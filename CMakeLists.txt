@@ -9,6 +9,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "-march=native -O3 -pthread -Wall -DQT_NO_VERSION_TAGGING")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
@@ -22,10 +23,18 @@ else()
     set(CUSTOM_EIGEN ${EIGEN_INCLUDE_DIR})
 endif()
 
+option(USE_RECORDER "Use recorder" OFF)
+
+if (USE_RECORDER)
+  MESSAGE(STATUS "USE_RECORDER")
+  add_definitions(-DUSE_RECORDER)
+endif()
+
 include_directories(.)
 include_directories(
         ${CUSTOM_EIGEN}
 )
+include_directories(${CNL_DIR})
 
 include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/CubicSpline"
