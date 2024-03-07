@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 # Run fot planner
-def fot(show_animation=False,
+def fot(show_animation=True,
         show_info=False,
         num_threads=0,
         save_frame=False):
@@ -17,7 +17,7 @@ def fot(show_animation=False,
         0,
         'target_speed':
         20,
-        'wp': [[0, 0], [50, 0], [150, 0]],
+        'wp': [[0, 0], [50, 0], [150, 0]],  #way point
         'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
                 [128, 2, 132, 6]],
         'pos': [0, 0],

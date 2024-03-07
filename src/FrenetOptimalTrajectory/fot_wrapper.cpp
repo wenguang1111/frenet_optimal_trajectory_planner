@@ -84,7 +84,7 @@ extern "C" {
             double vy, double forward_speed, double* xp, double* yp, int np,
             double* initial_conditions
             ) {
-        vector<double> wx (xp, xp + np);
+        vector<double> wx (xp, xp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
         vector<double> wy (yp, yp + np);
         CubicSpline2D* csp = new CubicSpline2D(wx, wy);
 

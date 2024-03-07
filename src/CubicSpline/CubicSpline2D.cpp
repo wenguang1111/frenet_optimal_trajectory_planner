@@ -23,7 +23,7 @@ CubicSpline2D::CubicSpline2D(const vector<double> &x,
 void CubicSpline2D::calc_s(const vector<double>& x,
                            const vector<double>& y) {
     int nx = x.size();
-    vector<double> dx (nx);
+    vector<double> dx (nx);//delta_x
     vector<double> dy (nx);
     adjacent_difference(x.begin(), x.end(), dx.begin());
     adjacent_difference(y.begin(), y.end(), dy.begin());

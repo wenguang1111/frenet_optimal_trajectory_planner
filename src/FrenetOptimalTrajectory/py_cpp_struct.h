@@ -5,14 +5,14 @@
 const size_t MAX_PATH_LENGTH = 100;
 
 struct FrenetInitialConditions {
-    double s0;
+    double s0; 
     double c_speed;
     double c_d;
     double c_d_d;
     double c_d_dd;
     double target_speed;
-    double *wx;
-    double *wy;
+    double *wx; //goal position
+    double *wy; //goal position
     int nw;
     double *o_llx;
     double *o_lly;
@@ -44,7 +44,7 @@ struct FrenetHyperparameters {
     double max_curvature;
     double max_road_width_l;
     double max_road_width_r;
-    double d_road_w;
+    double d_road_w; //delte_road_width
     double dt;
     double maxt;
     double mint;
