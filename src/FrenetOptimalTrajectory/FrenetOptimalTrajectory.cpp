@@ -7,7 +7,9 @@
 #include "QuarticPolynomial.h"
 #include "QuinticPolynomial.h"
 #include "utils.h"
-#include "tool/recorder.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 
 using namespace std;
 

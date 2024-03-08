@@ -11,11 +11,11 @@ CNL_Test
 // using cnl::scaled_integer;
 
 int main() {
-    cnl::scaled_integer<int16_t, cnl::power<-7>> a;
-    // std::cout << std::numeric_limits<
-    //                  cnl::scaled_integer<int16_t, cnl::power<-7>>>::max()
-    //           << std::endl;
-    a = -32.512;
+    cnl::scaled_integer<int16_t, cnl::power<-12>> a;
+    std::cout << std::numeric_limits<
+                     cnl::scaled_integer<int16_t, cnl::power<-12>>>::max()
+              << std::endl;
+    a = 2.512;
 
     // auto b = cnl::scaled_integer<uint16_t, cnl::power<-3>>{0};
     // b = 23.5212;
@@ -30,5 +30,5 @@ int main() {
     // cnl::scaled_integer<int16_t, cnl::power<-12>> x;
     // x = 1.001;
 
-    std::cout << sizeof(a);
+    std::cout << sizeof(a)<< std::endl;
 }

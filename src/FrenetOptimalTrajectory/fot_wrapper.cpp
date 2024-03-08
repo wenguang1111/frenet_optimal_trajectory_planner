@@ -3,6 +3,7 @@
 #include "py_cpp_struct.h"
 #include "CubicSpline2D.h"
 #include "utils.h"
+#include "tool/recorder.h"
 
 #include <stddef.h>
 #include <vector>
@@ -35,6 +36,12 @@ extern "C" {
             FrenetReturnValues *fot_rv
             ) {
         FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(fot_ic, fot_hp);
+        
+        #ifdef USE_RECORDER
+            // write recorded data to csv file
+            Recorder::getInstance()->writeDataToCSV();
+        #endif
+        
         FrenetPath* best_frenet_path = fot.getBestPath();
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv->success = 1;
