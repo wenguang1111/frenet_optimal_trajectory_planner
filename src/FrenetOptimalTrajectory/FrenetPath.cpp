@@ -1,5 +1,6 @@
 #include "FrenetPath.h"
 #include "utils.h"
+#include "tool/recorder.h"
 
 #include <algorithm>
 
@@ -27,6 +28,10 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::x", x.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::y", y.back());
+        #endif
     }
 
     // not enough points to construct a valid path
@@ -40,9 +45,14 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dy = y[i+1] - y[i];
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::yaw", yaw.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ds", ds.back());
+        #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
+
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -54,6 +64,9 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         }
         c.push_back(dyaw / ds[i]);
         //c.push_back(dyaw / fot_hp->dt);
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::c", c.back());
+        #endif
     }
 
     return true;
