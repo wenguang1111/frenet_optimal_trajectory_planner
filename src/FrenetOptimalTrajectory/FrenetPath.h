@@ -20,22 +20,22 @@ using namespace Eigen;
 class FrenetPath {
 public:
     // Frenet attributes
-    vector<uint_3_13> t;          // time
-    vector<int_3_12> d;          // lateral offset
-    vector<int_3_12> d_d;        // lateral speed
-    vector<int_4_11> d_dd;       // lateral acceleration
-    vector<int_7_8> d_ddd;      // lateral jerk
-    vector<int_8_7> s;          // s position along spline
-    vector<int_5_10> s_d;        // s speed
-    vector<int_5_10> s_dd;       // s acceleration
-    vector<int_5_10> s_ddd;      // s jerk
+    vector<double> t;          // time
+    vector<double> d;          // lateral offset
+    vector<double> d_d;        // lateral speed
+    vector<double> d_dd;       // lateral acceleration
+    vector<double> d_ddd;      // lateral jerk
+    vector<double> s;          // s position along spline
+    vector<double> s_d;        // s speed
+    vector<double> s_dd;       // s acceleration
+    vector<double> s_ddd;      // s jerk
 
     // Euclidean attributes
-    vector<int_8_7> x;          // x position
-    vector<int_3_12> y;          // y position
-    vector<int_1_14> yaw;        // yaw in radc
-    vector<int_3_12> ds;         // speed
-    vector<int_3_12> c;          // curvature
+    vector<double> x;          // x position
+    vector<double> y;          // y position
+    vector<double> yaw;        // yaw in radc
+    vector<double> ds;         // speed
+    vector<double> c;          // curvature
 
     // Debug
     vector<double> ix;

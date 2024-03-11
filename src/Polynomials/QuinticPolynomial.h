@@ -1,6 +1,8 @@
 #ifndef FRENET_OPTIMAL_TRAJECTORY_QUINTICPOLYNOMIAL_H
 #define FRENET_OPTIMAL_TRAJECTORY_QUINTICPOLYNOMIAL_H
 
+#include "tool/fp_datatype.h"
+
 class QuinticPolynomial {
 public:
     QuinticPolynomial() = default;

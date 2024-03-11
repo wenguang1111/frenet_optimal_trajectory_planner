@@ -1,4 +1,7 @@
 #include "QuarticPolynomial.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 
 #include <Eigen/LU>
 #include <cmath>
@@ -17,6 +20,14 @@ QuarticPolynomial::QuarticPolynomial(double xs, double vxs, double axs,
     Vector2d x = A_inv * B;
     a3 = x[0];
     a4 = x[1];
+
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::QuarticPolynomial::a0", xs);
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::QuarticPolynomial::a1", vxs);
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::QuarticPolynomial::a2", a2);
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::QuarticPolynomial::a3", a3);
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::QuarticPolynomial::a4", a4);
+    #endif
 }
 
 double QuarticPolynomial::calc_point(double t) {

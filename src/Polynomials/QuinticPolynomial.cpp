@@ -1,4 +1,7 @@
 #include "QuinticPolynomial.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 
 #include <Eigen/LU>
 #include <cmath>
@@ -21,6 +24,15 @@ QuinticPolynomial::QuinticPolynomial(double xs, double vxs, double axs,
     a3 = x[0];
     a4 = x[1];
     a5 = x[2];
+
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a0", xs);
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a1", vxs);
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a2", a2);
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a3", a3);
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a4", a4);
+        Recorder::getInstance()->saveData<double>("QuinticPolynomial::QuinticPolynomial::a5", a5);
+    #endif
 }
 
 double QuinticPolynomial::calc_point(double t) {

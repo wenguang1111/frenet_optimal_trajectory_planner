@@ -169,13 +169,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));
                 t += fot_hp->dt;
-                #ifdef USE_RECORDER
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::t", fp->t.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d", fp->d.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_d", fp->d_d.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_dd", fp->d_dd.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_ddd", fp->d_ddd.back());
-                #endif
+                // #ifdef USE_RECORDER
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::t", fp->t.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d", fp->d.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_d", fp->d_d.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_dd", fp->d_dd.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_ddd", fp->d_ddd.back());
+                // #endif
             }
 
             // velocity keeping
@@ -205,12 +205,12 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                         abs(lon_qp.calc_second_derivative(tp));
                     longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));
 
-                    #ifdef USE_RECORDER
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s", tfp->s.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_d", tfp->s_d.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_dd", tfp->s_dd.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_ddd", tfp->s_ddd.back());
-                    #endif	
+                    // #ifdef USE_RECORDER
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s", tfp->s.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_d", tfp->s_d.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_dd", tfp->s_dd.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_ddd", tfp->s_ddd.back());
+                    // #endif	
                 }
 
                 num_paths++;
