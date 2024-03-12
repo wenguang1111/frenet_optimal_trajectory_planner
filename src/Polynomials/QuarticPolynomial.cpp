@@ -19,18 +19,18 @@ QuarticPolynomial::QuarticPolynomial(double xs, double vxs, double axs,
     a4 = x[1];
 }
 
-double QuarticPolynomial::calc_point(double t) {
+fixp_s QuarticPolynomial::calc_point(double t) {
     return a0 + a1 * t + a2 * pow(t, 2) + a3 * pow(t, 3) + a4 * pow(t, 4);
 }
 
-double QuarticPolynomial::calc_first_derivative(double t) {
+fixp_s_d QuarticPolynomial::calc_first_derivative(double t) {
     return a1 + 2 * a2 * t + 3 * a3 * pow(t, 2) + 4 * a4 * pow(t, 3);
 }
 
-double QuarticPolynomial::calc_second_derivative(double t) {
+fixp_s_dd QuarticPolynomial::calc_second_derivative(double t) {
     return 2 * a2 + 6 * a3 * t + 12 * a4 * pow(t, 2);
 }
 
-double QuarticPolynomial::calc_third_derivative(double t) {
+fixp_s_ddd QuarticPolynomial::calc_third_derivative(double t) {
     return 6 * a3 + 24 * a4 * t;
 }

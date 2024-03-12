@@ -164,7 +164,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 fp->d_d.push_back(lat_qp.calc_first_derivative(t));
                 fp->d_dd.push_back(lat_qp.calc_second_derivative(t));
                 fp->d_ddd.push_back(lat_qp.calc_third_derivative(t));
-                lateral_deviation += abs(lat_qp.calc_point(t));
+                lateral_deviation += abs(lat_qp.calc_point(t)); //TODO: use calculated result directly fp->d.back()
                 lateral_velocity += abs(lat_qp.calc_first_derivative(t));
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));

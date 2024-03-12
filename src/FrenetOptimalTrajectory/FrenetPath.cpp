@@ -1,5 +1,6 @@
 #include "FrenetPath.h"
 #include "utils.h"
+#include "tool/fp_datatype.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
 #endif
@@ -17,15 +18,16 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
     double ix_, iy_, iyaw_, di, fx, fy, dx, dy;
     // calc global positions
     for (size_t i = 0; i < s.size(); i++) {
-        ix_ = csp->calc_x(s[i]);
-        iy_ = csp->calc_y(s[i]);
+        double s_i = static_cast<double>(s[i]);
+        ix_ = csp->calc_x(s_i);
+        iy_ = csp->calc_y(s_i);
         if (isnan(ix_) || isnan(iy_)) break;
 
-        iyaw_ = csp->calc_yaw(s[i]);
+        iyaw_ = csp->calc_yaw(s_i);
         ix.push_back(ix_);
         iy.push_back(iy_);
         iyaw.push_back(iyaw_);
-        di = d[i];
+        di = static_cast<double>(d[i]);
         fx = ix_ + di * cos(iyaw_ + M_PI_2);
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
@@ -43,8 +45,8 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
 
     // calc yaw and ds
     for (size_t i = 0; i < x.size() - 1; i++) {
-        dx = x[i+1] - x[i];
-        dy = y[i+1] - y[i];
+        dx = static_cast<double>(x[i+1] - x[i]);
+        dy = static_cast<double>(y[i+1] - y[i]);
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
         #ifdef USE_RECORDER
@@ -58,7 +60,7 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
-        double dyaw = yaw[i+1] - yaw[i];
+        double dyaw = static_cast<double>(yaw[i+1] - yaw[i]);
         if (dyaw > M_PI_2) {
             dyaw -= M_PI;
         } else if (dyaw < -M_PI_2) {
@@ -78,17 +80,17 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
 // curvature and collision checks
 bool FrenetPath::is_valid_path(const vector<Obstacle *> obstacles) {
     if (any_of(s_d.begin(), s_d.end(),
-            [this](int i){return abs(i) > fot_hp->max_speed;})) {
+            [this](auto i){return abs(i) > fot_hp->max_speed;})) {
         return false;
     }
     // max accel check
     else if (any_of(s_dd.begin(), s_dd.end(),
-            [this](int i){return abs(i) > fot_hp->max_accel;})) {
+            [this](auto i){return abs(i) > fot_hp->max_accel;})) {
         return false;
     }
     // max curvature check
     else if (any_of(c.begin(), c.end(),
-            [this](int i){return abs(i) > fot_hp->max_curvature;})) {
+            [this](auto i){return abs(i) > fot_hp->max_curvature;})) {
         return false;
     }
     // collision check
@@ -127,9 +129,9 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
             // only check for collision if one corner of bounding box is
             // within COLLISION_CHECK_THRESHOLD of waypoint
             if (closest <= COLLISION_CHECK_THRESHOLD) {
-                double xp = x[i];
-                double yp = y[i];
-                double yawp = yaw[i];
+                double xp = static_cast<double>(x[i]);
+                double yp = static_cast<double>(y[i]);
+                double yawp = static_cast<double>(yaw[i]);
                 pose.assign({xp, yp, yawp});
                 car.setPose(pose);
                 car_outline = car.getOutline();

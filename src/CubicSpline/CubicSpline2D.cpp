@@ -1,5 +1,6 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
+#include "tool/fp_datatype.h"
 
 #include <algorithm>
 #include <numeric>

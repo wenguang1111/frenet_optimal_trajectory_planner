@@ -5,10 +5,7 @@
 #include "CubicSpline2D.h"
 #include "Obstacle.h"
 #include "Car.h"
-#ifdef USE_RECORDER
-    #include "tool/fp_datatype.h"
-#endif
-
+#include "tool/fp_datatype.h"
 
 #include <eigen3/Eigen/Dense>
 #include <vector>
@@ -20,22 +17,22 @@ using namespace Eigen;
 class FrenetPath {
 public:
     // Frenet attributes
-    vector<uint_3_13> t;          // time
-    vector<int_3_12> d;          // lateral offset
-    vector<int_3_12> d_d;        // lateral speed
-    vector<int_4_11> d_dd;       // lateral acceleration
-    vector<int_7_8> d_ddd;      // lateral jerk
-    vector<int_8_7> s;          // s position along spline
-    vector<int_5_10> s_d;        // s speed
-    vector<int_5_10> s_dd;       // s acceleration
-    vector<int_5_10> s_ddd;      // s jerk
+    vector<double> t;          // time
+    vector<fixp_d> d;          // lateral offset
+    vector<fixp_d_d> d_d;        // lateral speed
+    vector<fixp_d_dd> d_dd;       // lateral acceleration
+    vector<fixp_d_ddd> d_ddd;      // lateral jerk
+    vector<fixp_s> s;          // s position along spline
+    vector<fixp_s_d> s_d;        // s speed
+    vector<fixp_s_dd> s_dd;       // s acceleration
+    vector<fixp_s_ddd> s_ddd;      // s jerk
 
     // Euclidean attributes
-    vector<int_8_7> x;          // x position
-    vector<int_3_12> y;          // y position
-    vector<int_1_14> yaw;        // yaw in radc
-    vector<int_3_12> ds;         // speed
-    vector<int_3_12> c;          // curvature
+    vector<fixp_x> x;          // x position
+    vector<fixp_y> y;          // y position
+    vector<fixp_yaw> yaw;        // yaw in radc
+    vector<fixp_ds> ds;         // speed
+    vector<fixp_c> c;          // curvature
 
     // Debug
     vector<double> ix;

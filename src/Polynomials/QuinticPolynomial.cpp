@@ -23,20 +23,20 @@ QuinticPolynomial::QuinticPolynomial(double xs, double vxs, double axs,
     a5 = x[2];
 }
 
-double QuinticPolynomial::calc_point(double t) {
+fixp_d QuinticPolynomial::calc_point(double t) {
     return a0 + a1 * t + a2 * pow(t, 2) + a3 * pow(t, 3) +
     a4 * pow(t, 4) + a5 * pow(t, 5);
 }
 
-double QuinticPolynomial::calc_first_derivative(double t) {
+fixp_d_d QuinticPolynomial::calc_first_derivative(double t) {
     return a1 + 2 * a2 * t + 3 * a3 * pow(t, 2) + 4 * a4 * pow(t, 3) +
     5 * a5 * pow(t, 4);
 }
 
-double QuinticPolynomial::calc_second_derivative(double t) {
+fixp_d_dd QuinticPolynomial::calc_second_derivative(double t) {
     return 2 * a2 + 6 * a3 * t + 12 * a4 * pow(t, 2) + 20 * a5 * pow(t, 3);
 }
 
-double QuinticPolynomial::calc_third_derivative(double t) {
+fixp_d_ddd QuinticPolynomial::calc_third_derivative(double t) {
     return 6 * a3 + 24 * a4 * t + 60 * a5 * pow(t, 2);
 }
