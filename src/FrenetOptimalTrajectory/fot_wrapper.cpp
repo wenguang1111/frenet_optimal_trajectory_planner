@@ -43,6 +43,15 @@ extern "C" {
         #endif
         
         FrenetPath* best_frenet_path = fot.getBestPath();
+        // if(!best_frenet_path)
+        // {
+        //     std::cout << "!!Empty path returned" << std::endl;
+        // }
+        // else if(best_frenet_path->x.empty())
+        // {
+        //     std::cout << "!!there is not any x position in path" << std::endl;
+        // }
+
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv->success = 1;
             fot_rv->path_length = std::min(best_frenet_path->x.size(), MAX_PATH_LENGTH);

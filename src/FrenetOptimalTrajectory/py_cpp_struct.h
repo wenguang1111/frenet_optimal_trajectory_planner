@@ -44,7 +44,7 @@ struct FrenetHyperparameters {
     double max_curvature;
     double max_road_width_l;
     double max_road_width_r;
-    double d_road_w; //delte_road_width
+    double d_road_w; //delta_road_width
     double dt;
     double maxt;
     double mint;

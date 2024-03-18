@@ -58,7 +58,7 @@ int main() {
         0.1,
         1.0,
         1.0,
-        2 // num thread
+        0 // num thread
     };
 
     // run experiment

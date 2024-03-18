@@ -17,7 +17,7 @@ using namespace Eigen;
 class FrenetPath {
 public:
     // Frenet attributes
-    vector<double> t;          // time
+    vector<float> t;          // time
     vector<fixp_d> d;          // lateral offset
     vector<fixp_d_d> d_d;        // lateral speed
     vector<fixp_d_dd> d_dd;       // lateral acceleration
