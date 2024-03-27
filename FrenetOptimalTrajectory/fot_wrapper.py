@@ -97,6 +97,7 @@ def run_fot(initial_conditions, hyperparameters):
         params (dict): next frenet coordinates, if they exist
         costs (dict): costs of best frenet path, if it exists
         success (bool): whether a fot was found or not
+        runtime (np.ndarray(float)): run time of run_fot in c
     """
     # parse initial conditions and convert to frenet coordinates
     fot_initial_conditions, misc = to_frenet_initial_conditions(
@@ -145,8 +146,10 @@ def run_fot(initial_conditions, hyperparameters):
 
     success = fot_rv.success
 
+    runtime = fot_rv.runtime
+
     return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
-           speeds_x, speeds_y, params, costs, success
+           speeds_x, speeds_y, params, costs, success, runtime
 
 
 def to_frenet_initial_conditions(initial_conditions):

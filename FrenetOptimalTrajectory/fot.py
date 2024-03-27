@@ -68,18 +68,21 @@ def fot(show_animation=True,
     sim_loop = 200
     area = 40
     total_time = 0
+    total_time_c = 0
     time_list = []
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
         start_time = time.time()
         result_x, result_y, speeds, ix, iy, iyaw, d, s, speeds_x, \
-            speeds_y, misc, costs, success = \
+            speeds_y, misc, costs, success, runtime_c = \
             fot_wrapper.run_fot(initial_conditions, hyperparameters)
         end_time = time.time() - start_time
-        print("Time taken: {}".format(end_time))
+        # print("Time taken: {} s".format(end_time))
+        print("Time take by c module:{} ms".format(runtime_c))
         total_time += end_time
-        time_list.append(end_time)
+        total_time_c += runtime_c
+        time_list.append(runtime_c)
 
         # reconstruct initial_conditions
         if success:
@@ -127,9 +130,9 @@ def fot(show_animation=True,
     print("Finish")
 
     print("======================= SUMMARY ========================")
-    print("Total time for {} iterations taken: {}".format(i, total_time))
-    print("Average time per iteration: {}".format(total_time / i))
-    print("Max time per iteration: {}".format(max(time_list)))
+    print("Total time for {} iterations taken: {} ms".format(i, total_time_c))
+    print("Average time per iteration: {} ms".format(total_time_c / i))
+    print("Max time per iteration: {} ms".format(max(time_list)))
 
     return time_list
 
