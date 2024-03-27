@@ -36,6 +36,7 @@ struct FrenetReturnValues {
     double speeds_y[MAX_PATH_LENGTH];
     double params[MAX_PATH_LENGTH];
     double costs[MAX_PATH_LENGTH];
+    double runtime;
 };
 
 struct FrenetHyperparameters {

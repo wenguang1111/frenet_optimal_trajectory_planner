@@ -18,8 +18,10 @@ def fot(show_animation=True,
         'target_speed':
         20,
         'wp': [[0, 0], [50, 0], [150, 0]],  #way point
-        'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
-                [128, 2, 132, 6]],
+        # 'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
+        #         [128, 2, 132, 6]],
+        'obs': [[25,-2,28,2],[35,4,40,6],[48, -5, 52, -6], [62,-4,68,-5],[62,2,68,5],[98, -4, 102, 2], [98, 6, 102, 10],
+                [145, 2, 150, 6]],
         'pos': [0, 0],
         'vel': [0, 0],
     }  # paste output from debug log
@@ -37,21 +39,21 @@ def fot(show_animation=True,
         "max_speed": 25.0,
         "max_accel": 15.0,
         "max_curvature": 15.0,
-        "max_road_width_l": 5.0,
-        "max_road_width_r": 5.0,
-        "d_road_w": 0.5,
-        "dt": 0.2,
+        "max_road_width_l": 6.0,
+        "max_road_width_r": 6.0,
+        "d_road_w": 0.1,
+        "dt": 0.1,
         "maxt": 5.0,
         "mint": 2.0,
-        "d_t_s": 0.5,
-        "n_s_sample": 2.0,
+        "d_t_s": 0.1,
+        "n_s_sample": 5.0,
         "obstacle_clearance": 0.1,
         "kd": 1.0,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
         "kt": 0.1,
-        "ko": 0.1,
+        "ko": 10,
         "klat": 1.0,
         "klon": 1.0,
         "num_threads": num_threads,  # set 0 to avoid using threaded algorithm
@@ -66,18 +68,21 @@ def fot(show_animation=True,
     sim_loop = 200
     area = 40
     total_time = 0
+    total_time_c = 0
     time_list = []
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
         start_time = time.time()
         result_x, result_y, speeds, ix, iy, iyaw, d, s, speeds_x, \
-            speeds_y, misc, costs, success = \
+            speeds_y, misc, costs, success, runtime_c = \
             fot_wrapper.run_fot(initial_conditions, hyperparameters)
         end_time = time.time() - start_time
-        print("Time taken: {}".format(end_time))
+        # print("Time taken: {}".format(end_time))
+        print("Time take by c module:{} ms".format(runtime_c))
         total_time += end_time
-        time_list.append(end_time)
+        total_time_c += runtime_c
+        time_list.append(runtime_c)
 
         # reconstruct initial_conditions
         if success:
@@ -125,10 +130,9 @@ def fot(show_animation=True,
     print("Finish")
 
     print("======================= SUMMARY ========================")
-    print("Total time for {} iterations taken: {}".format(i, total_time))
-    print("Average time per iteration: {}".format(total_time / i))
-    print("Max time per iteration: {}".format(max(time_list)))
-
+    print("Total time for {} iterations taken: {} ms".format(i, total_time_c))
+    print("Average time per iteration: {} ms".format(total_time_c / i))
+    print("Max time per iteration: {} ms".format(max(time_list)))
     return time_list
 
 

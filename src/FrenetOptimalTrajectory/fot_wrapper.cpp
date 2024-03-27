@@ -7,6 +7,7 @@
 
 #include <stddef.h>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 
@@ -35,8 +36,12 @@ extern "C" {
             FrenetInitialConditions *fot_ic, FrenetHyperparameters *fot_hp,
             FrenetReturnValues *fot_rv
             ) {
+        clock_t start, end;
+        start = clock();
         FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(fot_ic, fot_hp);
-        
+        end = clock();
+        double time_taken = ((double)end-start)/CLOCKS_PER_SEC * 1000; // multiply by 1000 to convert to milliseconds
+
         #ifdef USE_RECORDER
             // write recorded data to csv file
             Recorder::getInstance()->writeDataToCSV();
@@ -83,6 +88,7 @@ extern "C" {
             fot_rv->costs[10] = best_frenet_path->c_inv_dist_to_obstacles;
             fot_rv->costs[11] = best_frenet_path->cf;
         }
+        fot_rv->runtime = time_taken;
     }
 
     // Convert the initial conditions from cartesian space to frenet space
