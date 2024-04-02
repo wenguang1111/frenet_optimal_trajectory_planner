@@ -113,7 +113,7 @@ void AnytimeFrenetOptimalTrajectory::stopPlanning() {
 FrenetPath *AnytimeFrenetOptimalTrajectory::getBestPath() {
     mu->lock();
     // select the best path
-    double mincost = INFINITY;
+    uint_9_7 mincost = std::numeric_limits<uint_9_7>::max();
     for (FrenetPath *fp : frenet_paths) {
         if (fp->cf <= mincost) {
             mincost = fp->cf;
@@ -135,7 +135,7 @@ FrenetPath *AnytimeFrenetOptimalTrajectory::getBestPath() {
 void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                                                        int end_di_index) {
 
-    double t, ti, tv;
+    double t,ti, tv; //TODO:change to Fixed Point
     double lateral_deviation, lateral_velocity, lateral_acceleration,
         lateral_jerk;
     double longitudinal_acceleration, longitudinal_jerk;
@@ -145,7 +145,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     // double valid_path_time = 0;
 
     // initialize di, with start_di_index
-    double di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
+    fixp_s_d di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
 
     // generate path to each offset goal
     // note di goes up to but not including end_di_index*fot_hp->d_road_w
@@ -154,7 +154,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         (di < -fot_hp->max_road_width_l + end_di_index * fot_hp->d_road_w) &&
         (di <=
          fot_hp->max_road_width_r)) { // TODO: better sol to detect run worker
-        ti = fot_hp->mint;
+        ti = static_cast<double>(fot_hp->mint);
 
         // lateral motion planning
         while (ti <= fot_hp->maxt) {
@@ -165,7 +165,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 
             fp = new FrenetPath(fot_hp);
             QuinticPolynomial lat_qp = QuinticPolynomial(
-                fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, di, 0.0, 0.0, ti);
+                fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, di, 0.0, 0.0, tirm );
 
             // construct frenet path
             t = 0;
@@ -183,7 +183,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             }
 
             // velocity keeping
-            tv = fot_ic->target_speed - fot_hp->d_t_s * fot_hp->n_s_sample;
+            tv = static_cast<double>(fot_ic->target_speed - fot_hp->d_t_s * fot_hp->n_s_sample);
             while (tv <=
                    fot_ic->target_speed + fot_hp->d_t_s * fot_hp->n_s_sample) {
                 longitudinal_acceleration = 0;
@@ -217,7 +217,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 if (!success) {
                     // deallocate memory and continue
                     delete tfp;
-                    tv += fot_hp->d_t_s;
+                    tv += static_cast<double>(fot_hp->d_t_s);
                     continue;
                 }
 
@@ -230,7 +230,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 if (!valid_path) {
                     // deallocate memory and continue
                     delete tfp;
-                    tv += fot_hp->d_t_s;
+                    tv += static_cast<double>(fot_hp->d_t_s);
                     continue;
                 }
 
@@ -270,9 +270,9 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 mu->lock();
                 frenet_paths.push_back(tfp);
                 mu->unlock();
-                tv += fot_hp->d_t_s;
+                tv += static_cast<double>(fot_hp->d_t_s);
             }
-            ti += fot_hp->dt;
+            ti += static_cast<double>(fot_hp->dt);
             // make sure to deallocate
             delete fp;
         }

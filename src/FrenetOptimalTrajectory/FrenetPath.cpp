@@ -176,10 +176,10 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
 }
 
 // calculate the sum of 1 / distance_to_obstacle
-double
+fixp_inverse_distanceToObstacles
 FrenetPath::inverse_distance_to_obstacles(
     const vector<Obstacle *> obstacles) {
-    double total_inverse_distance = 0.0;
+    fixp_inverse_distanceToObstacles total_inverse_distance = 0.0;
 
     for (auto obstacle : obstacles) {
         double llx = obstacle->bbox.first.x();

@@ -8,6 +8,8 @@
 #include "QuarticPolynomial.h"
 #include "QuinticPolynomial.h"
 #include "utils.h"
+#include "tool/fp_datatype.h"
+
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
 #endif
@@ -54,7 +56,7 @@ FrenetOptimalTrajectory::FrenetOptimalTrajectory(
     }
 
     // select the best path
-    double mincost = INFINITY;
+    fixp_mincost mincost = std::numeric_limits<fixp_mincost>::max();
     for (FrenetPath *fp : frenet_paths) {
         if (fp->cf <= mincost) {
             mincost = fp->cf;
@@ -129,16 +131,18 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                                                 int end_di_index,
                                                 bool multithreaded) {
     double t, ti, tv;
-    double lateral_deviation, lateral_velocity, lateral_acceleration,
-        lateral_jerk;
-    double longitudinal_acceleration, longitudinal_jerk;
+    fixp_d_ddd lateral_acceleration;
+    fixp_d_ddd lateral_deviation;
+    fixp_d_ddd lateral_velocity;
+    fixp_lateral_jerk lateral_jerk;
+    fixp_s longitudinal_acceleration, longitudinal_jerk;
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;
     double valid_path_time = 0;
 
     // initialize di, with start_di_index
-    double di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
+    fixp_d di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
 
     // generate path to each offset goal
     // note di goes up to but not including end_di_index*fot_hp->d_road_w
@@ -154,8 +158,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             lateral_jerk = 0;
 
             fp = new FrenetPath(fot_hp);
-            QuinticPolynomial lat_qp = QuinticPolynomial(
-                fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, di, 0.0, 0.0, ti);
+            QuinticPolynomial lat_qp = QuinticPolynomial(fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, static_cast<double>(di), 0.0, 0.0, ti);
 
             // construct frenet path
             t = 0;
@@ -180,7 +183,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             }
 
             // velocity keeping
-            tv = fot_ic->target_speed - fot_hp->d_t_s * fot_hp->n_s_sample;
+            tv = static_cast<double>(fot_ic->target_speed - fot_hp->d_t_s * fot_hp->n_s_sample);
             while (tv <=
                    fot_ic->target_speed + fot_hp->d_t_s * fot_hp->n_s_sample) {
                 longitudinal_acceleration = 0;
@@ -194,7 +197,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 tfp->d_dd.assign(fp->d_dd.begin(), fp->d_dd.end());
                 tfp->d_ddd.assign(fp->d_ddd.begin(), fp->d_ddd.end());
                 QuarticPolynomial lon_qp = QuarticPolynomial(
-                    fot_ic->s0, fot_ic->c_speed, 0.0, tv, 0.0, ti);
+                    static_cast<double>(fot_ic->s0), static_cast<double>(fot_ic->c_speed), 0.0, tv, 0.0, ti);
 
                 // longitudinal motion
                 for (double tp : tfp->t) {

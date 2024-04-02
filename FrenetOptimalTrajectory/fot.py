@@ -35,7 +35,7 @@ def fot(show_animation=True,
         'obs': np.array(conds['obs'])
     }
 
-    hyperparameters = {
+    hyperparameters = { #！the datatye of following variable is int_5_10 in c, so be sure that tha value is between -32 and 32
         "max_speed": 25.0,
         "max_accel": 15.0,
         "max_curvature": 15.0,
@@ -48,7 +48,7 @@ def fot(show_animation=True,
         "d_t_s": 0.1,
         "n_s_sample": 5.0,
         "obstacle_clearance": 0.1,
-        "kd": 1.0,
+        "kd": 0.1,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
@@ -65,7 +65,7 @@ def fot(show_animation=True,
     obs = np.array(conds['obs'])
 
     # simulation config
-    sim_loop = 200
+    sim_loop = 2000
     area = 40
     total_time = 0
     total_time_c = 0

@@ -13,8 +13,8 @@ public:
     fixp_s_dd calc_second_derivative(double t);
     fixp_s_ddd calc_third_derivative(double t);
 private:
-    int_8_7 a0; 
-    int_4_11 a1, a2, a3, a4;
+    fixp_quarticpolynomial_A0 a0; 
+    fixp_quarticpolynomial_A1_A4 a1, a2, a3, a4;
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_QUARTICPOLYNOMIAL_H

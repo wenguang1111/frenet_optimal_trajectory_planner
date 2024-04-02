@@ -13,7 +13,7 @@ public:
     fixp_d_dd calc_second_derivative(double t);
     fixp_d_ddd calc_third_derivative(double t);
 private:
-    int_4_11 a0, a1, a2, a3, a4, a5;
+    fixp_quinticpolynomial_A0_A5 a0, a1, a2, a3, a4, a5;
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_QUINTICPOLYNOMIAL_H

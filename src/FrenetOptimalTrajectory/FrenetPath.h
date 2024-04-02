@@ -41,30 +41,30 @@ public:
 
     // Cost attributes
     // lateral costs
-    double c_lateral_deviation = 0.0;
-    double c_lateral_velocity = 0.0;
-    double c_lateral_acceleration = 0.0;
-    double c_lateral_jerk = 0.0;
-    double c_lateral = 0.0;
+    fixp_cost c_lateral_deviation = 0.0;
+    fixp_cost c_lateral_velocity = 0.0;
+    fixp_cost c_lateral_acceleration = 0.0;
+    fixp_lateral_jerk c_lateral_jerk = 0.0;
+    fixp_cost c_lateral = 0.0;
 
     // longitudinal costs
-    double c_longitudinal_acceleration = 0.0;
-    double c_longitudinal_jerk = 0.0;
-    double c_time_taken = 0.0;
-    double c_end_speed_deviation = 0.0;
-    double c_longitudinal = 0.0;
+    fixp_cost c_longitudinal_acceleration = 0.0;
+    fixp_cost c_longitudinal_jerk = 0.0;
+    fixp_cost c_time_taken = 0.0;
+    fixp_cost c_end_speed_deviation = 0.0;
+    fixp_cost c_longitudinal = 0.0;
 
     // obstacle costs
-    double c_inv_dist_to_obstacles = 0.0;
+    fixp_cost c_inv_dist_to_obstacles = 0.0;
 
     // final cost
-    double cf = 0.0;
+    fixp_sum_cost cf = 0.0;
 
     FrenetPath(FrenetHyperparameters *fot_hp_);
     bool to_global_path(CubicSpline2D* csp);
     bool is_valid_path(const vector<Obstacle *> obstacles);
     bool is_collision(const vector<Obstacle *> obstacles);
-    double inverse_distance_to_obstacles(
+    fixp_inverse_distanceToObstacles inverse_distance_to_obstacles(
         const vector<Obstacle *> obstacles);
 
 private:
