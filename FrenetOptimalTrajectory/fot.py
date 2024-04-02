@@ -35,7 +35,7 @@ def fot(show_animation=True,
         'obs': np.array(conds['obs'])
     }
 
-    hyperparameters = {
+    hyperparameters = { #！the datatye of following variable is int_5_10 in c, so be sure that tha value is between -32 and 32
         "max_speed": 25.0,
         "max_accel": 15.0,
         "max_curvature": 15.0,
@@ -48,12 +48,12 @@ def fot(show_animation=True,
         "d_t_s": 0.1,
         "n_s_sample": 5.0,
         "obstacle_clearance": 0.1,
-        "kd": 1.0,
+        "kd": 0.1,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
         "kt": 0.1,
-        "ko": 10,
+        "ko": 10.0,
         "klat": 1.0,
         "klon": 1.0,
         "num_threads": num_threads,  # set 0 to avoid using threaded algorithm

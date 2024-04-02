@@ -31,8 +31,11 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         x.push_back(fx);
         y.push_back(fy);
         #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("FrenetPath::to_global_path()::x", x.back());
-            Recorder::getInstance()->saveData<double>("FrenetPath::to_global_path()::y", y.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::x", x.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::y", y.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::ix_", ix_);
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::iy_", iy_);
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::iyaw_", iyaw_);
         #endif
     }
 
@@ -50,6 +53,8 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         #ifdef USE_RECORDER
             Recorder::getInstance()->saveData<double>("FrenetPath::to_global_path()::yaw", yaw.back());
             Recorder::getInstance()->saveData<double>("FrenetPath::to_global_path()::ds", ds.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::dx", dx);
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::dy", dy);
         #endif
     }
     yaw.push_back(yaw.back());
@@ -69,6 +74,7 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         
         #ifdef USE_RECORDER
             Recorder::getInstance()->saveData<double>("FrenetPath::to_global_path()::FrenetPath::c", c.back());
+            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::to_global_path()::FrenetPath::dyaw", dyaw);
         #endif
     }
 
@@ -118,11 +124,23 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
         double lly = obstacle->bbox.first.y();
         double urx = obstacle->bbox.second.x();
         double ury = obstacle->bbox.second.y();
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::llx", llx);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::lly", lly);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::urx", urx);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::ury", ury);
+        // #endif
         for (size_t i = 0; i < x.size(); i++) {
             double d1 = norm(llx - x[i], lly - y[i]);
             double d2 = norm(llx - x[i], ury - y[i]);
             double d3 = norm(urx - x[i], ury - y[i]);
             double d4 = norm(urx - x[i], lly - y[i]);
+            // #ifdef USE_RECORDER
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::d1", d1);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::d2", d2);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::d3", d3);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::is_collision()::FrenetPath::d4", d4);
+            // #endif
 
             double closest = min({d1, d2, d3, d4});
             // only check for collision if one corner of bounding box is
