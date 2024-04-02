@@ -118,7 +118,7 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
     Pose pose;
     Car car = Car();
     Vector2f p1, p2;
-    vector<Point> car_outline;
+    Rectangle car_outline;
     // iterate over all obstacles
     for (auto obstacle : obstacles) {
         double llx = obstacle->bbox.first.x();
@@ -154,18 +154,9 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
                 pose.assign({xp, yp, yawp});
                 car.setPose(pose);
                 car_outline = car.getOutline();
-                for (size_t i = 0; i < car_outline.size(); i++) {
-                    p1.x() = car_outline[i][0];
-                    p1.y() = car_outline[i][1];
-                    p2.x() = car_outline[(i+1) % car_outline.size()][0];
-                    p2.y() = car_outline[(i+1) % car_outline.size()][1];
-                    if (obstacle->isSegmentInObstacle(p1, p2)) {
-                        return true;
-                    }
-                    // TODO (@fangedward): containment check is not implemented
-                    // this is necessary when there is a obstacle that can fully
-                    // contain the ego vehicle, otherwise any point contained will
-                    // form a line segment that intersects the obstacle
+                if(obstacle->isOverlap(car_outline))
+                {
+                    return true;
                 }
             }
         }
