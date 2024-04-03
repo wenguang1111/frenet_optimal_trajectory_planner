@@ -17,11 +17,13 @@ def fot(show_animation=True,
         0,
         'target_speed':
         20,
-        'wp': [[0, 0], [50, 0], [150, 0]],  #way point
+        'wp': [[0, 0], [50, 0], [120, 0]],  #way point
         # 'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
         #         [128, 2, 132, 6]],
-        'obs': [[25,-2,28,2],[35,4,40,6],[48, -5, 52, -6], [62,-4,68,-5],[62,2,68,5],[98, -4, 102, 2], [98, 6, 102, 10],
-                [145, 2, 150, 6]],
+        'obs': [[25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
+                [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
+                [56,-4,58,-5],[56,2,58,5],[59,-4,61,-5],[59,2,61,5],[62,-4,63,-5],
+                [62,2,63,5],[65,-4,68,-5],[65,2,68,5],[85, -4, 90, 1], [85, 6, 90, 10]],
         'pos': [0, 0],
         'vel': [0, 0],
     }  # paste output from debug log
@@ -35,7 +37,7 @@ def fot(show_animation=True,
         'obs': np.array(conds['obs'])
     }
 
-    hyperparameters = { #！the datatye of following variable is int_5_10 in c, so be sure that tha value is between -32 and 32
+    hyperparameters = {
         "max_speed": 25.0,
         "max_accel": 15.0,
         "max_curvature": 15.0,
@@ -43,8 +45,8 @@ def fot(show_animation=True,
         "max_road_width_r": 6.0,
         "d_road_w": 0.1,
         "dt": 0.1,
-        "maxt": 5.0,
-        "mint": 2.0,
+        "maxt": 5,
+        "mint": 2,
         "d_t_s": 0.1,
         "n_s_sample": 5.0,
         "obstacle_clearance": 0.1,
@@ -78,7 +80,7 @@ def fot(show_animation=True,
             speeds_y, misc, costs, success, runtime_c = \
             fot_wrapper.run_fot(initial_conditions, hyperparameters)
         end_time = time.time() - start_time
-        # print("Time taken: {}".format(end_time))
+        # print("Time taken: {} s".format(end_time))
         print("Time take by c module:{} ms".format(runtime_c))
         total_time += end_time
         total_time_c += runtime_c
@@ -133,6 +135,7 @@ def fot(show_animation=True,
     print("Total time for {} iterations taken: {} ms".format(i, total_time_c))
     print("Average time per iteration: {} ms".format(total_time_c / i))
     print("Max time per iteration: {} ms".format(max(time_list)))
+
     return time_list
 
 
