@@ -23,7 +23,7 @@ public:
         width = VEHICLE_WIDTH;
     };
     void setPose(Pose p);
-    vector<Point> getOutline();
+    Rectangle getOutline();
 private:
     double length;
     double width;

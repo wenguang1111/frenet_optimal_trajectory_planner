@@ -33,36 +33,65 @@ Obstacle::Obstacle(Vector2f first_point, Vector2f second_point, double obstacle_
     bbox.second.y() = second_point.y();
 }
 
-// Determine whether given line segment intersects an obstacle
-// Arguments:
-//      p1: point 1 in the line segment
-//      p2: point 2 in the line segment
-// Returns:
-//      whether given line segment intersects an obstacle
-bool Obstacle::isSegmentInObstacle(Vector2f &p1, Vector2f &p2)
+//Separating Axis Theorem Algorithmus
+bool Obstacle::isOverlap(Rectangle& car_outline)
 {
-    QLineF line_segment(p1.x(), p1.y(), p2.x(), p2.y());
-    QPointF intersect_pt;
-    float length = bbox.second.x() - bbox.first.x();
-    float breadth = bbox.second.y() - bbox.first.y();
-    QLineF lseg1(bbox.first.x(), bbox.first.y(),
-                 bbox.first.x() + length, bbox.first.y());
-    QLineF lseg2(bbox.first.x(), bbox.first.y(),
-                 bbox.first.x(), bbox.first.y() + breadth);
-    QLineF lseg3(bbox.second.x(), bbox.second.y(),
-                 bbox.second.x(), bbox.second.y() - breadth);
-    QLineF lseg4(bbox.second.x(), bbox.second.y(),
-                 bbox.second.x() - length, bbox.second.y());
-    QLineF::IntersectType x1 = line_segment.intersect(lseg1, &intersect_pt);
-    QLineF::IntersectType x2 = line_segment.intersect(lseg2, &intersect_pt);
-    QLineF::IntersectType x3 = line_segment.intersect(lseg3, &intersect_pt);
-    QLineF::IntersectType x4 = line_segment.intersect(lseg4, &intersect_pt);
-    // check for bounded intersection. IntersectType for bounded intersection is 1.
-    if (x1 == 1 || x2 == 1 || x3 == 1 || x4 == 1) {
-        return true;
+    Rectangle obstacle = {{{bbox.first.x(),bbox.first.y()},{bbox.second.x(), bbox.first.y()}, {bbox.second.x(), bbox.second.y()}, {bbox.first.x(), bbox.second.y()}}};
+
+    Vector2D axes[4] ={
+        perpendicular(subtract(car_outline.points[1], car_outline.points[0])),
+        perpendicular(subtract(car_outline.points[2], car_outline.points[1])),
+        perpendicular(subtract(obstacle.points[1], obstacle.points[0])),
+        perpendicular(subtract(obstacle.points[2], obstacle.points[1]))
+    };
+
+    for (int i = 0; i < 4; i++) {
+        if(isSeparated(car_outline, obstacle, axes[i])){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Obstacle::isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis) {
+    float min1, max1, min2, max2;
+
+    min1 = max1 = dotProduct(rect1.points[0], axis);
+    min2 = max2 = dotProduct(rect2.points[0], axis);
+
+    for (int i = 1; i < 4; i++) {
+        float projection = dotProduct(rect1.points[i], axis);
+        if (projection < min1) min1 = projection;
+        if (projection > max1) max1 = projection;
+
+        projection = dotProduct(rect2.points[i], axis);
+        if (projection < min2) min2 = projection;
+        if (projection > max2) max2 = projection;
     }
 
-    return false;
+    if (max1 < min2 || max2 < min1) {
+        return true; // Separated
+    }
+
+    return false; // Not separated
+}
+
+Vector2D Obstacle::subtract(Vector2D a, Vector2D b) {
+    Vector2D result;
+    result.x = a.x - b.x;
+    result.y = a.y - b.y;
+    return result;
+}
+
+float Obstacle::dotProduct(Vector2D a, Vector2D b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+Vector2D Obstacle::perpendicular(Vector2D vector) {
+    Vector2D result;
+    result.x = -vector.y;
+    result.y = vector.x;
+    return result;
 }
 
 bool Obstacle::isPointNearObstacle(Vector2f &p, double radius) {

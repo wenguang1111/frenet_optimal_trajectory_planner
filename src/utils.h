@@ -7,7 +7,18 @@
 
 using namespace std;
 
-typedef vector<double> Point;
+typedef struct { 
+    double x,y;
+} Point;
+
+typedef struct {
+    double x, y;
+} Vector2D;
+
+typedef struct {
+    Vector2D points[4];
+} Rectangle;
+
 typedef vector<double> Pose;
 
 inline double norm(double x, double y) {
