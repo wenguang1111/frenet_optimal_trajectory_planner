@@ -135,7 +135,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;
-    double valid_path_time = 0;
+    // double valid_path_time = 0;
 
     // initialize di, with start_di_index
     double di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
@@ -225,11 +225,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     continue;
                 }
 
-                clock_t start, end;
-                start = clock();
+                // clock_t start, end;
+                // start = clock();
                 bool valid_path = tfp->is_valid_path(obstacles);
-                end = clock();
-                valid_path_time +=((double)end-start)/CLOCKS_PER_SEC * 1000;
+                // end = clock();
+                // valid_path_time +=((double)end-start)/CLOCKS_PER_SEC * 1000;
                 if (!valid_path) {
                     // deallocate memory and continue
                     delete tfp;
@@ -292,7 +292,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     // Thread argument is passed down cout << "Found " << frenet_paths.size() <<
     // " valid paths out of " << num_paths << " paths; Valid path time " <<
     // valid_path_time << "\n";
-    std::cout << "valid checking time: "<< valid_path_time<< ", for" <<num_paths<<" paths."<<std::endl ;
+    // std::cout << "valid checking time: "<< valid_path_time<< ", for" <<num_paths<<" paths."<<std::endl ;
 }
 
 void FrenetOptimalTrajectory::setObstacles() {
