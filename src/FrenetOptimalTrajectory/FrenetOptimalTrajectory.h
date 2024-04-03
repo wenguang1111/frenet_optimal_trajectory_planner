@@ -36,7 +36,7 @@ public:
     ~FrenetOptimalTrajectory();
     FrenetPath *getBestPath();
     void setObstacles();
-    void addObstacle(Vector2f first_point, Vector2f second_point);
+    void addObstacle(Point_FP first_point, Point_FP second_point);
 
 private:
     FrenetInitialConditions *fot_ic;

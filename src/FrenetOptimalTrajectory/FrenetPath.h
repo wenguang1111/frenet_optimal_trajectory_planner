@@ -29,7 +29,7 @@ public:
 
     // Euclidean attributes
     vector<fixp_x> x;          // x position
-    vector<fixp_y> y;          // y position
+    vector<fixp_x> y;          // y position
     vector<fixp_yaw> yaw;        // yaw in radc
     vector<fixp_ds> ds;         // speed
     vector<fixp_c> c;          // curvature
@@ -64,7 +64,7 @@ public:
     bool to_global_path(CubicSpline2D* csp);
     bool is_valid_path(const vector<Obstacle *> obstacles);
     bool is_collision(const vector<Obstacle *> obstacles);
-    double inverse_distance_to_obstacles(
+    fixp_inverse_distanceToObstacles inverse_distance_to_obstacles(
         const vector<Obstacle *> obstacles);
 
 private:

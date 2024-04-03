@@ -19,6 +19,7 @@
 #define fixp_quinticpolynomial_A0_A5 int_5_10
 #define fixp_cost uint_8_8
 #define fixp_lateral_jerk int_9_6
+#define fixp_docProduct int_12_3
 #define fixp_sum_cost uint_11_5
 #define fixp_inverse_distanceToObstacles uint_6_10
 #define fixp_mincost uint_11_5
@@ -33,6 +34,7 @@ typedef cnl::scaled_integer<int16_t, cnl::power<-11>> int_4_11;
 typedef cnl::scaled_integer<int16_t, cnl::power<-12>> int_3_12;
 typedef cnl::scaled_integer<int16_t, cnl::power<-14>> int_1_14;
 typedef cnl::scaled_integer<int16_t, cnl::power<-6>> int_9_6;
+typedef cnl::scaled_integer<int16_t, cnl::power<-3>> int_12_3;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-13>> uint_3_13;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-10>> uint_6_10;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-9>> uint_7_9;

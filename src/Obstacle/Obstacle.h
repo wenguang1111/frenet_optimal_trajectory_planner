@@ -8,15 +8,15 @@ using namespace Eigen;
 
 class Obstacle {
 public:
-    std::pair<Vector2f, Vector2f> bbox;
-    Obstacle(Vector2f first_point, Vector2f second_point,
+    std::pair<Point_FP, Point_FP> bbox;
+    Obstacle(Point_FP first_point, Point_FP second_point,
              double obstacle_clearance);
     bool isOverlap(Rectangle& car_outline);
     bool isPointNearObstacle(Vector2f &p, double radius);
     double getArea();
 private:
     Vector2D subtract(Vector2D a, Vector2D b);
-    float dotProduct(Vector2D a, Vector2D b);
+    fixp_docProduct dotProduct(Vector2D a, Vector2D b);
     Vector2D perpendicular(Vector2D vector);
     bool isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis);
 };
