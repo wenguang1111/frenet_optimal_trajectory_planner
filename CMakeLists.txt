@@ -58,8 +58,8 @@ add_library(FrenetOptimalTrajectory SHARED
             src/CubicSpline/CubicSpline2D.h
             src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.cpp
             src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.h
-            src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.cpp
-            src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.h
+            # src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.cpp
+            # src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.h
             src/FrenetOptimalTrajectory/FrenetPath.cpp
             src/FrenetOptimalTrajectory/FrenetPath.h
             src/FrenetOptimalTrajectory/fot_wrapper.cpp
