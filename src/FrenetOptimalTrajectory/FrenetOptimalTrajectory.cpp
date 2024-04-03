@@ -56,7 +56,7 @@ FrenetOptimalTrajectory::FrenetOptimalTrajectory(
     }
 
     // select the best path
-    fixp_mincost mincost = std::numeric_limits<fixp_mincost>::max();
+    double mincost = INFINITY;
     for (FrenetPath *fp : frenet_paths) {
         if (fp->cf <= mincost) {
             mincost = fp->cf;
@@ -131,11 +131,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                                                 int end_di_index,
                                                 bool multithreaded) {
     double t, ti, tv;
-    fixp_d_ddd lateral_acceleration;
-    fixp_d_ddd lateral_deviation;
-    fixp_d_ddd lateral_velocity;
-    fixp_lateral_jerk lateral_jerk;
-    fixp_s longitudinal_acceleration, longitudinal_jerk;
+    double lateral_acceleration;
+    double lateral_deviation;
+    double lateral_velocity;
+    double lateral_jerk;
+    double longitudinal_acceleration, longitudinal_jerk;
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;

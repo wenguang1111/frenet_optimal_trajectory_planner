@@ -70,7 +70,7 @@ struct FrenetInitialConditions {
     double c_d;
     double c_d_d;
     double c_d_dd;
-    fixp_s_d target_speed;
+    double target_speed;
     double *wx; //goal position
     double *wy; //goal position
     int nw;
