@@ -32,7 +32,7 @@ inline double norm(double x, double y) {
 }
 
 inline fixp_x norm_FP(fixp_x x, fixp_x y) {
-    return cnl::sqrt(x*x + y*y);
+    return sqrt(static_cast<float>(x*x + y*y));
 }
 
 inline void as_unit_vector(tuple<double, double>& vec) {
