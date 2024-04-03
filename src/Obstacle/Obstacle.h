@@ -16,7 +16,7 @@ public:
     double getArea();
 private:
     Vector2D subtract(Vector2D a, Vector2D b);
-    fixp_docProduct dotProduct(Vector2D a, Vector2D b);
+    float dotProduct(Vector2D a, Vector2D b);
     Vector2D perpendicular(Vector2D vector);
     bool isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis);
 };

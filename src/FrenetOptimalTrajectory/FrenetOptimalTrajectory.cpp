@@ -298,9 +298,9 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 void FrenetOptimalTrajectory::setObstacles() {
     // Construct obstacles
     vector<fixp_x> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
-    vector<fixp_x> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
+    vector<fixp_y> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
     vector<fixp_x> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
-    vector<fixp_x> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
+    vector<fixp_y> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
 
     for (int i = 0; i < fot_ic->no; i++) {
         addObstacle(Point_FP(llx[i], lly[i]), Point_FP(urx[i], ury[i]));

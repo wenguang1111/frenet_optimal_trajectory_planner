@@ -122,9 +122,9 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
     // iterate over all obstacles
     for (auto obstacle : obstacles) {
         fixp_x llx = obstacle->bbox.first.x;
-        fixp_x lly = obstacle->bbox.first.y;
+        fixp_y lly = obstacle->bbox.first.y;
         fixp_x urx = obstacle->bbox.second.x;
-        fixp_x ury = obstacle->bbox.second.y;
+        fixp_y ury = obstacle->bbox.second.y;
         // #ifdef USE_RECORDER
         //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::llx", llx);
         //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::lly", lly);
@@ -167,16 +167,16 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
 }
 
 // calculate the sum of 1 / distance_to_obstacle
-fixp_inverse_distanceToObstacles
+double
 FrenetPath::inverse_distance_to_obstacles(
     const vector<Obstacle *> obstacles) {
-    fixp_inverse_distanceToObstacles total_inverse_distance = 0.0;
+    double total_inverse_distance = 0.0;
 
     for (auto obstacle : obstacles) {
         fixp_x llx = obstacle->bbox.first.x;
-        fixp_x lly = obstacle->bbox.first.y;
+        fixp_y lly = obstacle->bbox.first.y;
         fixp_x urx = obstacle->bbox.second.x;
-        fixp_x ury = obstacle->bbox.second.y;
+        fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
             fixp_x d1 = norm_FP(llx - x[i], lly - y[i]);
@@ -184,7 +184,7 @@ FrenetPath::inverse_distance_to_obstacles(
             fixp_x d3 = norm_FP(urx - x[i], ury - y[i]);
             fixp_x d4 = norm_FP(urx - x[i], lly - y[i]);
 
-            fixp_x closest = min({d1, d2, d3, d4});
+            double closest = static_cast<double>(min({d1, d2, d3, d4}));
             total_inverse_distance += 1.0 / closest;
         }
     }
