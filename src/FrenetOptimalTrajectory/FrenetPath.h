@@ -29,7 +29,7 @@ public:
 
     // Euclidean attributes
     vector<fixp_x> x;          // x position
-    vector<fixp_x> y;          // y position
+    vector<fixp_y> y;          // y position
     vector<fixp_yaw> yaw;        // yaw in radc
     vector<fixp_ds> ds;         // speed
     vector<fixp_c> c;          // curvature
