@@ -32,13 +32,13 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::x", x.back());
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::y", y.back());
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ix_", ix_);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::iy_", iy_);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::iyaw_", iyaw_);
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::x", x.back());
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::y", y.back());
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ix_", ix_);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::iy_", iy_);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::iyaw_", iyaw_);
+        // #endif
     }
 
     // not enough points to construct a valid path
@@ -52,12 +52,12 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dy = static_cast<double>(y[i+1] - y[i]);
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::yaw", yaw.back());
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ds", ds.back());
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dx", dx);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dy", dy);
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::yaw", yaw.back());
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ds", ds.back());
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dx", dx);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dy", dy);
+        // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
@@ -73,10 +73,10 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         }
         c.push_back(dyaw / ds[i]);
         //c.push_back(dyaw / fot_hp->dt);
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::c", c.back());
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dyaw", dyaw);
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::c", c.back());
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dyaw", dyaw);
+        // #endif
     }
 
     return true;
@@ -121,30 +121,30 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
     Rectangle car_outline;
     // iterate over all obstacles
     for (auto obstacle : obstacles) {
-        double llx = obstacle->bbox.first.x();
-        double lly = obstacle->bbox.first.y();
-        double urx = obstacle->bbox.second.x();
-        double ury = obstacle->bbox.second.y();
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::llx", llx);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::lly", lly);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::urx", urx);
-            Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ury", ury);
-        #endif
+        fixp_x llx = obstacle->bbox.first.x;
+        fixp_y lly = obstacle->bbox.first.y;
+        fixp_x urx = obstacle->bbox.second.x;
+        fixp_y ury = obstacle->bbox.second.y;
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::llx", llx);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::lly", lly);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::urx", urx);
+        //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ury", ury);
+        // #endif
 
         for (size_t i = 0; i < x.size(); i++) {
-            double d1 = norm(llx - x[i], lly - y[i]);
-            double d2 = norm(llx - x[i], ury - y[i]);
-            double d3 = norm(urx - x[i], ury - y[i]);
-            double d4 = norm(urx - x[i], lly - y[i]);
-            #ifdef USE_RECORDER
-                Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d1", d1);
-                Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d2", d2);
-                Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d3", d3);
-                Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d4", d4);
-            #endif
+            fixp_x d1 = norm_FP(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm_FP(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm_FP(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm_FP(urx - x[i], lly - y[i]);
+            // #ifdef USE_RECORDER
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d1", d1);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d2", d2);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d3", d3);
+            //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d4", d4);
+            // #endif
 
-            double closest = min({d1, d2, d3, d4});
+            fixp_x closest = min({d1, d2, d3, d4});
             // only check for collision if one corner of bounding box is
             // within COLLISION_CHECK_THRESHOLD of waypoint
             if (closest <= COLLISION_CHECK_THRESHOLD) {
@@ -173,18 +173,18 @@ FrenetPath::inverse_distance_to_obstacles(
     double total_inverse_distance = 0.0;
 
     for (auto obstacle : obstacles) {
-        double llx = obstacle->bbox.first.x();
-        double lly = obstacle->bbox.first.y();
-        double urx = obstacle->bbox.second.x();
-        double ury = obstacle->bbox.second.y();
+        fixp_x llx = obstacle->bbox.first.x;
+        fixp_y lly = obstacle->bbox.first.y;
+        fixp_x urx = obstacle->bbox.second.x;
+        fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
-            double d1 = norm(llx - x[i], lly - y[i]);
-            double d2 = norm(llx - x[i], ury - y[i]);
-            double d3 = norm(urx - x[i], ury - y[i]);
-            double d4 = norm(urx - x[i], lly - y[i]);
+            fixp_x d1 = norm_FP(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm_FP(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm_FP(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm_FP(urx - x[i], lly - y[i]);
 
-            double closest = min({d1, d2, d3, d4});
+            double closest = static_cast<double>(min({d1, d2, d3, d4}));
             total_inverse_distance += 1.0 / closest;
         }
     }

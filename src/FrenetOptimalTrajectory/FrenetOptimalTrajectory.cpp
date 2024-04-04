@@ -135,7 +135,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;
-    double valid_path_time = 0;
+    // double valid_path_time = 0;
 
     // initialize di, with start_di_index
     double di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
@@ -170,13 +170,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));
                 t += fot_hp->dt;
-                #ifdef USE_RECORDER
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::t", fp->t.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d", fp->d.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_d", fp->d_d.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_dd", fp->d_dd.back());
-                    Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_ddd", fp->d_ddd.back());
-                #endif
+                // #ifdef USE_RECORDER
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::t", fp->t.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d", fp->d.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_d", fp->d_d.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_dd", fp->d_dd.back());
+                //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_ddd", fp->d_ddd.back());
+                // #endif
             }
 
             // velocity keeping
@@ -206,12 +206,12 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                         abs(lon_qp.calc_second_derivative(tp));
                     longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));
 
-                    #ifdef USE_RECORDER
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s", tfp->s.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_d", tfp->s_d.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_dd", tfp->s_dd.back());
-                        Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_ddd", tfp->s_ddd.back());
-                    #endif	
+                    // #ifdef USE_RECORDER
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s", tfp->s.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_d", tfp->s_d.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_dd", tfp->s_dd.back());
+                    //     Recorder::getInstance()->saveData<double>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_ddd", tfp->s_ddd.back());
+                    // #endif	
                 }
 
                 num_paths++;
@@ -225,11 +225,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     continue;
                 }
 
-                clock_t start, end;
-                start = clock();
+                // clock_t start, end;
+                // start = clock();
                 bool valid_path = tfp->is_valid_path(obstacles);
-                end = clock();
-                valid_path_time +=((double)end-start)/CLOCKS_PER_SEC * 1000;
+                // end = clock();
+                // valid_path_time +=((double)end-start)/CLOCKS_PER_SEC * 1000;
                 if (!valid_path) {
                     // deallocate memory and continue
                     delete tfp;
@@ -260,8 +260,9 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     fot_hp->kd * tfp->c_end_speed_deviation;
 
                 // obstacle costs
-                tfp->c_inv_dist_to_obstacles =
-                    tfp->inverse_distance_to_obstacles(obstacles);
+                tfp->c_inv_dist_to_obstacles = static_cast<double>(
+                    tfp->inverse_distance_to_obstacles(obstacles)
+                );
 
                 // final cost
                 tfp->cf = fot_hp->klat * tfp->c_lateral +
@@ -291,23 +292,23 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     // Thread argument is passed down cout << "Found " << frenet_paths.size() <<
     // " valid paths out of " << num_paths << " paths; Valid path time " <<
     // valid_path_time << "\n";
-    std::cout << "valid checking time: "<< valid_path_time<< ", for" <<num_paths<<" paths."<<std::endl ;
+    // std::cout << "valid checking time: "<< valid_path_time<< ", for" <<num_paths<<" paths."<<std::endl ;
 }
 
 void FrenetOptimalTrajectory::setObstacles() {
     // Construct obstacles
-    vector<double> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
-    vector<double> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
-    vector<double> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
-    vector<double> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
+    vector<fixp_x> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
+    vector<fixp_y> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
+    vector<fixp_x> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
+    vector<fixp_y> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
 
     for (int i = 0; i < fot_ic->no; i++) {
-        addObstacle(Vector2f(llx[i], lly[i]), Vector2f(urx[i], ury[i]));
+        addObstacle(Point_FP(llx[i], lly[i]), Point_FP(urx[i], ury[i]));
     }
 }
 
-void FrenetOptimalTrajectory::addObstacle(Vector2f first_point,
-                                          Vector2f second_point) {
+void FrenetOptimalTrajectory::addObstacle(Point_FP first_point,
+                                          Point_FP second_point) {
     obstacles.push_back(new Obstacle(std::move(first_point),
                                      std::move(second_point),
                                      fot_hp->obstacle_clearance));

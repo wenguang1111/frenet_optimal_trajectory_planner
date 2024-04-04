@@ -5,14 +5,22 @@
 #include <tuple>
 #include <vector>
 
+#include "tool/fp_datatype.h"
+
 using namespace std;
 
 typedef struct { 
     double x,y;
 } Point;
 
+typedef struct { 
+    fixp_x x;
+    fixp_y y;
+} Point_FP;
+
 typedef struct {
-    double x, y;
+    fixp_x x;
+    fixp_y y;
 } Vector2D;
 
 typedef struct {
@@ -23,6 +31,10 @@ typedef vector<double> Pose;
 
 inline double norm(double x, double y) {
     return sqrt(pow(x, 2) + pow(y, 2));
+}
+
+inline fixp_x norm_FP(fixp_x x, fixp_y y) {
+    return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
 }
 
 inline void as_unit_vector(tuple<double, double>& vec) {

@@ -8,8 +8,8 @@ using namespace Eigen;
 
 class Obstacle {
 public:
-    std::pair<Vector2f, Vector2f> bbox;
-    Obstacle(Vector2f first_point, Vector2f second_point,
+    std::pair<Point_FP, Point_FP> bbox;
+    Obstacle(Point_FP first_point, Point_FP second_point,
              double obstacle_clearance);
     bool isOverlap(Rectangle& car_outline);
     bool isPointNearObstacle(Vector2f &p, double radius);
