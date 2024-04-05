@@ -1,5 +1,8 @@
-1. In FrenetPath.cpp and fot_wrapper, a lot of fixed point are converted to double. This may help reducing runtime for later.
-2. The files in polynomials forder are not using fixed point for calculation
+
+1. I tried to convert all variables of interface from python in Branch Make_ValidChecker. However,the runtime is worse. That could because that some variable
+   need much computation and it does not worth to use fixed point. TODO: analyse the computation of variable and change only the varibales which need high memory access but low computation
+2. The files in polynomials forder is  using fixed point for calculation. But it runtime could be slower. TODO: test the runtime by changing back to float
+3. Eigen lib is used for matrix computation. Some variables in CubinSpline1D is defined as double.
 
 Runtime measurment:
 
@@ -164,5 +167,3 @@ if __name__ == '__main__':
     fot(args.display, args.verbose, args.thread, args.save)
 
 ```
-
-before:
