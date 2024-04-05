@@ -35,36 +35,36 @@ public:
     vector<fixp_c> c;          // curvature
 
     // Debug
-    vector<double> ix;
-    vector<double> iy;
-    vector<double> iyaw;
+    vector<float> ix;
+    vector<float> iy;
+    vector<float> iyaw;
 
     // Cost attributes
     // lateral costs
-    double c_lateral_deviation = 0.0;
-    double c_lateral_velocity = 0.0;
-    double c_lateral_acceleration = 0.0;
-    double c_lateral_jerk = 0.0;
-    double c_lateral = 0.0;
+    float c_lateral_deviation = 0.0;
+    float c_lateral_velocity = 0.0;
+    float c_lateral_acceleration = 0.0;
+    float c_lateral_jerk = 0.0;
+    float c_lateral = 0.0;
 
     // longitudinal costs
-    double c_longitudinal_acceleration = 0.0;
-    double c_longitudinal_jerk = 0.0;
-    double c_time_taken = 0.0;
-    double c_end_speed_deviation = 0.0;
-    double c_longitudinal = 0.0;
+    float c_longitudinal_acceleration = 0.0;
+    float c_longitudinal_jerk = 0.0;
+    float c_time_taken = 0.0;
+    float c_end_speed_deviation = 0.0;
+    float c_longitudinal = 0.0;
 
     // obstacle costs
-    double c_inv_dist_to_obstacles = 0.0;
+    float c_inv_dist_to_obstacles = 0.0;
 
     // final cost
-    double cf = 0.0;
+    float cf = 0.0;
 
     FrenetPath(FrenetHyperparameters *fot_hp_);
     bool to_global_path(CubicSpline2D* csp);
     bool is_valid_path(const vector<Obstacle *> obstacles);
     bool is_collision(const vector<Obstacle *> obstacles);
-    double inverse_distance_to_obstacles(
+    float inverse_distance_to_obstacles(
         const vector<Obstacle *> obstacles);
 
 private:

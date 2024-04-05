@@ -6,7 +6,7 @@
 using namespace Eigen;
 using namespace std;
 
-Obstacle::Obstacle(Point_FP first_point, Point_FP second_point, double obstacle_clearance)
+Obstacle::Obstacle(Point_FP first_point, Point_FP second_point, float obstacle_clearance)
 {
     // Get topLeft and bottomRight points from the given points.
     Point_FP tmp;
@@ -65,14 +65,14 @@ bool Obstacle::isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis) {
         if (projection < min1) min1 = projection;
         if (projection > max1) max1 = projection;
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<double>("Obstacle::isSeparated::projection", projection);
+        //     Recorder::getInstance()->saveData<float>("Obstacle::isSeparated::projection", projection);
         // #endif
 
         projection = dotProduct(rect2.points[i], axis);
         if (projection < min2) min2 = projection;
         if (projection > max2) max2 = projection;
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<double>("Obstacle::isSeparated::projection", projection);
+        //     Recorder::getInstance()->saveData<float>("Obstacle::isSeparated::projection", projection);
         // #endif
     }
 

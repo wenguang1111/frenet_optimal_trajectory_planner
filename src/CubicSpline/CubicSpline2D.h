@@ -12,21 +12,21 @@ using namespace std;
 class CubicSpline2D {
 public:
     CubicSpline2D();
-    CubicSpline2D(const vector<double> &x, const vector<double> &y);
-    double calc_x(double t);
-    double calc_y(double t);
-    double calc_curvature(double t);
-    double calc_yaw(double t);
-    double find_s(double x, double y, double s0);
+    CubicSpline2D(const vector<float> &x, const vector<float> &y);
+    float calc_x(float t);
+    float calc_y(float t);
+    float calc_curvature(float t);
+    float calc_yaw(float t);
+    float find_s(float x, float y, float s0);
 
 private:
     vector<double> s;
     CubicSpline1D sx, sy;
     void calc_s(const vector<double>& x,
                 const vector<double>& y);
-    vector<vector<double>> remove_collinear_points(vector<double> x,
-        vector<double> y);
-    bool are_collinear(double x1, double y1, double x2, double y2, double x3, double y3);
+    vector<vector<double>> remove_collinear_points(vector<float> x,
+        vector<float> y);
+    bool are_collinear(float x1, float y1, float x2, float y2, float x3, float y3);
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE2D_H

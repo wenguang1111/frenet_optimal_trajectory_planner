@@ -6,12 +6,12 @@
 class QuarticPolynomial {
 public:
     QuarticPolynomial() = default;
-    QuarticPolynomial(double xs, double vxs, double axs, double vxe,
-                      double axe, double t);
-    fixp_s calc_point(double t);
-    fixp_s_d calc_first_derivative(double t);
-    fixp_s_dd calc_second_derivative(double t);
-    fixp_s_ddd calc_third_derivative(double t);
+    QuarticPolynomial(float xs, float vxs, float axs, float vxe,
+                      float axe, float t);
+    fixp_s calc_point(float t);
+    fixp_s_d calc_first_derivative(float t);
+    fixp_s_dd calc_second_derivative(float t);
+    fixp_s_ddd calc_third_derivative(float t);
 private:
     int_8_7 a0; 
     int_4_11 a1, a2, a3, a4;
