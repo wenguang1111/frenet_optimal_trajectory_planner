@@ -5,61 +5,61 @@
 const size_t MAX_PATH_LENGTH = 100;
 
 struct FrenetInitialConditions {
-    double s0; 
-    double c_speed;
-    double c_d;
-    double c_d_d;
-    double c_d_dd;
-    double target_speed;
-    double *wx; //goal position
-    double *wy; //goal position
+    float s0; 
+    float c_speed;
+    float c_d;
+    float c_d_d;
+    float c_d_dd;
+    float target_speed;
+    float *wx; //goal position
+    float *wy; //goal position
     int nw;
-    double *o_llx;
-    double *o_lly;
-    double *o_urx;
-    double *o_ury;
+    float *o_llx;
+    float *o_lly;
+    float *o_urx;
+    float *o_ury;
     int no;
 };
 
 struct FrenetReturnValues {
     int success;
     size_t path_length;
-    double x_path[MAX_PATH_LENGTH];
-    double y_path[MAX_PATH_LENGTH];
-    double speeds[MAX_PATH_LENGTH];
-    double ix[MAX_PATH_LENGTH];
-    double iy[MAX_PATH_LENGTH];
-    double iyaw[MAX_PATH_LENGTH];
-    double d[MAX_PATH_LENGTH];
-    double s[MAX_PATH_LENGTH];
-    double speeds_x[MAX_PATH_LENGTH];
-    double speeds_y[MAX_PATH_LENGTH];
-    double params[MAX_PATH_LENGTH];
-    double costs[MAX_PATH_LENGTH];
-    double runtime;
+    float x_path[MAX_PATH_LENGTH];
+    float y_path[MAX_PATH_LENGTH];
+    float speeds[MAX_PATH_LENGTH];
+    float ix[MAX_PATH_LENGTH];
+    float iy[MAX_PATH_LENGTH];
+    float iyaw[MAX_PATH_LENGTH];
+    float d[MAX_PATH_LENGTH];
+    float s[MAX_PATH_LENGTH];
+    float speeds_x[MAX_PATH_LENGTH];
+    float speeds_y[MAX_PATH_LENGTH];
+    float params[MAX_PATH_LENGTH];
+    float costs[MAX_PATH_LENGTH];
+    float runtime;
 };
 
 struct FrenetHyperparameters {
-    double max_speed;
-    double max_accel;
-    double max_curvature;
-    double max_road_width_l;
-    double max_road_width_r;
-    double d_road_w; //delte_road_width
-    double dt;
-    double maxt;
-    double mint;
-    double d_t_s;
-    double n_s_sample;
-    double obstacle_clearance;
-    double kd;
-    double kv;
-    double ka;
-    double kj;
-    double kt;
-    double ko;
-    double klat;
-    double klon;
+    float max_speed;
+    float max_accel;
+    float max_curvature;
+    float max_road_width_l;
+    float max_road_width_r;
+    float d_road_w; //delte_road_width
+    float dt;
+    float maxt;
+    float mint;
+    float d_t_s;
+    float n_s_sample;
+    float obstacle_clearance;
+    float kd;
+    float kv;
+    float ka;
+    float kj;
+    float kt;
+    float ko;
+    float klat;
+    float klon;
     int num_threads;
 };
 #endif //FRENETOPTIMALTRAJECTORY_PY_CPP_STRUCT_H

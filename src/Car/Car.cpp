@@ -7,8 +7,8 @@ void Car::setPose(Pose p) {
 
 // Compute the outline of the car given its current pose
 Rectangle Car::getOutline() {
-    double x, y, yaw;
-    double tail_x, tail_y, head_x, head_y;
+    float x, y, yaw;
+    float tail_x, tail_y, head_x, head_y;
     Vector2D tail_l, tail_r;
     Vector2D head_l, head_r;
 

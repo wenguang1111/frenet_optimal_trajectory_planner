@@ -4,15 +4,15 @@
 class QuarticPolynomial {
 public:
     QuarticPolynomial() = default;
-    QuarticPolynomial(double xs, double vxs, double axs, double vxe,
-                      double axe, double t);
-    double calc_point(double t);
-    double calc_first_derivative(double t);
-    double calc_second_derivative(double t);
-    double calc_third_derivative(double t);
+    QuarticPolynomial(float xs, float vxs, float axs, float vxe,
+                      float axe, float t);
+    float calc_point(float t);
+    float calc_first_derivative(float t);
+    float calc_second_derivative(float t);
+    float calc_third_derivative(float t);
 private:
-    double a0;
-    double a1, a2, a3, a4;
+    float a0;
+    float a1, a2, a3, a4;
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_QUARTICPOLYNOMIAL_H

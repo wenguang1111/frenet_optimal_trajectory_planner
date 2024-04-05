@@ -10,10 +10,10 @@ class Obstacle {
 public:
     std::pair<Vector2f, Vector2f> bbox;
     Obstacle(Vector2f first_point, Vector2f second_point,
-             double obstacle_clearance);
+             float obstacle_clearance);
     bool isOverlap(Rectangle& car_outline);
-    bool isPointNearObstacle(Vector2f &p, double radius);
-    double getArea();
+    bool isPointNearObstacle(Vector2f &p, float radius);
+    float getArea();
 private:
     Vector2D subtract(Vector2D a, Vector2D b);
     float dotProduct(Vector2D a, Vector2D b);

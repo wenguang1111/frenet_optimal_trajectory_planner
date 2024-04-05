@@ -11,12 +11,12 @@ public:
     int nx;
     CubicSpline1D();
     CubicSpline1D(const std::vector<double>& v1, const std::vector<double>& v2);
-    double calc_der0(double t);
-    double calc_der1(double t);
-    double calc_der2(double t);
+    float calc_der0(float t);
+    float calc_der1(float t);
+    float calc_der2(float t);
 private:
     std::vector<double> a, b, c, d, w, x, y;
-    int search_index(double t);
+    int search_index(float t);
     void matrix_a(std::vector<double>& deltas, Eigen::MatrixXd& result);
     void vector_b(std::vector<double>& deltas, Eigen::VectorXd& result);
 };

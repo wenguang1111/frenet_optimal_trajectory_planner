@@ -1,7 +1,7 @@
 import numpy as np
 import os
 
-from ctypes import c_double, c_int, POINTER, Structure, CDLL, byref
+from ctypes import c_float, c_int, POINTER, Structure, CDLL, byref
 
 try:
     from py_cpp_struct import FrenetInitialConditions, FrenetHyperparameters, \
@@ -18,7 +18,7 @@ except:
                 "build/libFrenetOptimalTrajectory.so".format(
                     os.getenv("PYLOT_HOME")))
 
-_c_double_p = POINTER(c_double)
+_c_float_p = POINTER(c_float)
 
 # func / return type declarations for C++ run_fot
 _run_fot = cdll.run_fot
@@ -32,10 +32,10 @@ _run_fot.restype = None
 # func / return type declarations for C++ to_frenet_initial_conditions
 _to_frenet_initial_conditions = cdll.to_frenet_initial_conditions
 _to_frenet_initial_conditions.restype = None
-_to_frenet_initial_conditions.argtypes = (c_double, c_double, c_double,
-                                          c_double, c_double, c_double,
-                                          _c_double_p, _c_double_p, c_int,
-                                          _c_double_p)
+_to_frenet_initial_conditions.argtypes = (c_float, c_float, c_float,
+                                          c_float, c_float, c_float,
+                                          _c_float_p, _c_float_p, c_int,
+                                          _c_float_p)
 
 
 def _parse_hyperparameters(hp):
@@ -112,16 +112,16 @@ def run_fot(initial_conditions, hyperparameters):
     # run the planner
     _run_fot(fot_initial_conditions, fot_hp, fot_rv)
 
-    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)])
-    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)])
-    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)])
-    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)])
-    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)])
-    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)])
-    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)])
-    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)])
-    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)])
-    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)])
+    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     params = {
         "s": fot_rv.params[0],
         "s_d": fot_rv.params[1],
@@ -174,28 +174,28 @@ def to_frenet_initial_conditions(initial_conditions):
     obs = initial_conditions['obs']
     target_speed = initial_conditions['target_speed']
     if obs.shape[0] == 0:
-        obs = np.empty((0, 4))
+        obs = np.empty((0, 4)).astype(np.float32)
     x = pos[0].item()
     y = pos[1].item()
     vx = vel[0].item()
     vy = vel[1].item()
-    wx = wp[:, 0].astype(np.float64)
-    wy = wp[:, 1].astype(np.float64)
-    o_llx = np.copy(obs[:, 0]).astype(np.float64)
-    o_lly = np.copy(obs[:, 1]).astype(np.float64)
-    o_urx = np.copy(obs[:, 2]).astype(np.float64)
-    o_ury = np.copy(obs[:, 3]).astype(np.float64)
+    wx = wp[:, 0].astype(np.float32)
+    wy = wp[:, 1].astype(np.float32)
+    o_llx = np.copy(obs[:, 0]).astype(np.float32)
+    o_lly = np.copy(obs[:, 1]).astype(np.float32)
+    o_urx = np.copy(obs[:, 2]).astype(np.float32)
+    o_ury = np.copy(obs[:, 3]).astype(np.float32)
     forward_speed = np.hypot(vx, vy).item()
 
     # construct return array and convert initial conditions
-    misc = np.zeros(5)
-    _to_frenet_initial_conditions(c_double(ps), c_double(x), c_double(y),
-                                  c_double(vx), c_double(vy),
-                                  c_double(forward_speed),
-                                  wx.ctypes.data_as(_c_double_p),
-                                  wy.ctypes.data_as(_c_double_p),
+    misc = np.zeros(5).astype(np.float32)
+    _to_frenet_initial_conditions(c_float(ps), c_float(x), c_float(y),
+                                  c_float(vx), c_float(vy),
+                                  c_float(forward_speed),
+                                  wx.ctypes.data_as(_c_float_p),
+                                  wy.ctypes.data_as(_c_float_p),
                                   c_int(len(wx)),
-                                  misc.ctypes.data_as(_c_double_p))
+                                  misc.ctypes.data_as(_c_float_p))
 
     # return the FrenetInitialConditions structure
     return FrenetInitialConditions(
@@ -205,13 +205,13 @@ def to_frenet_initial_conditions(initial_conditions):
         misc[3],  # c_d_d
         misc[4],  # c_d_dd
         target_speed,  # target speed
-        wx.ctypes.data_as(_c_double_p),  # waypoints x position
-        wy.ctypes.data_as(_c_double_p),  # waypoints y position
+        wx.ctypes.data_as(_c_float_p),  # waypoints x position
+        wy.ctypes.data_as(_c_float_p),  # waypoints y position
         len(wx),
-        o_llx.ctypes.data_as(_c_double_p),  # obstacles lower left x
-        o_lly.ctypes.data_as(_c_double_p),  # obstacles lower left y
-        o_urx.ctypes.data_as(_c_double_p),  # obstacles upper right x
-        o_ury.ctypes.data_as(_c_double_p),  # obstacles upper right y
+        o_llx.ctypes.data_as(_c_float_p),  # obstacles lower left x
+        o_lly.ctypes.data_as(_c_float_p),  # obstacles lower left y
+        o_urx.ctypes.data_as(_c_float_p),  # obstacles upper right x
+        o_ury.ctypes.data_as(_c_float_p),  # obstacles upper right y
         len(o_llx),
     ), misc
 
@@ -224,16 +224,16 @@ def query_anytime_planner_path(fot_planner, return_rv_object=False):
     fot_rv = FrenetReturnValues(0)
     fot_planner.get_path(fot_rv)
 
-    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)])
-    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)])
-    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)])
-    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)])
-    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)])
-    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)])
-    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)])
-    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)])
-    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)])
-    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)])
+    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     params = {
         "s": fot_rv.params[0],
         "s_d": fot_rv.params[1],

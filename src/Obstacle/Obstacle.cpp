@@ -5,7 +5,7 @@
 using namespace Eigen;
 using namespace std;
 
-Obstacle::Obstacle(Vector2f first_point, Vector2f second_point, double obstacle_clearance)
+Obstacle::Obstacle(Vector2f first_point, Vector2f second_point, float obstacle_clearance)
 {
     // Get topLeft and bottomRight points from the given points.
     Vector2f tmp;
@@ -94,8 +94,8 @@ Vector2D Obstacle::perpendicular(Vector2D vector) {
     return result;
 }
 
-bool Obstacle::isPointNearObstacle(Vector2f &p, double radius) {
-    double dist_to_ll, dist_to_lr, dist_to_ul, dist_to_ur;
+bool Obstacle::isPointNearObstacle(Vector2f &p, float radius) {
+    float dist_to_ll, dist_to_lr, dist_to_ul, dist_to_ur;
     dist_to_ll = sqrt(pow(bbox.first.x() - p.x(), 2) +
                       pow(bbox.first.y() - p.y(), 2));
     dist_to_lr = sqrt(pow(bbox.second.x() - p.x(), 2) +

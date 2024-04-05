@@ -31,10 +31,10 @@ def fot(show_animation=True,
     initial_conditions = {
         'ps': conds['s0'],
         'target_speed': conds['target_speed'],
-        'pos': np.array(conds['pos']),
-        'vel': np.array(conds['vel']),
-        'wp': np.array(conds['wp']),
-        'obs': np.array(conds['obs'])
+        'pos': np.array(conds['pos']).astype(np.float32),
+        'vel': np.array(conds['vel']).astype(np.float32),
+        'wp': np.array(conds['wp']).astype(np.float32),
+        'obs': np.array(conds['obs']).astype(np.float32)
     }
 
     hyperparameters = {
@@ -64,7 +64,7 @@ def fot(show_animation=True,
     # static elements of planner
     wx = initial_conditions['wp'][:, 0]
     wy = initial_conditions['wp'][:, 1]
-    obs = np.array(conds['obs'])
+    obs = np.array(conds['obs']).astype(np.float32)
 
     # simulation config
     sim_loop = 200
@@ -88,8 +88,8 @@ def fot(show_animation=True,
 
         # reconstruct initial_conditions
         if success:
-            initial_conditions['pos'] = np.array([result_x[1], result_y[1]])
-            initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]])
+            initial_conditions['pos'] = np.array([result_x[1], result_y[1]]).astype(np.float32)
+            initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]]).astype(np.float32)
             initial_conditions['ps'] = misc['s']
             if show_info:
                 print(costs)
@@ -110,7 +110,7 @@ def fot(show_animation=True,
                 lambda event: [exit(0) if event.key == "escape" else None])
             plt.plot(wx, wy)
             if obs.shape[0] == 0:
-                obs = np.empty((0, 4))
+                obs = np.empty((0, 4)).astype(np.float32)
             ax = plt.gca()
             for o in obs:
                 rect = patch.Rectangle((o[0], o[1]), o[2] - o[0], o[3] - o[1])

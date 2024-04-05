@@ -8,33 +8,33 @@
 using namespace std;
 
 typedef struct { 
-    double x,y;
+    float x,y;
 } Point;
 
 typedef struct {
-    double x, y;
+    float x, y;
 } Vector2D;
 
 typedef struct {
     Vector2D points[4];
 } Rectangle;
 
-typedef vector<double> Pose;
+typedef vector<float> Pose;
 
-inline double norm(double x, double y) {
+inline float norm(float x, float y) {
     return sqrt(pow(x, 2) + pow(y, 2));
 }
 
-inline void as_unit_vector(tuple<double, double>& vec) {
-    double magnitude = norm(get<0>(vec), get<1>(vec));
+inline void as_unit_vector(tuple<float, float>& vec) {
+    float magnitude = norm(get<0>(vec), get<1>(vec));
     if (magnitude > 0) {
         get<0>(vec) = get<0>(vec) / magnitude;
         get<1>(vec) = get<1>(vec) / magnitude;
     }
 }
 
-inline double dot(const tuple<double, double>& vec1,
-                  const tuple<double, double>& vec2) {
+inline float dot(const tuple<float, float>& vec1,
+                  const tuple<float, float>& vec2) {
     return get<0>(vec1) * get<0>(vec2) +
            get<1>(vec1) * get<1>(vec2);
 }
