@@ -9,8 +9,8 @@
 using namespace std;
 
 // Lincoln MKZ configuration
-const double VEHICLE_LENGTH = 4.93;
-const double VEHICLE_WIDTH = 1.86;
+const float VEHICLE_LENGTH = 4.93;
+const float VEHICLE_WIDTH = 1.86;
 
 class Car {
 public:
@@ -25,8 +25,8 @@ public:
     void setPose(Pose p);
     Rectangle getOutline();
 private:
-    double length;
-    double width;
+    float length;
+    float width;
     Pose pose; // x, y, yaw
 };
 

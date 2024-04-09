@@ -36,7 +36,7 @@ class AnytimeFrenetOptimalTrajectory {
     vector<thread *> threads;
     CubicSpline2D *csp;
     vector<Obstacle *> obstacles;
-    vector<double> x, y;
+    vector<float> x, y;
     vector<FrenetPath *> frenet_paths; // TO-DO: Considering using a heap
     bool run_workers;
     void

@@ -23,9 +23,9 @@ extern "C" {
     //      fot_hp (FrenetHyperparameters *):
     //          struct ptr containing relevant hyperparameters to compute
     //          Frenet Optimal Trajectory
-    //      x_path, y_path, speeds (double *):
+    //      x_path, y_path, speeds (float *):
     //          ptr to storage arrays for Frenet Optimal Trajectory
-    //      params (double *):
+    //      params (float *):
     //          ptr to store initial conditions for debugging
     //
     // Returns:
@@ -40,7 +40,7 @@ extern "C" {
         start = clock();
         FrenetOptimalTrajectory fot = FrenetOptimalTrajectory(fot_ic, fot_hp);
         end = clock();
-        double time_taken = ((double)end-start)/CLOCKS_PER_SEC * 1000; // multiply by 1000 to convert to milliseconds
+        float time_taken = ((float)end-start)/CLOCKS_PER_SEC * 1000; // multiply by 1000 to convert to milliseconds
         
         #ifdef USE_RECORDER
             // write recorded data to csv file
@@ -48,27 +48,18 @@ extern "C" {
         #endif
         
         FrenetPath* best_frenet_path = fot.getBestPath();
-        // if(!best_frenet_path)
-        // {
-        //     std::cout << "!!Empty path returned" << std::endl;
-        // }
-        // else if(best_frenet_path->x.empty())
-        // {
-        //     std::cout << "!!there is not any x position in path" << std::endl;
-        // }
-
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv->success = 1;
             fot_rv->path_length = std::min(best_frenet_path->x.size(), MAX_PATH_LENGTH);
             for (size_t i = 0; i < fot_rv->path_length; i++) {
-                fot_rv->x_path[i] = static_cast<double>(best_frenet_path->x[i]);
-                fot_rv->y_path[i] = static_cast<double>(best_frenet_path->y[i]);
-                fot_rv->speeds[i] = static_cast<double>(best_frenet_path->s_d[i]);
-                fot_rv->ix[i] = static_cast<double>(best_frenet_path->ix[i]);
-                fot_rv->iy[i] = static_cast<double>(best_frenet_path->iy[i]);
-                fot_rv->iyaw[i] = static_cast<double>(best_frenet_path->iyaw[i]);
-                fot_rv->d[i] = static_cast<double>(best_frenet_path->d[i]);
-                fot_rv->s[i] = static_cast<double>(best_frenet_path->s[i]);
+                fot_rv->x_path[i] = static_cast<float>(best_frenet_path->x[i]);
+                fot_rv->y_path[i] = static_cast<float>(best_frenet_path->y[i]);
+                fot_rv->speeds[i] = static_cast<float>(best_frenet_path->s_d[i]);
+                fot_rv->ix[i] = static_cast<float>(best_frenet_path->ix[i]);
+                fot_rv->iy[i] = static_cast<float>(best_frenet_path->iy[i]);
+                fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
+                fot_rv->d[i] = static_cast<float>(best_frenet_path->d[i]);
+                fot_rv->s[i] = static_cast<float>(best_frenet_path->s[i]);
                 fot_rv->speeds_x[i] = cos(best_frenet_path->yaw[i]) *
                     fot_rv->speeds[i];
                 fot_rv->speeds_y[i] = sin(best_frenet_path->yaw[i]) *
@@ -77,11 +68,11 @@ extern "C" {
 
 
             // store info for debug
-            fot_rv->params[0] = static_cast<double>(best_frenet_path->s[1]);
-            fot_rv->params[1] = static_cast<double>(best_frenet_path->s_d[1]);
-            fot_rv->params[2] = static_cast<double>(best_frenet_path->d[1]);
-            fot_rv->params[3] = static_cast<double>(best_frenet_path->d_d[1]);
-            fot_rv->params[4] = static_cast<double>(best_frenet_path->d_dd[1]);
+            fot_rv->params[0] = static_cast<float>(best_frenet_path->s[1]);
+            fot_rv->params[1] = static_cast<float>(best_frenet_path->s_d[1]);
+            fot_rv->params[2] = static_cast<float>(best_frenet_path->d[1]);
+            fot_rv->params[3] = static_cast<float>(best_frenet_path->d_d[1]);
+            fot_rv->params[4] = static_cast<float>(best_frenet_path->d_dd[1]);
 
             // store costs for logging
             fot_rv->costs[0] = best_frenet_path->c_lateral_deviation;
@@ -102,32 +93,32 @@ extern "C" {
 
     // Convert the initial conditions from cartesian space to frenet space
     void to_frenet_initial_conditions(
-            double s0, double x, double y, double vx,
-            double vy, double forward_speed, double* xp, double* yp, int np,
-            double* initial_conditions
+            float s0, float x, float y, float vx,
+            float vy, float forward_speed, float* xp, float* yp, int np,
+            float* initial_conditions
             ) {
-        vector<double> wx (xp, xp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
-        vector<double> wy (yp, yp + np);
+        vector<float> wx (xp, xp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
+        vector<float> wy (yp, yp + np);
         CubicSpline2D* csp = new CubicSpline2D(wx, wy);
 
         // get distance from car to spline and projection
-        double s = csp->find_s(x, y, s0);
-        double distance = norm(csp->calc_x(s) - x, csp->calc_y(s) - y);
-        tuple<double, double> bvec ((csp->calc_x(s) - x) / distance,
+        float s = csp->find_s(x, y, s0);
+        float distance = norm(csp->calc_x(s) - x, csp->calc_y(s) - y);
+        tuple<float, float> bvec ((csp->calc_x(s) - x) / distance,
                 (csp->calc_y(s) - y) / distance);
 
         // normal spline vector
-        double x0 = csp->calc_x(s0);
-        double y0 = csp->calc_y(s0);
-        double x1 = csp->calc_x(s0 + 2);
-        double y1 = csp->calc_y(s0 + 2);
+        float x0 = csp->calc_x(s0);
+        float y0 = csp->calc_y(s0);
+        float x1 = csp->calc_x(s0 + 2);
+        float y1 = csp->calc_y(s0 + 2);
 
         // unit vector orthog. to spline
-        tuple<double, double> tvec (y1-y0, -(x1-x0));
+        tuple<float, float> tvec (y1-y0, -(x1-x0));
         as_unit_vector(tvec);
 
         // compute tangent / normal car vectors
-        tuple<double, double> fvec (vx, vy);
+        tuple<float, float> fvec (vx, vy);
         as_unit_vector(fvec);
 
         // get initial conditions in frenet frame

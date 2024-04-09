@@ -18,13 +18,11 @@ CubicSpline1D::CubicSpline1D(const vector<double>& v1,
     vector<double> deltas (nx);
     adjacent_difference(x.begin(), x.end(), deltas.begin());
     deltas.erase(deltas.begin());
-
     // compute matrix a, vector b
     MatrixXd ma = MatrixXd::Zero(nx, nx);
     VectorXd vb = VectorXd::Zero(nx);
     matrix_a(deltas, ma);
     vector_b(deltas, vb);
-
     // solve for c and copy to attribute vector
     MatrixXd ma_inv = ma.inverse();
     VectorXd tmp_c = ma_inv * vb;
@@ -40,36 +38,36 @@ CubicSpline1D::CubicSpline1D(const vector<double>& v1,
 }
 
 // Calculate the 0th derivative evaluated at t
-double CubicSpline1D::calc_der0(double t) {
+float CubicSpline1D::calc_der0(float t) {
     if (t < x.front() || t >= x.back()) {
         return NAN;
     }
 
     int i = search_index(t) - 1;
-    double dx = t - x[i];
+    float dx = t - x[i];
     return a[i] + b[i] * dx + c[i] * pow(dx, 2) + d[i] * pow(dx, 3);
 }
 
 // Calculate the 1st derivative evaluated at t
-double CubicSpline1D::calc_der1(double t) {
+float CubicSpline1D::calc_der1(float t) {
     if (t < x.front() || t >= x.back()) {
         return NAN;
     }
 
     int i = search_index(t) - 1;
-    double dx = t - x[i];
+    float dx = t - x[i];
 
     return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow(dx, 2);
 }
 
 // Calculate the 2nd derivative evaluated at
-double CubicSpline1D::calc_der2(double t) {
+float CubicSpline1D::calc_der2(float t) {
     if (t < x.front() || t >= x.back()) {
         return NAN;
     }
 
     int i = search_index(t) - 1;
-    double dx = t - x[i];
+    float dx = t - x[i];
 
     return 2.0 * c[i] + 6.0 * d[i] * dx;
 }
@@ -99,6 +97,6 @@ void CubicSpline1D::vector_b(vector<double> &deltas, VectorXd &result) {
 }
 
 // Search the spline for index closest to t
-int CubicSpline1D::search_index(double t) {
+int CubicSpline1D::search_index(float t) {
     return std::upper_bound (x.begin(), x.end(), t) - x.begin();
 }
