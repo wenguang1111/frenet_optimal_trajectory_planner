@@ -23,9 +23,9 @@ extern "C" {
     //      fot_hp (FrenetHyperparameters *):
     //          struct ptr containing relevant hyperparameters to compute
     //          Frenet Optimal Trajectory
-    //      x_path, y_path, speeds (double *):
+    //      x_path, y_path, speeds (float *):
     //          ptr to storage arrays for Frenet Optimal Trajectory
-    //      params (double *):
+    //      params (float *):
     //          ptr to store initial conditions for debugging
     //
     // Returns:
@@ -48,15 +48,6 @@ extern "C" {
         #endif
         
         FrenetPath* best_frenet_path = fot.getBestPath();
-        // if(!best_frenet_path)
-        // {
-        //     std::cout << "!!Empty path returned" << std::endl;
-        // }
-        // else if(best_frenet_path->x.empty())
-        // {
-        //     std::cout << "!!there is not any x position in path" << std::endl;
-        // }
-
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv->success = 1;
             fot_rv->path_length = std::min(best_frenet_path->x.size(), MAX_PATH_LENGTH);

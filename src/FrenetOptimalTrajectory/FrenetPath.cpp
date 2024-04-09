@@ -52,12 +52,6 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dy = static_cast<float>(y[i+1] - y[i]);
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::yaw", yaw.back());
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::ds", ds.back());
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dx", dx);
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dy", dy);
-        // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
@@ -72,11 +66,6 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
             dyaw += M_PI;
         }
         c.push_back(dyaw / ds[i]);
-        //c.push_back(dyaw / fot_hp->dt);
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::c", c.back());
-        //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::dyaw", dyaw);
-        // #endif
     }
 
     return true;

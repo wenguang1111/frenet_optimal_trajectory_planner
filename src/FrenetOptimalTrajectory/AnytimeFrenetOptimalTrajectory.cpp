@@ -113,7 +113,7 @@ void AnytimeFrenetOptimalTrajectory::stopPlanning() {
 FrenetPath *AnytimeFrenetOptimalTrajectory::getBestPath() {
     mu->lock();
     // select the best path
-    double mincost = INFINITY;
+    float mincost = INFINITY;
     for (FrenetPath *fp : frenet_paths) {
         if (fp->cf <= mincost) {
             mincost = fp->cf;
@@ -135,17 +135,17 @@ FrenetPath *AnytimeFrenetOptimalTrajectory::getBestPath() {
 void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                                                        int end_di_index) {
 
-    double t, ti, tv;
-    double lateral_deviation, lateral_velocity, lateral_acceleration,
+    float t, ti, tv;
+    float lateral_deviation, lateral_velocity, lateral_acceleration,
         lateral_jerk;
-    double longitudinal_acceleration, longitudinal_jerk;
+    float longitudinal_acceleration, longitudinal_jerk;
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;
-    // double valid_path_time = 0;
+    // float valid_path_time = 0;
 
     // initialize di, with start_di_index
-    double di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
+    float di = -fot_hp->max_road_width_l + start_di_index * fot_hp->d_road_w;
 
     // generate path to each offset goal
     // note di goes up to but not including end_di_index*fot_hp->d_road_w
@@ -200,7 +200,7 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     fot_ic->s0, fot_ic->c_speed, 0.0, tv, 0.0, ti);
 
                 // longitudinal motion
-                for (double tp : tfp->t) {
+                for (float tp : tfp->t) {
                     tfp->s.push_back(lon_qp.calc_point(tp));
                     tfp->s_d.push_back(lon_qp.calc_first_derivative(tp));
                     tfp->s_dd.push_back(lon_qp.calc_second_derivative(tp));
@@ -287,10 +287,10 @@ void AnytimeFrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 
 void AnytimeFrenetOptimalTrajectory::setObstacles() {
     // Construct obstacles
-    vector<double> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
-    vector<double> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
-    vector<double> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
-    vector<double> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
+    vector<float> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
+    vector<float> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
+    vector<float> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
+    vector<float> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
 
     for (int i = 0; i < fot_ic->no; i++) {
         addObstacle(Vector2f(llx[i], lly[i]), Vector2f(urx[i], ury[i]));

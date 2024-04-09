@@ -16,8 +16,8 @@
 #define fixp_ds int_3_12
 #define fixp_c int_3_12
 #define fixp_quarticpolynomial_A0 int_8_7
-#define fixp_quarticpolynomial_A1_A4 int_5_10
-#define fixp_quinticpolynomial_A0_A5 int_5_10
+#define fixp_quarticpolynomial_A1_A4 int_4_11
+#define fixp_quinticpolynomial_A0_A5 int_4_11
 #define fixp_cost uint_8_8
 #define fixp_lateral_jerk int_9_6
 #define fixp_docProduct int_12_3

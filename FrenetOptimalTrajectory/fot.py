@@ -110,7 +110,7 @@ def fot(show_animation=True,
                 lambda event: [exit(0) if event.key == "escape" else None])
             plt.plot(wx, wy)
             if obs.shape[0] == 0:
-                obs = np.empty((0, 4))
+                obs = np.empty((0, 4)).astype(np.float32)
             ax = plt.gca()
             for o in obs:
                 rect = patch.Rectangle((o[0], o[1]), o[2] - o[0], o[3] - o[1])

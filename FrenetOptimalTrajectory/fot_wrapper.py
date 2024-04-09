@@ -225,16 +225,16 @@ def query_anytime_planner_path(fot_planner, return_rv_object=False):
     fot_rv = FrenetReturnValues(0)
     fot_planner.get_path(fot_rv)
 
-    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)])
-    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)])
-    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)])
-    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)])
-    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)])
-    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)])
-    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)])
-    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)])
-    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)])
-    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)])
+    x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    d = np.array([fot_rv.d[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     params = {
         "s": fot_rv.params[0],
         "s_d": fot_rv.params[1],
