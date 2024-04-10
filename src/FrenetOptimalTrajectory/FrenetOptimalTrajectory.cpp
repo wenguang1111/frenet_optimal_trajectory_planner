@@ -197,14 +197,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     tfp->s_ddd.push_back(lon_qp.calc_third_derivative(tp));
                     longitudinal_acceleration +=
                         abs(lon_qp.calc_second_derivative(tp));
-                    longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));
-
-                    // #ifdef USE_RECORDER
-                    //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s", tfp->s.back());
-                    //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_d", tfp->s_d.back());
-                    //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_dd", tfp->s_dd.back());
-                    //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::s_ddd", tfp->s_ddd.back());
-                    // #endif	
+                    longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));	
                 }
 
                 num_paths++;
@@ -218,13 +211,9 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     continue;
                 }
 
-                // clock_t start, end;
-                // start = clock();
+
                 bool valid_path = tfp->is_valid_path(obstacles);
-                // end = clock();
-                // valid_path_time +=((float)end-start)/CLOCKS_PER_SEC * 1000;
                 if (!valid_path) {
-                    // deallocate memory and continue
                     delete tfp;
                     tv += fot_hp->d_t_s;
                     continue;
@@ -253,9 +242,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     fot_hp->kd * tfp->c_end_speed_deviation;
 
                 // obstacle costs
-                tfp->c_inv_dist_to_obstacles = static_cast<float>(
-                    tfp->inverse_distance_to_obstacles(obstacles)
-                );
+                tfp->c_inv_dist_to_obstacles = tfp->inverse_distance_to_obstacles(obstacles);
 
                 // final cost
                 tfp->cf = fot_hp->klat * tfp->c_lateral +
