@@ -170,13 +170,6 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));
                 t += fot_hp->dt;
-                // #ifdef USE_RECORDER
-                //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::t", fp->t.back());
-                //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d", fp->d.back());
-                //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_d", fp->d_d.back());
-                //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_dd", fp->d_dd.back());
-                //     Recorder::getInstance()->saveData<float>("FrenetOptimalTrajectory::calc_frenet_paths()::FrenetPath::d_ddd", fp->d_ddd.back());
-                // #endif
             }
 
             // velocity keeping
@@ -287,12 +280,6 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         }
         di += fot_hp->d_road_w;
     }
-    // valid_path_time *= 1e-6;
-    // cout << "NUM THREADS = " << fot_hp->num_threads << "\n"; // check if
-    // Thread argument is passed down cout << "Found " << frenet_paths.size() <<
-    // " valid paths out of " << num_paths << " paths; Valid path time " <<
-    // valid_path_time << "\n";
-    // std::cout << "valid checking time: "<< valid_path_time<< ", for" <<num_paths<<" paths."<<std::endl ;
 }
 
 void FrenetOptimalTrajectory::setObstacles() {

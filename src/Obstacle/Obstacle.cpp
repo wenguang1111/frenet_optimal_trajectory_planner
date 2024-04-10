@@ -64,16 +64,10 @@ bool Obstacle::isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis) {
         float projection = dotProduct(rect1.points[i], axis);
         if (projection < min1) min1 = projection;
         if (projection > max1) max1 = projection;
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("Obstacle::isSeparated::projection", projection);
-        // #endif
 
         projection = dotProduct(rect2.points[i], axis);
         if (projection < min2) min2 = projection;
         if (projection > max2) max2 = projection;
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("Obstacle::isSeparated::projection", projection);
-        // #endif
     }
 
     if (max1 < min2 || max2 < min1) {
