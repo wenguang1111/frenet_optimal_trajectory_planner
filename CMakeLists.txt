@@ -30,12 +30,19 @@ else()
 endif()
 
 option(USE_RECORDER "Use recorder" OFF)
+option(ANALYZE_VECTORIZATION "Detect if vectorization is successful" OFF)
 
 set(recorder_file ${recorder_file})
 if (USE_RECORDER)
-  MESSAGE(STATUS "USE_RECORDER")
+  MESSAGE(STATUS "USE_RECORDER=ON")
   add_definitions(-DUSE_RECORDER)
   set(recorder_file ${recorder_file} tool/recorder.h tool/recorder.cpp tool/fp_datatype.h)
+endif()
+
+if (ANALYZE_VECTORIZATION)
+  MESSAGE(STATUS "ANALYZE_VECTORIZATION=ON")
+  add_definitions(-DANALYZE_VECTORIZATION)
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Rpass-analysis=loop-vectorize")
 endif()
 
 include_directories(.)
