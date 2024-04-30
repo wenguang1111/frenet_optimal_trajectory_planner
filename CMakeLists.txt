@@ -9,7 +9,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "-march=native -O3 -pthread -Wall -DQT_NO_VERSION_TAGGING")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
-set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)" )
+  set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)")
+  set(CNL_DIR "${CNL_DIR} /space/xuw/Installed/cnl/include")
+endif()
+
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
@@ -145,4 +151,4 @@ add_executable(FrenetOptimalTrajectoryTest
 target_link_libraries(FrenetOptimalTrajectory Eigen3::Eigen Qt5::Widgets Qt5::Gui)
 # target_link_libraries(PackageFrenetOptimalTrajectory Eigen3::Eigen Qt5::Widgets Qt5::Gui)
 target_link_libraries(FrenetOptimalTrajectoryTest Eigen3::Eigen Qt5::Widgets Qt5::Gui)
-# target_link_libraries(AnytimeFrenetOptimalTrajectoryTest Eigen3::Eigen Qt5::Widgets Qt5::Gui)
+#target_link_libraries(AnytimeFrenetOptimalTrajectoryTest Eigen3::Eigen Qt5::Widgets Qt5::Gui)
