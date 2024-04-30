@@ -12,7 +12,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)" )
   set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)|(aarch64)")
   set(CNL_DIR "${CNL_DIR} /space/xuw/Installed/cnl/include")
 endif()
 
