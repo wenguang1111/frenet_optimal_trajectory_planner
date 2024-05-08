@@ -1,6 +1,7 @@
 #include "FrenetPath.h"
 #include "utils.h"
 #include "tool/fp_datatype.h"
+#include "cordic.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
 #endif
@@ -28,6 +29,8 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         iy.push_back(iy_);
         iyaw.push_back(iyaw_);
         di = static_cast<float>(d[i]);
+        // fx = ix_ + di * cordic_cos(iyaw_ + M_PI_2);
+        // fy = iy_ + di * cordic_sin(iyaw_ + M_PI_2);
         fx = ix_ + di * cos(iyaw_ + M_PI_2);
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
