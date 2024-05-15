@@ -1,7 +1,6 @@
 #ifndef FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE1D_H
 #define FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE1D_H
 
-#include <Eigen/LU>
 #include <vector>
 
 // 1-dimensional cubic spline class.
@@ -16,9 +15,10 @@ public:
     float calc_der2(float t);
 private:
     std::vector<double> a, b, c, d, w, x, y;
+    std::vector<double> tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d;
     int search_index(float t);
-    void matrix_a(std::vector<double>& deltas, Eigen::MatrixXd& result);
-    void vector_b(std::vector<double>& deltas, Eigen::VectorXd& result);
+    void assignValue(std::vector<double> &TM_a, std::vector<double> &TM_b, 
+            std::vector<double> &TM_c, std::vector<double> &TM_d, std::vector<double> &deltas);
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE1D_H

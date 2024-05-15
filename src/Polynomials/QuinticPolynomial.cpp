@@ -1,6 +1,5 @@
 #include "QuinticPolynomial.h"
 
-#include <Eigen/LU>
 #include <cmath>
 
 using namespace Eigen;
@@ -9,18 +8,21 @@ QuinticPolynomial::QuinticPolynomial(fixp_c_d xs, fixp_c_d vxs, fixp_c_d axs,
         fixp_c_d xe, fixp_c_d vxe, fixp_c_d axe, fixp_maxt t):
         a0(xs), a1(vxs) {
     a2 = axs / 2.0;
-    Matrix3d A;
-    Vector3d B;
-    A << pow(t, 3), pow(t, 4), pow(t, 5), 3 * pow(t, 2),
-    4 * pow(t, 3), 5 * pow(t, 4), 6 * t, 12 * pow(t, 2),
-    20 * pow(t, 3);
-    B << xe - a0 - a1 * t - a2 * pow(t, 2), vxe - a1 - 2 * a2 * t,
-    axe - 2 * a2;
-    Matrix3d A_inv = A.inverse();
-    Vector3d x = A_inv * B;
-    a3 = x[0];
-    a4 = x[1];
-    a5 = x[2];
+
+    //Gaussian elimination
+    float K,K0,K1,K2;
+    float t2,t3,t4,t5;
+    t2=pow(t,2);
+    t3=pow(t,3);
+    t4=pow(t,4);
+    t5=pow(t,5);
+    K=a0+a1*t+a2*t2;
+    K0=xe-K;
+    K1=vxe-2*a2*t-a1;
+    K2=axe-2*a2;
+    a3=10*K0/t3-4*K1/t2+2*K2/t;
+    a4=7*K1/t3-15*K0/t4-4*K2/t2;
+    a5=2*K2/t3+6*K0/t5-3*K1/t4;
 }
 
 fixp_d QuinticPolynomial::calc_point(fixp_maxt t) {
