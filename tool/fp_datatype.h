@@ -6,11 +6,15 @@
 #define fixp_d_dd int_4_11
 #define fixp_d_ddd int_7_8
 #define fixp_s int_8_7
-#define fixp_s_d int_5_10
+#define fixp_s_d int_6_9
 #define fixp_s_dd int_5_10
 #define fixp_s_ddd int_5_10
-#define fixp_x int_7_8
-// #define fixp_y int_3_8
+#define fixp_dt int_5_10
+#define fixp_maxt int_4_11
+#define fixp_mint int_4_11
+#define fixp_max_road_width int_4_11
+#define fixp_tv int_6_9
+#define fixp_x int_8_7
 #define fixp_y int_7_8
 #define fixp_yaw int_3_12
 #define fixp_ds int_3_12
@@ -24,7 +28,19 @@
 #define fixp_sum_cost uint_11_5
 #define fixp_inverse_distanceToObstacles uint_6_10
 #define fixp_mincost uint_11_5
-
+#define fixp_c_d int_4_11
+#define fixp_target_speed int_6_9
+#define fixp_lateral_acceleration int_8_7
+#define fixp_lateral_deviation int_9_6
+#define fixp_lateral_jerk int_10_5
+#define fixp_lateral_velocity int_7_8
+#define fixp_longitudinal_acceleration int_8_7
+#define fixp_longitudinal_jerk int_9_6
+#define fixp_end_speed_deviation int_1_14
+#define fixp_inv_dist_to_obstacles int_8_7
+#define fixp_c_lateral int_8_7
+#define fixp_longitudinal int_6_9
+#define fixp_cf int_11_4
 
 typedef cnl::scaled_integer<int16_t, cnl::power<-7>>  int_8_7;
 typedef cnl::scaled_integer<int16_t, cnl::power<-8>>  int_7_8;
@@ -36,6 +52,8 @@ typedef cnl::scaled_integer<int16_t, cnl::power<-12>> int_3_12;
 typedef cnl::scaled_integer<int16_t, cnl::power<-14>> int_1_14;
 typedef cnl::scaled_integer<int16_t, cnl::power<-6>> int_9_6;
 typedef cnl::scaled_integer<int16_t, cnl::power<-3>> int_12_3;
+typedef cnl::scaled_integer<int16_t, cnl::power<-5>> int_10_5;
+typedef cnl::scaled_integer<int16_t, cnl::power<-4>> int_11_4;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-13>> uint_3_13;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-10>> uint_6_10;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-9>> uint_7_9;

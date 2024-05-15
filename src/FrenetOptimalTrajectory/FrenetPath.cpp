@@ -9,7 +9,7 @@
 
 const float COLLISION_CHECK_THRESHOLD = 6; // don't check unless within 6m
 
-FrenetPath::FrenetPath(FrenetHyperparameters *fot_hp_) {
+FrenetPath::FrenetPath(FrenetHyperparameters_FP *fot_hp_) {
     fot_hp = fot_hp_;
 }
 

@@ -31,16 +31,16 @@ using namespace Eigen;
 
 class FrenetOptimalTrajectory {
 public:
-    FrenetOptimalTrajectory(FrenetInitialConditions *fot_ic_,
-                            FrenetHyperparameters *fot_hp_);
+    FrenetOptimalTrajectory(FrenetInitialConditions_FP *fot_ic_,
+                            FrenetHyperparameters_FP *fot_hp_);
     ~FrenetOptimalTrajectory();
     FrenetPath *getBestPath();
     void setObstacles();
     void addObstacle(Point_FP first_point, Point_FP second_point);
 
 private:
-    FrenetInitialConditions *fot_ic;
-    FrenetHyperparameters *fot_hp;
+    FrenetInitialConditions_FP *fot_ic;
+    FrenetHyperparameters_FP *fot_hp;
     mutex *mu;
     FrenetPath *best_frenet_path;
     CubicSpline2D *csp;

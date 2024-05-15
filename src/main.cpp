@@ -15,9 +15,9 @@ int main() {
     float o_ury[1] = {191.75};
 
     // set up experiment
-    FrenetInitialConditions fot_ic = {
-        34.6,
-        7.10964962,
+    FrenetInitialConditions_FP fot_ic = {
+        fixp_s{34.6},
+        fixp_s_d{7.10964962},
         -1.35277168,
         -1.86,
         0.0,
@@ -31,27 +31,27 @@ int main() {
         o_ury,
         1
     };
-    FrenetHyperparameters fot_hp = {
-        25.0,
-        15.0,
-        15.0,
-        6.0,
-        6.0,
-        0.1,
-        0.1,
-        5.0,
+    FrenetHyperparameters_FP fot_hp = {
+        fixp_s_d{25.0},
+        fixp_s_d{15.0},
+        fixp_s_d{15.0},
+        fixp_s_d{6.0},
+        fixp_s_d{6.0},
+        fixp_s_d{0.1},
+        fixp_s_d{0.1},
+        fixp_s_d{5.0},
         2.0,
+        fixp_s_d{0.1},
+        fixp_s_d{5.0},
         0.1,
-        5.0,
-        0.1,
-        1.0,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        10,
-        1.0,
-        1.0,
+        fixp_s_d{1.0},
+        fixp_s_d{0.1},
+        fixp_s_d{0.1},
+        fixp_s_d{0.1},
+        fixp_s_d{0.1},
+        fixp_s_d{10},
+        fixp_s_d{1.0},
+        fixp_s_d{1.0},
         0 // num thread
     };
 
