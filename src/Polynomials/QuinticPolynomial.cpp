@@ -1,7 +1,6 @@
 #include "QuinticPolynomial.h"
 
 #include <cmath>
-#include <iostream>
 
 QuinticPolynomial::QuinticPolynomial(float xs, float vxs, float axs,
         float xe, float vxe, float axe, float t):
