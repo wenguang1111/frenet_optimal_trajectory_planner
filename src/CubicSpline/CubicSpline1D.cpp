@@ -1,6 +1,6 @@
 #include "CubicSpline1D.h"
 #include "TriDiagonalMatrixSolver.h"
-
+#include "tool/recorder.h"
 #include <algorithm>
 #include <numeric>
 #include <cmath>
@@ -90,6 +90,12 @@ void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &
         TM_c[i+1] = deltas[i+1];
         TM_d[i+1] = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 * 
             (a[i + 1] - a[i]) / deltas[i];
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("assignValue::TM_a", TM_a[i+i]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_b", TM_b[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_c", TM_c[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_d", TM_d[i+1]);
+        #endif
     }
 }
 

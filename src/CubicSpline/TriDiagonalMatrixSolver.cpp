@@ -1,5 +1,6 @@
 //Implementation based on thomas algorithmn http://www.industrial-maths.com/ms6021_thomas.pdf
 #include "TriDiagonalMatrixSolver.h"
+#include "tool/recorder.h"
 #include <vector>
 
 void solveTriDiagonalMatrix(const std::vector<double>& a, const std::vector<double>& b,
@@ -16,6 +17,11 @@ void solveTriDiagonalMatrix(const std::vector<double>& a, const std::vector<doub
         double m = 1.0 / (b[i] - a[i] * c_star[i - 1]);
         c_star[i] = c[i] * m;
         d_star[i] = (d[i] - a[i] * d_star[i - 1]) * m;
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("solveTriDiagonalMatrix::c_star", c_star[i]);
+            Recorder::getInstance()->saveData<double>("solveTriDiagonalMatrix::d_star", d_star[i]);
+            Recorder::getInstance()->saveData<double>("solveTriDiagonalMatrix::m", m);
+        #endif
     }
 
     // Backward sweep
