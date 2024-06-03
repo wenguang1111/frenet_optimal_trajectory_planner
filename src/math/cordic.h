@@ -33,6 +33,7 @@
 #define CORDIC_H
 
 #define int_2_13 cnl::scaled_integer<int16_t, cnl::power<-13>> 
+#define int_8_7 cnl::scaled_integer<int16_t, cnl::power<-7>>
 
 # include "cnl/all.h"
 // Function to find the sine and cosine of an angle
@@ -44,6 +45,8 @@ void cordic_sincos(int,
 
 int_2_13  cordic_sin(int_2_13 theta);
 int_2_13  cordic_cos(int_2_13  theta);
+template<typename T>
+int_2_13 cordic_atan(T y, T x);
 // cnl::scaled_integer<int16_t, cnl::power<-13>> sin_int_1_15(cnl::scaled_integer<int16_t, cnl::power<-13>> angle);
 // cnl::scaled_integer<int16_t, cnl::power<-13>> cos_int_1_15(cnl::scaled_integer<int16_t, cnl::power<-13>> angle);
 

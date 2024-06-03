@@ -237,3 +237,37 @@ int_2_13 cordic_cos(int_2_13 theta){
   return ans;
 }
 
+template<typename T>
+int_2_13 cordic_atan(T y,  T x){
+  int_2_13 z;
+  T x1, x2, y_temp;
+  int_2_13 *atanptr = atantable;
+  char iterations=ITERATION;
+  
+  if (x == 0) {
+    if (y > 0) return PI_2;
+    if (y < 0) return -PI_2;
+    return 0;
+  }
+
+  x1 = x;
+  y_temp = y;
+  
+  //Initial angle
+  z = 0;
+
+  for (short i=0; i<iterations; i++){
+    if(y_temp < 0){
+      x2 = x1 - (y_temp >> i);
+      y_temp = y_temp + (x1 >> i);
+      x1 = x2;
+      z -= *atanptr++;
+    } else{
+      x2 = x1 + (y_temp >> i);
+      y_temp = y_temp - (x1 >> i);
+      x1 = x2;
+      z += *atanptr++;
+    }
+  }
+  return z;
+}
