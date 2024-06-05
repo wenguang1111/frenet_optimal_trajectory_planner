@@ -37,7 +37,7 @@ FrenetOptimalTrajectory::FrenetOptimalTrajectory(
 
     // construct spline path
     csp = new CubicSpline2D(x, y);
-    
+
     // calculate the trajectories
     if (fot_hp->num_threads == 0) {
         // calculate how to split computation across threads

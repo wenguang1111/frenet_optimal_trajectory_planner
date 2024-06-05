@@ -1,5 +1,7 @@
 #include "QuinticPolynomial.h"
-#include "tool/recorder.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 
 #include <cmath>
 

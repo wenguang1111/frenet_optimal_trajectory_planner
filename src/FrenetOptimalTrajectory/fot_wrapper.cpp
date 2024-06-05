@@ -4,6 +4,7 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
 #include "tool/recorder.h"
+#include "cordic.h"
 
 #include <stddef.h>
 #include <vector>

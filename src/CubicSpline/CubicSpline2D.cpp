@@ -1,6 +1,9 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
 #include "tool/fp_datatype.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 
 #include <algorithm>
 #include <numeric>
@@ -35,6 +38,9 @@ void CubicSpline2D::calc_s(const vector<fixp_x>& x,
     s.push_back(cum_sum);
     for (int i = 0; i < nx - 1; i++) {
         cum_sum += norm(dx[i], dy[i]);
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("CubicSpline2D::calc_s::cum_sum", cum_sum);
+        #endif
         s.push_back(cum_sum);
     }
     s.erase(unique(s.begin(), s.end()), s.end());
@@ -124,5 +130,8 @@ bool CubicSpline2D::are_collinear(fixp_x x1, fixp_y y1, fixp_x x2, fixp_y y2,
     fixp_x a = x1 * (y2 - y3) +
                x2 * (y3 - y1) +
                x3 * (y1 - y2);
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
+    #endif
     return a <= 0.01;
 }

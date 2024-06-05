@@ -65,6 +65,7 @@ typedef cnl::scaled_integer<int16_t, cnl::power<-11>> int_4_11;
 typedef cnl::scaled_integer<int16_t, cnl::power<-12>> int_3_12;
 typedef cnl::scaled_integer<int16_t, cnl::power<-14>> int_1_14;
 typedef cnl::scaled_integer<int16_t, cnl::power<-6>> int_9_6;
+typedef cnl::scaled_integer<int16_t, cnl::power<-4>> int_11_4;
 typedef cnl::scaled_integer<int16_t, cnl::power<-3>> int_12_3;
 typedef cnl::scaled_integer<int16_t, cnl::power<-5>> int_10_5;
 typedef cnl::scaled_integer<int16_t, cnl::power<-4>> int_11_4;

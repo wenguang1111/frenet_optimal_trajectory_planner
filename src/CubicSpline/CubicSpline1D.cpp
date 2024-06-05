@@ -1,6 +1,8 @@
 #include "CubicSpline1D.h"
 #include "TriDiagonalMatrixSolver.h"
-
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 #include <algorithm>
 #include <numeric>
 #include <cmath>
@@ -11,8 +13,8 @@ using namespace std;
 CubicSpline1D::CubicSpline1D() = default;
 
 // Construct the 1-dimensional cubic spline.
-CubicSpline1D::CubicSpline1D(const vector<double>& v1,
-                             const vector<double>& v2):
+CubicSpline1D::CubicSpline1D(const vector<double>& v1, //s
+                             const vector<double>& v2): //x or y
                              nx(v1.size()), a(v2), x(v1), y(v2){
     // compute elementwise difference
     vector<double> deltas (nx);
@@ -90,6 +92,12 @@ void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &
         TM_c[i+1] = deltas[i+1];
         TM_d[i+1] = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 * 
             (a[i + 1] - a[i]) / deltas[i];
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("assignValue::TM_a", TM_a[i+i]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_b", TM_b[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_c", TM_c[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_d", TM_d[i+1]);
+        #endif
     }
 }
 
