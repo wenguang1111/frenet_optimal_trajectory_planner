@@ -109,10 +109,10 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
         fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
-            fixp_x d1 = norm_FP(llx - x[i], lly - y[i]);
-            fixp_x d2 = norm_FP(llx - x[i], ury - y[i]);
-            fixp_x d3 = norm_FP(urx - x[i], ury - y[i]);
-            fixp_x d4 = norm_FP(urx - x[i], lly - y[i]);
+            fixp_x d1 = norm(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm(urx - x[i], lly - y[i]);
 
             fixp_x closest = min({d1, d2, d3, d4});
             // only check for collision if one corner of bounding box is
@@ -149,10 +149,10 @@ FrenetPath::inverse_distance_to_obstacles(
         fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
-            fixp_x d1 = norm_FP(llx - x[i], lly - y[i]);
-            fixp_x d2 = norm_FP(llx - x[i], ury - y[i]);
-            fixp_x d3 = norm_FP(urx - x[i], ury - y[i]);
-            fixp_x d4 = norm_FP(urx - x[i], lly - y[i]);
+            fixp_x d1 = norm(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm(urx - x[i], lly - y[i]);
 
             fixp_x closest = min({d1, d2, d3, d4});
             total_inverse_distance += static_cast<float>(1.0 / closest);

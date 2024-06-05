@@ -29,21 +29,21 @@ typedef struct {
 
 typedef vector<float> Pose;
 
-inline float norm(float x, float y) {
-    return sqrt(pow(x, 2) + pow(y, 2));
+inline fixp_x norm(fixp_x x, fixp_y y) {
+    return sqrt(pow_2<fixp_x>(x) + pow_2<fixp_y>(y));
 }
 
-inline fixp_x norm_FP(fixp_x x, fixp_y y) {
-    return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
-}
+// inline fixp_x norm_FP(fixp_x x, fixp_y y) {
+//     return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
+// }
 
-inline void as_unit_vector(tuple<float, float>& vec) {
-    float magnitude = norm(get<0>(vec), get<1>(vec));
-    if (magnitude > 0) {
-        get<0>(vec) = get<0>(vec) / magnitude;
-        get<1>(vec) = get<1>(vec) / magnitude;
-    }
-}
+// inline void as_unit_vector(tuple<float, float>& vec) {
+//     float magnitude = norm(get<0>(vec), get<1>(vec));
+//     if (magnitude > 0) {
+//         get<0>(vec) = get<0>(vec) / magnitude;
+//         get<1>(vec) = get<1>(vec) / magnitude;
+//     }
+// }
 
 inline float dot(const tuple<float, float>& vec1,
                   const tuple<float, float>& vec2) {

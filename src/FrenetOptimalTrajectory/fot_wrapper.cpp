@@ -132,18 +132,18 @@ extern "C" {
             fot_rv_f->params[4] = static_cast<float>(best_frenet_path->d_dd[1]);
 
             // store costs for logging
-            fot_rv_f->costs[0] = best_frenet_path->c_lateral_deviation;
-            fot_rv_f->costs[1] = best_frenet_path->c_lateral_velocity;
-            fot_rv_f->costs[2] = best_frenet_path->c_lateral_acceleration;
-            fot_rv_f->costs[3] = best_frenet_path->c_lateral_jerk;
-            fot_rv_f->costs[4] = best_frenet_path->c_lateral;
-            fot_rv_f->costs[5] = best_frenet_path->c_longitudinal_acceleration;
-            fot_rv_f->costs[6] = best_frenet_path->c_longitudinal_jerk;
-            fot_rv_f->costs[7] = best_frenet_path->c_time_taken;
-            fot_rv_f->costs[8] = best_frenet_path->c_end_speed_deviation;
-            fot_rv_f->costs[9] = best_frenet_path->c_longitudinal;
-            fot_rv_f->costs[10] = best_frenet_path->c_inv_dist_to_obstacles;
-            fot_rv_f->costs[11] = best_frenet_path->cf;
+            fot_rv_f->costs[0] = static_cast<float>(best_frenet_path->c_lateral_deviation);
+            fot_rv_f->costs[1] = static_cast<float>(best_frenet_path->c_lateral_velocity);
+            fot_rv_f->costs[2] = static_cast<float>(best_frenet_path->c_lateral_acceleration);
+            fot_rv_f->costs[3] = static_cast<float>(best_frenet_path->c_lateral_jerk);
+            fot_rv_f->costs[4] = static_cast<float>(best_frenet_path->c_lateral);
+            fot_rv_f->costs[5] = static_cast<float>(best_frenet_path->c_longitudinal_acceleration);
+            fot_rv_f->costs[6] = static_cast<float>(best_frenet_path->c_longitudinal_jerk);
+            fot_rv_f->costs[7] = static_cast<float>(best_frenet_path->c_time_taken);
+            fot_rv_f->costs[8] = static_cast<float>(best_frenet_path->c_end_speed_deviation);
+            fot_rv_f->costs[9] = static_cast<float>(best_frenet_path->c_longitudinal);
+            fot_rv_f->costs[10] = static_cast<float>(best_frenet_path->c_inv_dist_to_obstacles);
+            fot_rv_f->costs[11] = static_cast<float>(best_frenet_path->cf);
         }
         fot_rv_f->runtime = time_taken;
     }
