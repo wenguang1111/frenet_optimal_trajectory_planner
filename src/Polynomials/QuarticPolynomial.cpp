@@ -1,22 +1,22 @@
 #include "QuarticPolynomial.h"
+#include "tool/recorder.h"
 
-#include <Eigen/LU>
 #include <cmath>
-
-using namespace Eigen;
 
 QuarticPolynomial::QuarticPolynomial(float xs, float vxs, float axs,
         float vxe, float axe, float t):
         a0(xs), a1(vxs) {
     a2 = axs / 2.0;
-    Matrix2d A;
-    Vector2d B;
-    A << 3 * pow(t, 2), 4 * pow(t, 3), 6 * t, 12 * pow(t, 2);
-    B << vxe - a1 - 2 * a2 * t, axe - 2 * a2;
-    Matrix2d A_inv = A.inverse();
-    Vector2d x = A_inv * B;
-    a3 = x[0];
-    a4 = x[1];
+    fixp_quarticpolynomial_K1 K1;
+    fixp_quarticpolynomial_K2 K2;
+    K1=vxe-a1-2*a2*t;
+    K2=axe-2*a2;
+    a3 = K1/pow(t,2) - K2/(3*t);
+    a4 = K2/(4*pow(t,2))-K1/(2*pow(t,3));
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::K1", K1);
+        Recorder::getInstance()->saveData<double>("QuarticPolynomial::K2", K2);
+    #endif
 }
 
 fixp_s QuarticPolynomial::calc_point(float t) {

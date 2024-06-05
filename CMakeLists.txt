@@ -9,27 +9,33 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "-march=native -O3 -pthread -Wall -DQT_NO_VERSION_TAGGING")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
-set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)" )
+  set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)|(aarch64)")
+  set(CNL_DIR "${CNL_DIR} /space/xuw/Installed/cnl/include")
+endif()
+
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Eigen3)
 
-if(Eigen3_FOUND)
-    set(CUSTOM_EIGEN ${EIGEN3_INCLUDE_DIR})
-else()
-    find_package(Eigen)
-    set(CUSTOM_EIGEN ${EIGEN_INCLUDE_DIR})
-endif()
-
 option(USE_RECORDER "Use recorder" OFF)
+option(ANALYZE_VECTORIZATION "Detect if vectorization is successful" OFF)
 
 set(recorder_file ${recorder_file})
 if (USE_RECORDER)
-  MESSAGE(STATUS "USE_RECORDER")
+  MESSAGE(STATUS "USE_RECORDER=ON")
   add_definitions(-DUSE_RECORDER)
   set(recorder_file ${recorder_file} tool/recorder.h tool/recorder.cpp tool/fp_datatype.h)
+endif()
+
+if (ANALYZE_VECTORIZATION)
+  MESSAGE(STATUS "ANALYZE_VECTORIZATION=ON")
+  add_definitions(-DANALYZE_VECTORIZATION)
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Rpass-analysis=loop-vectorize")
 endif()
 
 include_directories(.)
@@ -47,7 +53,6 @@ include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/math")
 
 add_library(FrenetOptimalTrajectory SHARED
-            #src/main.cpp
             src/utils.h
             src/Polynomials/QuarticPolynomial.cpp
             src/Polynomials/QuarticPolynomial.h
@@ -57,10 +62,10 @@ add_library(FrenetOptimalTrajectory SHARED
             src/CubicSpline/CubicSpline1D.h
             src/CubicSpline/CubicSpline2D.cpp
             src/CubicSpline/CubicSpline2D.h
+            src/CubicSpline/TriDiagonalMatrixSolver.h
+            src/CubicSpline/TriDiagonalMatrixSolver.cpp
             src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.cpp
             src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.h
-            # src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.cpp
-            # src/FrenetOptimalTrajectory/AnytimeFrenetOptimalTrajectory.h
             src/FrenetOptimalTrajectory/FrenetPath.cpp
             src/FrenetOptimalTrajectory/FrenetPath.h
             src/FrenetOptimalTrajectory/fot_wrapper.cpp
@@ -72,6 +77,7 @@ add_library(FrenetOptimalTrajectory SHARED
             ${recorder_file}
             src/math/cordic.cpp
             src/math/cordic.h)
+            ${recorder_file})
 
 add_executable(FrenetOptimalTrajectoryTest
                src/main.cpp
@@ -84,6 +90,8 @@ add_executable(FrenetOptimalTrajectoryTest
                src/CubicSpline/CubicSpline1D.h
                src/CubicSpline/CubicSpline2D.cpp
                src/CubicSpline/CubicSpline2D.h
+               src/CubicSpline/TriDiagonalMatrixSolver.h
+               src/CubicSpline/TriDiagonalMatrixSolver.cpp
                src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.cpp
                src/FrenetOptimalTrajectory/FrenetOptimalTrajectory.h
                src/FrenetOptimalTrajectory/FrenetPath.cpp

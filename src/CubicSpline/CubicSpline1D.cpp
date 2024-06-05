@@ -1,11 +1,11 @@
 #include "CubicSpline1D.h"
-
+#include "TriDiagonalMatrixSolver.h"
+#include "tool/recorder.h"
 #include <algorithm>
 #include <numeric>
 #include <cmath>
 
 using namespace std;
-using namespace Eigen;
 
 // Default constructor
 CubicSpline1D::CubicSpline1D() = default;
@@ -18,16 +18,16 @@ CubicSpline1D::CubicSpline1D(const vector<double>& v1,
     vector<double> deltas (nx);
     adjacent_difference(x.begin(), x.end(), deltas.begin());
     deltas.erase(deltas.begin());
-    // compute matrix a, vector b
-    MatrixXd ma = MatrixXd::Zero(nx, nx);
-    VectorXd vb = VectorXd::Zero(nx);
-    matrix_a(deltas, ma);
-    vector_b(deltas, vb);
-    // solve for c and copy to attribute vector
-    MatrixXd ma_inv = ma.inverse();
-    VectorXd tmp_c = ma_inv * vb;
-    c.resize(tmp_c.size());
-    VectorXd::Map(&c[0], tmp_c.size()) = tmp_c;
+    
+    //compute c with thomas algorithmus
+    c.resize(nx);
+    std::fill(c.begin(), c.end(), 0);
+    tridionalmatrix_a.resize(nx);
+    tridionalmatrix_b.resize(nx);
+    tridionalmatrix_c.resize(nx);
+    tridionalmatrix_d.resize(nx);
+    assignValue(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, deltas);
+    solveTriDiagonalMatrix(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, c, nx);
 
     // construct attribute b, d
     for (int i = 0; i < nx - 1; i++) {
@@ -72,27 +72,30 @@ float CubicSpline1D::calc_der2(float t) {
     return 2.0 * c[i] + 6.0 * d[i] * dx;
 }
 
-// Create the constants matrix a used in spline construction
-void CubicSpline1D::matrix_a(vector<double> &deltas, MatrixXd &result) {
-    result(0, 0) = 1;
-    for (int i = 0; i < nx - 1; i++) {
-        if (i != nx - 2) {
-            result(i + 1, i + 1) = 2.0 * (deltas[i] + deltas[i + 1]);
-        }
-        result(i + 1, i) = deltas[i];
-        result(i, i + 1) = deltas[i];
-    }
-
-    result(0, 1) = 0.0;
-    result(nx - 1, nx - 2) = 0.0;
-    result(nx - 1, nx - 1) = 1.0;
-}
-
-// Create the 1st derivative vector b used in spline construction
-void CubicSpline1D::vector_b(vector<double> &deltas, VectorXd &result) {
+void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &TM_b, 
+                                std::vector<double> &TM_c, std::vector<double> &TM_d, 
+                                std::vector<double> &deltas) {
+    //initalize the vector for first and last elements
+    TM_a[0] = 0;
+    TM_a[nx-1] = 0;
+    TM_b[0] = 1;
+    TM_b[nx-1] = 1;
+    TM_c[0] = 0;
+    TM_c[nx-1] = 0;
+    TM_d[0]=0;
+    TM_d[nx-1]=0;
     for (int i = 0; i < nx - 2; i++) {
-        result(i + 1) = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 *
-                (a[i + 1] - a[i]) / deltas[i];
+        TM_a[i+1] = deltas[i];
+        TM_b[i+1] = 2*(deltas[i] + deltas[i+1]);
+        TM_c[i+1] = deltas[i+1];
+        TM_d[i+1] = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 * 
+            (a[i + 1] - a[i]) / deltas[i];
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<double>("assignValue::TM_a", TM_a[i+i]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_b", TM_b[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_c", TM_c[i+1]);
+            Recorder::getInstance()->saveData<double>("assignValue::TM_d", TM_d[i+1]);
+        #endif
     }
 }
 
