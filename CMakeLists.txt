@@ -49,7 +49,8 @@ include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/Polynomials"
                     "${CMAKE_SOURCE_DIR}/src/FrenetOptimalTrajectory"
                     "${CMAKE_SOURCE_DIR}/src/Obstacle"
-                    "${CMAKE_SOURCE_DIR}/src/Car")
+                    "${CMAKE_SOURCE_DIR}/src/Car"
+                    "${CMAKE_SOURCE_DIR}/src/math")
 
 add_library(FrenetOptimalTrajectory SHARED
             src/utils.h
@@ -73,6 +74,9 @@ add_library(FrenetOptimalTrajectory SHARED
             src/Obstacle/Obstacle.h
             src/Car/Car.cpp
             src/Car/Car.h
+            ${recorder_file}
+            src/math/cordic.cpp
+            src/math/cordic.h)
             ${recorder_file})
 
 add_executable(FrenetOptimalTrajectoryTest
@@ -98,6 +102,8 @@ add_executable(FrenetOptimalTrajectoryTest
                src/Obstacle/Obstacle.h
                src/Car/Car.cpp
                src/Car/Car.h
-               ${recorder_file})
-target_link_libraries(FrenetOptimalTrajectory Qt5::Widgets Qt5::Gui)
-target_link_libraries(FrenetOptimalTrajectoryTest Qt5::Widgets Qt5::Gui)
+               ${recorder_file}
+               src/math/cordic.cpp
+               src/math/cordic.h)
+target_link_libraries(FrenetOptimalTrajectory Eigen3::Eigen Qt5::Widgets Qt5::Gui)
+target_link_libraries(FrenetOptimalTrajectoryTest Eigen3::Eigen Qt5::Widgets Qt5::Gui)
