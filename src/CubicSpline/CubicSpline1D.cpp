@@ -1,6 +1,8 @@
 #include "CubicSpline1D.h"
 #include "TriDiagonalMatrixSolver.h"
-#include "tool/recorder.h"
+#ifdef USE_RECORDER
+    #include "tool/recorder.h"
+#endif
 #include <algorithm>
 #include <numeric>
 #include <cmath>
@@ -11,8 +13,8 @@ using namespace std;
 CubicSpline1D::CubicSpline1D() = default;
 
 // Construct the 1-dimensional cubic spline.
-CubicSpline1D::CubicSpline1D(const vector<double>& v1,
-                             const vector<double>& v2):
+CubicSpline1D::CubicSpline1D(const vector<double>& v1, //s
+                             const vector<double>& v2): //x or y
                              nx(v1.size()), a(v2), x(v1), y(v2){
     // compute elementwise difference
     vector<double> deltas (nx);

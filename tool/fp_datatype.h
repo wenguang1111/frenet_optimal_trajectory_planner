@@ -9,9 +9,9 @@
 #define fixp_s_d int_5_10
 #define fixp_s_dd int_5_10
 #define fixp_s_ddd int_5_10
-#define fixp_x int_7_8
+#define fixp_x int_8_7
 // #define fixp_y int_3_8
-#define fixp_y int_7_8
+#define fixp_y int_8_7
 #define fixp_yaw int_3_12
 #define fixp_ds int_3_12
 #define fixp_c int_3_12
@@ -34,6 +34,7 @@
 #define fixp_quinticpolynomial_t3 int_8_7
 #define fixp_quinticpolynomial_t4 int_11_4
 #define fixp_quinticpolynomial_t5 int_13_2
+#define fixp_cum_sum int_8_7
 
 typedef cnl::scaled_integer<int16_t, cnl::power<-7>>  int_8_7;
 typedef cnl::scaled_integer<int16_t, cnl::power<-8>>  int_7_8;

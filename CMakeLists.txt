@@ -77,7 +77,6 @@ add_library(FrenetOptimalTrajectory SHARED
             ${recorder_file}
             src/math/cordic.cpp
             src/math/cordic.h)
-            ${recorder_file})
 
 add_executable(FrenetOptimalTrajectoryTest
                src/main.cpp
