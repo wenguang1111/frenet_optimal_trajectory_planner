@@ -1,6 +1,7 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
 #include "tool/fp_datatype.h"
+#include "cordic.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
 #endif
@@ -38,9 +39,9 @@ void CubicSpline2D::calc_s(const vector<fixp_x>& x,
     s.push_back(cum_sum);
     for (int i = 0; i < nx - 1; i++) {
         cum_sum += norm(dx[i], dy[i]);
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("CubicSpline2D::calc_s::cum_sum", cum_sum);
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("CubicSpline2D::calc_s::cum_sum", cum_sum);
+        // #endif
         s.push_back(cum_sum);
     }
     s.erase(unique(s.begin(), s.end()), s.end());
@@ -68,31 +69,31 @@ fixp_y CubicSpline2D::calc_y(fixp_s t) {
 // }
 
 // Calculate the yaw along the spline at given t
-float CubicSpline2D::calc_yaw(fixp_s t) {
+fixp_yaw CubicSpline2D::calc_yaw(fixp_s t) {
     fixp_dx dx = sx.calc_der1(t);
     fixp_dy dy = sy.calc_der1(t);
-    fixp_dyaw yaw = atan2(dy, dx);
+    fixp_yaw yaw = cordic_atan<fixp_dx>(dy, dx);
     return yaw;
 }
 
-// // Given x, y positions and an initial guess s0, find the closest s value
-// float CubicSpline2D::find_s(float x, float y, float s0) {
-//     float s_closest = s0;
-//     float closest = INFINITY;
-//     float si = s.front();
+// Given x, y positions and an initial guess s0, find the closest s value
+fixp_s CubicSpline2D::find_s(fixp_x x, fixp_y y, fixp_s s0) {
+    fixp_s s_closest = s0;
+    fixp_x closest = std::numeric_limits<fixp_x>::max();
+    fixp_s si = s.front();
 
-//     do {
-//         float px = calc_x(si);
-//         float py = calc_y(si);
-//         float dist = norm(x - px, y - py);
-//         if (dist < closest) {
-//             closest = dist;
-//             s_closest = si;
-//         }
-//         si += 0.1;
-//     } while (si < s.back());
-//     return s_closest;
-// }
+    do {
+        fixp_x px = calc_x(si);
+        fixp_y py = calc_y(si);
+        fixp_x dist = norm(x - px, y - py);
+        if (dist < closest) {
+            closest = dist;
+            s_closest = si;
+        }
+        si += 0.1;
+    } while (si < s.back());
+    return s_closest;
+}
 
 // Remove any collinear points from given list of points by the triangle rule
 vector<vector<fixp_x>>
@@ -113,8 +114,8 @@ CubicSpline2D::remove_collinear_points(vector<fixp_x> x, vector<fixp_y> y) {
         if (collinear) {
             continue;
         }
-        x_.push_back(static_cast<double>(x[i]));
-        y_.push_back(static_cast<double>(y[i]));
+        x_.push_back(static_cast<fixp_x>(x[i]));
+        y_.push_back(static_cast<fixp_y>(y[i]));
     }
     // make sure to add the last point in case all points are collinear
     x_.push_back(x.back());
@@ -130,8 +131,8 @@ bool CubicSpline2D::are_collinear(fixp_x x1, fixp_y y1, fixp_x x2, fixp_y y2,
     fixp_x a = x1 * (y2 - y3) +
                x2 * (y3 - y1) +
                x3 * (y1 - y2);
-    #ifdef USE_RECORDER
-        Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
-    #endif
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
+    // #endif
     return a <= 0.01;
 }

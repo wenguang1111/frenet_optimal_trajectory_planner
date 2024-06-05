@@ -17,8 +17,8 @@ public:
     fixp_x calc_x(fixp_s t);
     fixp_y calc_y(fixp_s t);
     // float calc_curvature(fixp_t t);
-    float calc_yaw(fixp_s t);
-    // float find_s(fixp_x x, fixp_y y, fixp_s s0);
+    fixp_yaw calc_yaw(fixp_s t);
+    fixp_s find_s(fixp_x x, fixp_y y, fixp_s s0);
 
 private:
     vector<fixp_s> s;

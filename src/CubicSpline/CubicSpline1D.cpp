@@ -13,11 +13,11 @@ using namespace std;
 CubicSpline1D::CubicSpline1D() = default;
 
 // Construct the 1-dimensional cubic spline.
-CubicSpline1D::CubicSpline1D(const vector<double>& v1, //s
-                             const vector<double>& v2): //x or y
+CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
+                             const vector<fixp_x>& v2): //x or y
                              nx(v1.size()), a(v2), x(v1), y(v2){
     // compute elementwise difference
-    vector<double> deltas (nx);
+    vector<fixp_s> deltas (nx);
     adjacent_difference(x.begin(), x.end(), deltas.begin());
     deltas.erase(deltas.begin());
     
@@ -40,43 +40,43 @@ CubicSpline1D::CubicSpline1D(const vector<double>& v1, //s
 }
 
 // Calculate the 0th derivative evaluated at t
-float CubicSpline1D::calc_der0(float t) {
+fixp_x CubicSpline1D::calc_der0(fixp_s t) {
     if (t < x.front() || t >= x.back()) {
         return NAN;
     }
 
     int i = search_index(t) - 1;
-    float dx = t - x[i];
-    return a[i] + b[i] * dx + c[i] * pow(dx, 2) + d[i] * pow(dx, 3);
+    fixp_s dx = t - x[i];
+    return a[i] + b[i] * dx + c[i] * pow_2<fixp_s>(dx) + d[i] * pow_3<fixp_s>(dx);
 }
 
 // Calculate the 1st derivative evaluated at t
-float CubicSpline1D::calc_der1(float t) {
+fixp_dx CubicSpline1D::calc_der1(fixp_s t) {
     if (t < x.front() || t >= x.back()) {
         return NAN;
     }
 
     int i = search_index(t) - 1;
-    float dx = t - x[i];
+    fixp_s dx = t - x[i];
 
-    return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow(dx, 2);
+    return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow_2<fixp_s>(dx);
 }
 
-// Calculate the 2nd derivative evaluated at
-float CubicSpline1D::calc_der2(float t) {
-    if (t < x.front() || t >= x.back()) {
-        return NAN;
-    }
+// // Calculate the 2nd derivative evaluated at
+// float CubicSpline1D::calc_der2(float t) {
+//     if (t < x.front() || t >= x.back()) {
+//         return NAN;
+//     }
 
-    int i = search_index(t) - 1;
-    float dx = t - x[i];
+//     int i = search_index(t) - 1;
+//     float dx = t - x[i];
 
-    return 2.0 * c[i] + 6.0 * d[i] * dx;
-}
+//     return 2.0 * c[i] + 6.0 * d[i] * dx;
+// }
 
-void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &TM_b, 
-                                std::vector<double> &TM_c, std::vector<double> &TM_d, 
-                                std::vector<double> &deltas) {
+void CubicSpline1D::assignValue(std::vector<fixp_TM_a> &TM_a, std::vector<fixp_TM_b> &TM_b, 
+                                std::vector<fixp_TM_c> &TM_c, std::vector<fixp_TM_d> &TM_d, 
+                                std::vector<fixp_s> &deltas) {
     //initalize the vector for first and last elements
     TM_a[0] = 0;
     TM_a[nx-1] = 0;
@@ -102,6 +102,6 @@ void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &
 }
 
 // Search the spline for index closest to t
-int CubicSpline1D::search_index(float t) {
+int CubicSpline1D::search_index(fixp_s t) {
     return std::upper_bound (x.begin(), x.end(), t) - x.begin();
 }
