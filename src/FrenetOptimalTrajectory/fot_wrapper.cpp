@@ -37,7 +37,6 @@ extern "C" {
             FrenetInitialConditions_Float *fot_ic_f, FrenetHyperparameters_Float *fot_hp_f,
             FrenetReturnValues_FLoat *fot_rv_f
             ) {
-        
         FrenetHyperparameters_FP* fot_hp_fp = new FrenetHyperparameters_FP();
         FrenetInitialConditions_FP* fot_ic_fp = new FrenetInitialConditions_FP();
         //----------------------------------------------------------------------
@@ -51,26 +50,21 @@ extern "C" {
         fot_ic_fp->target_speed = fot_ic_f->target_speed;
         fot_ic_fp->nw = fot_ic_f->nw;
         fot_ic_fp->no = fot_ic_f->no;
-        
-        fot_ic_fp->wx = fot_ic_f->wx;
-        fot_ic_fp->wy = fot_ic_f->wy;
-        fot_ic_fp->o_llx = fot_ic_f->o_llx;
-        fot_ic_fp->o_lly = fot_ic_f->o_lly;
-        fot_ic_fp->o_urx = fot_ic_f->o_urx;
-        fot_ic_fp->o_ury = fot_ic_f->o_ury;
-        // fot_ic->wx = new fixp_x[fot_ic->nw];
-        // fot_ic->wy = new fixp_y[fot_ic->nw];
-        // fot_ic->o_llx = new fixp_x[fot_ic->no];
-        // fot_ic->o_lly = new fixp_y[fot_ic->no];
-        // fot_ic->o_urx = new fixp_x[fot_ic->no];
-        // fot_ic->o_ury = new fixp_y[fot_ic->no];
 
-        // assignValueToFixedPoint<fixp_x>(fot_ic->wx, fot_ic_d->wx, fot_ic->nw);
-        // assignValueToFixedPoint<fixp_y>(fot_ic->wy, fot_ic_d->wy, fot_ic->nw);
-        // assignValueToFixedPoint<fixp_x>(fot_ic->o_llx, fot_ic_d->o_llx, fot_ic->no);
-        // assignValueToFixedPoint<fixp_y>(fot_ic->o_lly, fot_ic_d->o_lly, fot_ic->no);
-        // assignValueToFixedPoint<fixp_x>(fot_ic->o_urx, fot_ic_d->o_urx, fot_ic->no);
-        // assignValueToFixedPoint<fixp_y>(fot_ic->o_ury, fot_ic_d->o_ury, fot_ic->no);        
+        fot_ic_fp->wx = new fixp_x[fot_ic_f->nw];
+        fot_ic_fp->wy = new fixp_y[fot_ic_f->nw];
+        fot_ic_fp->o_llx = new fixp_x[fot_ic_f->no];
+        fot_ic_fp->o_lly = new fixp_y[fot_ic_f->no];
+        fot_ic_fp->o_urx = new fixp_x[fot_ic_f->no];
+        fot_ic_fp->o_ury = new fixp_y[fot_ic_f->no];
+
+        assignValueToFixedPoint<fixp_x>(fot_ic_fp->wx, fot_ic_f->wx, fot_ic_fp->nw);
+        assignValueToFixedPoint<fixp_y>(fot_ic_fp->wy, fot_ic_f->wy, fot_ic_fp->nw);
+        assignValueToFixedPoint<fixp_x>(fot_ic_fp->o_llx, fot_ic_f->o_llx, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_y>(fot_ic_fp->o_lly, fot_ic_f->o_lly, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_x>(fot_ic_fp->o_urx, fot_ic_f->o_urx, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_y>(fot_ic_fp->o_ury, fot_ic_f->o_ury, fot_ic_fp->no);
+          
         //-----------------FrenetHyperparameters--------------------------------
         fot_hp_fp->max_speed = fot_hp_f->max_speed;
         fot_hp_fp->max_accel = fot_hp_f->max_accel;
@@ -104,7 +98,6 @@ extern "C" {
             // write recorded data to csv file
             Recorder::getInstance()->writeDataToCSV();
         #endif
-        
         FrenetPath* best_frenet_path = fot.getBestPath();
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv_f->success = 1;
@@ -122,8 +115,29 @@ extern "C" {
                     fot_rv_f->speeds[i];
                 fot_rv_f->speeds_y[i] = sin(best_frenet_path->yaw[i]) *
                     fot_rv_f->speeds[i];
+                // #ifdef USE_RECORDER
+                //     Recorder::getInstance()->saveData<float>("index", float(i));
+                //     Recorder::getInstance()->saveData<float>("time", static_cast<float>(best_frenet_path->t[i]));
+                //     Recorder::getInstance()->saveData<float>("x", static_cast<float>(best_frenet_path->x[i]));
+                //     Recorder::getInstance()->saveData<float>("y", static_cast<float>(best_frenet_path->y[i]));
+                //     Recorder::getInstance()->saveData<float>("d", static_cast<float>(best_frenet_path->d[i]));
+                //     Recorder::getInstance()->saveData<float>("d_d", static_cast<float>(best_frenet_path->d_d[i]));
+                //     Recorder::getInstance()->saveData<float>("d_dd", static_cast<float>(best_frenet_path->d_dd[i]));
+                //     Recorder::getInstance()->saveData<float>("d_ddd", static_cast<float>(best_frenet_path->d_ddd[i]));
+                //     Recorder::getInstance()->saveData<float>("s", static_cast<float>(best_frenet_path->s[i]));
+                //     Recorder::getInstance()->saveData<float>("s_d", static_cast<float>(best_frenet_path->s_d[i]));
+                //     Recorder::getInstance()->saveData<float>("s_dd", static_cast<float>(best_frenet_path->s_dd[i]));
+                //     Recorder::getInstance()->saveData<float>("s_ddd", static_cast<float>(best_frenet_path->s_ddd[i]));
+                //     Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(best_frenet_path->yaw[i]));
+                //     Recorder::getInstance()->saveData<float>("ix", static_cast<float>(best_frenet_path->ix[i]));
+                //     Recorder::getInstance()->saveData<float>("iy", static_cast<float>(best_frenet_path->iy[i]));
+                //     Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(best_frenet_path->iyaw[i]));
+                //     Recorder::getInstance()->saveData<float>("ds", static_cast<float>(best_frenet_path->ds[i]));
+                //     Recorder::getInstance()->saveData<float>("c", static_cast<float>(best_frenet_path->c[i]));
+                //     Recorder::getInstance()->saveData<float>("speed_x", fot_rv_f->speeds_x[i]);
+                //     Recorder::getInstance()->saveData<float>("speed_y", fot_rv_f->speeds_y[i]);
+                // #endif
             }
-
 
             // store info for debug
             fot_rv_f->params[0] = static_cast<float>(best_frenet_path->s[1]);
@@ -147,6 +161,12 @@ extern "C" {
             fot_rv_f->costs[11] = static_cast<float>(best_frenet_path->cf);
         }
         fot_rv_f->runtime = time_taken;
+        delete fot_ic_fp->wx;
+        delete fot_ic_fp->wy;
+        delete fot_ic_fp->o_llx;
+        delete fot_ic_fp->o_lly;
+        delete fot_ic_fp->o_urx;
+        delete fot_ic_fp->o_ury;
     }
 
     // Convert the initial conditions from cartesian space to frenet space
@@ -155,22 +175,26 @@ extern "C" {
             float vy, float forward_speed, float* xp, float* yp, int np,
             float* initial_conditions
             ) {
-        vector<float> wx (xp, xp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
-        vector<float> wy (yp, yp + np);
+        fixp_x* xp_fp = new fixp_x[np];
+        fixp_y* yp_fp = new fixp_y[np];
+        assignValueToFixedPoint<fixp_x>(xp_fp, xp, np);
+        assignValueToFixedPoint<fixp_y>(yp_fp, yp, np);
+        vector<fixp_x> wx (xp_fp, xp_fp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
+        vector<fixp_y> wy (yp_fp, yp_fp + np);
         CubicSpline2D* csp = new CubicSpline2D(wx, wy);
-
         // get distance from car to spline and projection
-        float s = csp->find_s(x, y, s0);
-        float distance = norm(csp->calc_x(s) - x, csp->calc_y(s) - y);
-        tuple<float, float> bvec ((csp->calc_x(s) - x) / distance,
-                (csp->calc_y(s) - y) / distance);
-
+        fixp_x x_fp = x;
+        fixp_y y_fp = y;
+        fixp_s s0_fp = s0;
+        fixp_s s_fp = csp->find_s(x_fp, y_fp, s0_fp);
+        fixp_x distance = norm(csp->calc_x(s_fp) - x_fp, csp->calc_y(s_fp) - y_fp);
+        tuple<float, float> bvec ((static_cast<float>(csp->calc_x(s_fp) - x_fp) / distance),
+                (static_cast<float>(csp->calc_y(s_fp) - y_fp) / distance));
         // normal spline vector
-        float x0 = csp->calc_x(s0);
-        float y0 = csp->calc_y(s0);
-        float x1 = csp->calc_x(s0 + 2);
-        float y1 = csp->calc_y(s0 + 2);
-
+        float x0 = static_cast<float>(csp->calc_x(s0_fp));
+        float y0 = static_cast<float>(csp->calc_y(s0_fp));
+        float x1 = static_cast<float>(csp->calc_x(s0_fp + 2));
+        float y1 = static_cast<float>(csp->calc_y(s0_fp + 2));
         // unit vector orthog. to spline
         tuple<float, float> tvec (y1-y0, -(x1-x0));
         as_unit_vector(tvec);
@@ -178,17 +202,18 @@ extern "C" {
         // compute tangent / normal car vectors
         tuple<float, float> fvec (vx, vy);
         as_unit_vector(fvec);
-
         // get initial conditions in frenet frame
-        initial_conditions[0] = s; // current longitudinal position s
+        initial_conditions[0] = static_cast<float>(s_fp); // current longitudinal position s
         initial_conditions[1] = forward_speed; // speed [m/s]
         // lateral position c_d [m]
-        initial_conditions[2] = copysign(distance, dot(tvec, bvec));
+        initial_conditions[2] = copysign(static_cast<float>(distance), dot(tvec, bvec));
         // lateral speed c_d_d [m/s]
         initial_conditions[3] = -forward_speed * dot(tvec, fvec);
         initial_conditions[4] = 0.0; // lateral acceleration c_d_dd [m/s^2]
         // TODO: add lateral acceleration when CARLA 9.7 is patched (IMU)
 
         delete csp;
+        delete xp_fp;
+        delete yp_fp;
     }
 }

@@ -19,6 +19,7 @@ public:
     // float calc_curvature(fixp_t t);
     fixp_yaw calc_yaw(fixp_s t);
     fixp_s find_s(fixp_x x, fixp_y y, fixp_s s0);
+    bool isValidPath();
 
 private:
     vector<fixp_s> s;

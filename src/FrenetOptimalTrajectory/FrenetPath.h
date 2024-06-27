@@ -35,27 +35,27 @@ public:
     vector<fixp_c> c;          // curvature
 
     // Debug
-    vector<float> ix;
-    vector<float> iy;
-    vector<float> iyaw;
+    vector<fixp_x> ix;
+    vector<fixp_y> iy;
+    vector<fixp_s> iyaw;
 
     // Cost attributes
     // lateral costs
-    fixp_lateral_acceleration c_lateral_deviation = 0.0;
-    fixp_lateral_velocity c_lateral_velocity = 0.0;
-    fixp_lateral_acceleration c_lateral_acceleration = 0.0;
-    fixp_lateral_jerk c_lateral_jerk = 0.0;
-    fixp_c_lateral c_lateral = 0.0;
+    fixp_cf c_lateral_deviation = 0.0;
+    fixp_cf c_lateral_velocity = 0.0;
+    fixp_cf c_lateral_acceleration = 0.0;
+    fixp_cf c_lateral_jerk = 0.0;
+    fixp_cf c_lateral = 0.0;
 
     // longitudinal costs
-    fixp_longitudinal_acceleration c_longitudinal_acceleration = 0.0;
-    fixp_longitudinal_jerk c_longitudinal_jerk = 0.0;
+    fixp_cf c_longitudinal_acceleration = 0.0;
+    fixp_cf c_longitudinal_jerk = 0.0;
     fixp_maxt c_time_taken = 0.0;
-    fixp_end_speed_deviation c_end_speed_deviation = 0.0;
-    fixp_longitudinal c_longitudinal = 0.0;
+    fixp_cf c_end_speed_deviation = 0.0;
+    fixp_cf c_longitudinal = 0.0;
 
     // obstacle costs
-    fixp_inv_dist_to_obstacles c_inv_dist_to_obstacles = 0.0;
+    fixp_cf c_inv_dist_to_obstacles = 0.0;
 
     // final cost
     fixp_cf cf = 0.0;
@@ -64,7 +64,7 @@ public:
     bool to_global_path(CubicSpline2D* csp);
     bool is_valid_path(const vector<Obstacle *> obstacles);
     bool is_collision(const vector<Obstacle *> obstacles);
-    float inverse_distance_to_obstacles(
+    fixp_x inverse_distance_to_obstacles(
         const vector<Obstacle *> obstacles);
 
 private:

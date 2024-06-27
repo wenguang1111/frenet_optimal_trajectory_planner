@@ -1,6 +1,5 @@
 #include "FrenetPath.h"
 #include "utils.h"
-#include "tool/fp_datatype.h"
 #include "cordic.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
@@ -8,35 +7,36 @@
 
 #include <algorithm>
 
-const float COLLISION_CHECK_THRESHOLD = 6; // don't check unless within 6m
+const short COLLISION_CHECK_THRESHOLD = 6; // don't check unless within 6m
 
-FrenetPath::FrenetPath(FrenetHyperparameters_FP *fot_hp_) {
+FrenetPath::FrenetPath(FrenetHyperparameters_FP *fot_hp_){
     fot_hp = fot_hp_;
 }
 
 // Convert the frenet path to global path in terms of x, y, yaw, velocity
 bool FrenetPath::to_global_path(CubicSpline2D* csp) {
-    float ix_, iy_, iyaw_, di, fx, fy, dx, dy;
+    fixp_x ix_, iy_;
+    fixp_yaw iyaw_;
+    fixp_d di;
+    fixp_x fx,dx;
+    fixp_y fy,dy;
     // calc global positions
     for (size_t i = 0; i < s.size(); i++) {
-        float s_i = static_cast<float>(s[i]);
+        fixp_s s_i = s[i];
         ix_ = csp->calc_x(s_i);
         iy_ = csp->calc_y(s_i);
-        if (isnan(ix_) || isnan(iy_)) break;
-
+        //if (isnan(ix_) || isnan(iy_)) break; //FIXME: maybe create bug after deletion
+        if (csp->isValidPath()!=true) break; 
         iyaw_ = csp->calc_yaw(s_i);
         ix.push_back(ix_);
         iy.push_back(iy_);
         iyaw.push_back(iyaw_);
-        di = static_cast<float>(d[i]);
+        di = d[i];
         fx = ix_ + di * cordic_cos(iyaw_ + M_PI_2);
         fy = iy_ + di * cordic_sin(iyaw_ + M_PI_2);
-        // fx = ix_ + di * cos(iyaw_ + M_PI_2);
-        // fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
     }
-
     // not enough points to construct a valid path
     if (x.size() <= 1) {
         return false;
@@ -44,26 +44,31 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
 
     // calc yaw and ds
     for (size_t i = 0; i < x.size() - 1; i++) {
-        dx = static_cast<float>(x[i+1] - x[i]);
-        dy = static_cast<float>(y[i+1] - y[i]);
-        yaw.push_back(atan2(dy, dx));
-        ds.push_back(hypot(dx, dy));
+        dx = x[i+1] - x[i];
+        dy = y[i+1] - y[i];
+        yaw.push_back(cordic_atan<fixp_x>(dy, dx));
+        ds.push_back(sqrt(dx*dx+dy*dy));
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
 
-
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
-        float dyaw = static_cast<float>(yaw[i+1] - yaw[i]);
+        fixp_yaw dyaw = yaw[i+1] - yaw[i];
         if (dyaw > M_PI_2) {
             dyaw -= M_PI;
         } else if (dyaw < -M_PI_2) {
             dyaw += M_PI;
         }
-        c.push_back(dyaw / ds[i]);
+        if(ds[i] == 0)
+        {   //TODO: Here could be the reseaon of bug
+            c.push_back(std::numeric_limits<fixp_c>::max());
+        }
+        else
+        {
+            c.push_back(cnl::quotient(dyaw, ds[i]));
+        }
     }
-
     return true;
 }
 
@@ -102,7 +107,6 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
 
     Pose pose;
     Car car = Car();
-    Vector2f p1, p2;
     Rectangle car_outline;
     // iterate over all obstacles
     for (auto obstacle : obstacles) {
@@ -121,10 +125,10 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
             // only check for collision if one corner of bounding box is
             // within COLLISION_CHECK_THRESHOLD of waypoint
             if (closest <= COLLISION_CHECK_THRESHOLD) {
-                float xp = static_cast<float>(x[i]);
-                float yp = static_cast<float>(y[i]);
-                float yawp = static_cast<float>(yaw[i]);
-                pose.assign({xp, yp, yawp});
+                fixp_x xp = x[i];
+                fixp_y yp = y[i];
+                fixp_yaw yawp = yaw[i];
+                pose=Pose{xp, yp, yawp};
                 car.setPose(pose);
                 car_outline = car.getOutline();
                 if(obstacle->isOverlap(car_outline))
@@ -134,16 +138,14 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
             }
         }
     }
-
-    // no collisions
     return false;
 }
 
 // calculate the sum of 1 / distance_to_obstacle
-float
+fixp_x
 FrenetPath::inverse_distance_to_obstacles(
     const vector<Obstacle *> obstacles) {
-    float total_inverse_distance = 0.0;
+    fixp_x total_inverse_distance = 0.0;
 
     for (auto obstacle : obstacles) {
         fixp_x llx = obstacle->bbox.first.x;
@@ -158,7 +160,15 @@ FrenetPath::inverse_distance_to_obstacles(
             fixp_x d4 = norm(urx - x[i], lly - y[i]);
 
             fixp_x closest = min({d1, d2, d3, d4});
-            total_inverse_distance += static_cast<float>(1.0 / closest);
+
+            if(closest==0)
+            {
+                total_inverse_distance = std::numeric_limits<fixp_x>::max();
+                break;
+            }
+            else{
+                total_inverse_distance += cnl::quotient(fixp_x(1.0) , closest);
+            }
         }
     }
     return total_inverse_distance;

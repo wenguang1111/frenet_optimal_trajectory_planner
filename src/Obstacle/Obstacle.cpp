@@ -6,10 +6,10 @@
 using namespace Eigen;
 using namespace std;
 
-Obstacle::Obstacle(Point_FP first_point, Point_FP second_point, float obstacle_clearance)
+Obstacle::Obstacle(Point first_point, Point second_point, fixp_obstacle_clearance obstacle_clearance)
 {
     // Get topLeft and bottomRight points from the given points.
-    Point_FP tmp;
+    Point tmp;
     if (first_point.x > second_point.x && first_point.y > second_point.y) {
         tmp = first_point;
         first_point = second_point;
@@ -55,13 +55,13 @@ bool Obstacle::isOverlap(Rectangle& car_outline)
 }
 
 bool Obstacle::isSeparated(Rectangle rect1, Rectangle rect2, Vector2D axis) {
-    float min1, max1, min2, max2;
+    fixp_x min1, max1, min2, max2;
 
-    min1 = max1 = dotProduct(rect1.points[0], axis);
+    min1 = max1 =  dotProduct(rect1.points[0], axis);
     min2 = max2 = dotProduct(rect2.points[0], axis);
 
     for (int i = 1; i < 4; i++) {
-        float projection = dotProduct(rect1.points[i], axis);
+        fixp_x projection = dotProduct(rect1.points[i], axis);
         if (projection < min1) min1 = projection;
         if (projection > max1) max1 = projection;
 
@@ -84,8 +84,8 @@ Vector2D Obstacle::subtract(Vector2D a, Vector2D b) {
     return result;
 }
 
-float Obstacle::dotProduct(Vector2D a, Vector2D b) {
-    return static_cast<float>(a.x * b.x + a.y * b.y);
+fixp_x Obstacle::dotProduct(Vector2D a, Vector2D b) {
+    return a.x * b.x + a.y * b.y;
 }
 
 Vector2D Obstacle::perpendicular(Vector2D vector) {

@@ -93,7 +93,7 @@ struct FrenetHyperparameters_FP {
     fixp_maxt mint;
     fixp_s_d d_t_s;
     fixp_s_d n_s_sample;
-    float obstacle_clearance;
+    fixp_obstacle_clearance obstacle_clearance;
     fixp_s_d kd;
     fixp_s_d kv;
     fixp_s_d ka;

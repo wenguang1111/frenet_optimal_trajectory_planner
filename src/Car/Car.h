@@ -25,8 +25,8 @@ public:
     void setPose(Pose p);
     Rectangle getOutline();
 private:
-    float length;
-    float width;
+    fixp_x length;
+    fixp_x width;
     Pose pose; // x, y, yaw
 };
 

@@ -1,6 +1,5 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
-#include "tool/fp_datatype.h"
 #include "cordic.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
@@ -135,4 +134,16 @@ bool CubicSpline2D::are_collinear(fixp_x x1, fixp_y y1, fixp_x x2, fixp_y y2,
     //     Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
     // #endif
     return a <= 0.01;
+}
+
+bool CubicSpline2D::isValidPath()
+{
+    if(sx.isValidPath()==true && sy.isValidPath()==true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

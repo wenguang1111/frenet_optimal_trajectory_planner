@@ -9,45 +9,112 @@
 
 using namespace std;
 
-typedef struct { 
-    float x,y;
-} Point;
-
-typedef struct { 
-    fixp_x x;
-    fixp_y y;
-} Point_FP;
-
-typedef struct {
-    fixp_x x;
-    fixp_y y;
-} Vector2D;
-
-typedef struct {
-    Vector2D points[4];
-} Rectangle;
-
-typedef vector<float> Pose;
-
-inline fixp_x norm(fixp_x x, fixp_y y) {
-    return sqrt(pow_2<fixp_x>(x) + pow_2<fixp_y>(y));
+template<typename T>
+T pow_2(auto a)
+{
+    return a*a;
 }
 
-// inline fixp_x norm_FP(fixp_x x, fixp_y y) {
-//     return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
-// }
+template<typename T>
+T pow_3(auto a)
+{
+    return a*a*a;
+}
 
-// inline void as_unit_vector(tuple<float, float>& vec) {
-//     float magnitude = norm(get<0>(vec), get<1>(vec));
-//     if (magnitude > 0) {
-//         get<0>(vec) = get<0>(vec) / magnitude;
-//         get<1>(vec) = get<1>(vec) / magnitude;
-//     }
+template<typename T>
+T pow_4(auto a)
+{
+    return a*a*a*a;
+}
+
+template<typename T>
+T pow_5(auto a)
+{
+    return a*a*a*a*a;
+}
+struct Point{ 
+    Point()=default;
+    Point(fixp_x a, fixp_y b):x(a),y(b){};
+    Point& operator =(const Point& a)
+    {
+        x=a.x;
+        y=a.y;
+        return *this;
+    }
+    fixp_x x;
+    fixp_y y;
+};
+
+struct Pose{ 
+    fixp_x x;
+    fixp_y y;
+    fixp_yaw yaw;
+    Pose& operator =(const Pose& a)
+    {
+        x=a.x;
+        y=a.y;
+        yaw=a.yaw;
+        return *this;
+    }
+};
+
+struct Vector2D{
+    Vector2D& operator =(const Vector2D& a)
+    {
+        x=a.x;
+        y=a.y;
+        return *this;
+    }
+    fixp_x x;
+    fixp_y y;
+};
+
+struct Rectangle{
+    Rectangle& operator =(const Rectangle& a)
+    {
+        points[0]=a.points[0];
+        points[1]=a.points[1];
+        points[2]=a.points[2];
+        points[3]=a.points[3];
+        return *this;
+    }
+    Vector2D points[4];
+} ;
+
+// typedef vector<float> Pose;
+
+// inline fixp_x norm(fixp_x x, fixp_y y) {
+//     return cnl::sqrt(x*x + y*y);
 // }
+//FIXME: use fixed_x instead of float
+inline fixp_x norm(fixp_x x, fixp_y y) {
+    return sqrt(static_cast<float>(x)*static_cast<float>(x) + static_cast<float>(y)*static_cast<float>(y));
+}
+
+inline float norm_floating(float x, float y) {
+    return std::sqrt(pow(x, 2) + pow(y, 2));
+}
+
+inline void as_unit_vector(tuple<float, float>& vec) {
+    float magnitude = norm_floating(get<0>(vec), get<1>(vec));
+    if (magnitude > 0) {
+        get<0>(vec) = get<0>(vec) / magnitude;
+        get<1>(vec) = get<1>(vec) / magnitude;
+    }
+}
 
 inline float dot(const tuple<float, float>& vec1,
                   const tuple<float, float>& vec2) {
     return get<0>(vec1) * get<0>(vec2) +
            get<1>(vec1) * get<1>(vec2);
+}
+
+template<typename T>
+void assignValueToFixedPoint(T* d_fp, float* d_float, int size)
+{
+    for(int i=0;i<size;i++)
+    {
+        d_fp[i] = d_float[i];
+    }
 }
 #endif //FRENET_OPTIMAL_TRAJECTORY_UTILS_H

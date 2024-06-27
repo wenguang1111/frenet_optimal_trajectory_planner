@@ -36,7 +36,7 @@ public:
     ~FrenetOptimalTrajectory();
     FrenetPath *getBestPath();
     void setObstacles();
-    void addObstacle(Point_FP first_point, Point_FP second_point);
+    void addObstacle(Point first_point, Point second_point);
 
 private:
     FrenetInitialConditions_FP *fot_ic;
@@ -45,11 +45,11 @@ private:
     FrenetPath *best_frenet_path;
     CubicSpline2D *csp;
     vector<Obstacle *> obstacles;
-    vector<float> x, y; // way points
+    vector<fixp_x> x;
+    vector<fixp_y> y; // way points
     vector<FrenetPath *> frenet_paths;
     void calc_frenet_paths(int start_di_index, int end_di_index,
                            bool multithreaded);
-    void threaded_calc_all_frenet_paths();
 };
 
 #endif // FRENET_OPTIMAL_TRAJECTORY_FRENET_OPTIMAL_TRAJECTORY_H
