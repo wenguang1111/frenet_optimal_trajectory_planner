@@ -47,6 +47,8 @@ int_2_13  cordic_sin(int_2_13 theta);
 int_2_13  cordic_cos(int_2_13  theta);
 template<typename T>
 int_2_13 cordic_atan(T y, T x);
+template<typename T>
+T cordic_sqrt(T input);
 // cnl::scaled_integer<int16_t, cnl::power<-13>> sin_int_1_15(cnl::scaled_integer<int16_t, cnl::power<-13>> angle);
 // cnl::scaled_integer<int16_t, cnl::power<-13>> cos_int_1_15(cnl::scaled_integer<int16_t, cnl::power<-13>> angle);
 

@@ -271,3 +271,127 @@ int_2_13 cordic_atan(T y,  T x){
   }
   return z;
 }
+
+float cordic_sqrt(float number)
+{
+  float An = 0.82816;
+  float magic_num = 0.364503; //1/(4*An*An)
+  float x = number + magic_num;
+  float y = number - magic_num;
+  short loop_max = 10;
+  int d_j=0;
+  int j=0;
+  for(int i=0; i<loop_max;i++)
+  {
+    j=i+1;
+    if(y>=0)
+    {
+      d_j = -1;
+    }
+    else
+    {
+      d_j=1;
+    }
+    x = x + y*(d_j>>j);
+    y = y + x*(d_j>>j);
+  }
+  return x;
+}
+
+//https://de.mathworks.com/help/fixedpoint/ug/compute-square-root-using-cordic.html
+template<typename T>
+T cordic_sqrt(T input)
+{
+  T ans;
+  DataRange range = DataRange::in_range;
+  short factor=0;
+  uint_2_14 number=input; 
+  if(input<0.5)
+  {
+    range = DataRange::under_range;
+    factor=1;
+    T u = input<<(2*factor);;
+    while (u<0.5)
+    {
+      factor++;
+      u = input<<(2*factor);
+      if(u>=0.5)
+      {
+        break;
+      } 
+    }
+    number = input<<(2*factor);
+  }
+  else if(input>=2.0)
+  {
+    range = DataRange::abrove_range;
+    factor=1;
+    T u = input>>(2*factor);
+    while (u>=2)
+    {
+      factor++;
+      u = input>>(2*factor);
+      if(u<2)
+      {
+        break;
+      }
+    }
+    number = input>>(2*factor);
+  }
+
+  std::cout << "number= " << number << std::endl;
+  int_2_13 x = number + int_2_13(1);
+  int_2_13 y = number - int_2_13(1);
+
+  short k = 3;
+  short n = 1;
+
+  while(n <= 20 ){
+
+    int_2_13 xn = y>>n;
+    int_2_13 yn = x>>n;
+
+    if(y < 0){ 
+        x = x + xn;
+        y = y + yn; 
+    }
+    else
+    {
+        x = x - xn;
+        y = y - yn;
+    }
+
+    if(n !=4 && n!=13){
+        //k = k-1;
+    }
+    else{
+      xn = y>>n;   // recalculate!
+      yn = x>>n;
+        //k = 3;
+        if(y < 0){ 
+            x = x + xn;
+            y = y + yn;
+        }
+        else
+        {
+            x = x - xn;
+            y = y - yn;
+        }
+    }
+    std::cout <<"x_fix = "<<x<< std::endl;
+    std::cout <<"y_fix = "<<y<< std::endl;
+    n++; 
+  }
+  std::cout << "factor = " << factor << std::endl;
+  if(range == DataRange::abrove_range)
+  {
+    ans = x<<(factor-1);
+    ans *= 1.207497;
+  }
+  else 
+  {
+    ans = x>>(factor+1);
+    ans *= 1.207497;
+  }
+  return ans;
+}

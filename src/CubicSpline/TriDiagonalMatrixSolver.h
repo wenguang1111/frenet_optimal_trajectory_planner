@@ -1,5 +1,5 @@
 #include <vector>
 
-void solveTriDiagonalMatrix(const std::vector<double>& a, const std::vector<double>& b,
-                                     const std::vector<double>& c, const std::vector<double>& d,
-                                     std::vector<double>& result, short n);
+void solveTriDiagonalMatrix(const std::vector<float>& a, const std::vector<float>& b,
+                                     const std::vector<float>& c, const std::vector<float>& d,
+                                     std::vector<float>& result, short n);

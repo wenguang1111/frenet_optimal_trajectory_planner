@@ -13,11 +13,11 @@ using namespace std;
 CubicSpline1D::CubicSpline1D() = default;
 
 // Construct the 1-dimensional cubic spline.
-CubicSpline1D::CubicSpline1D(const vector<double>& v1, //s
-                             const vector<double>& v2): //x or y
+CubicSpline1D::CubicSpline1D(const vector<float>& v1, //s
+                             const vector<float>& v2): //x or y
                              nx(v1.size()), a(v2), x(v1), y(v2){
     // compute elementwise difference
-    vector<double> deltas (nx);
+    vector<float> deltas (nx);
     adjacent_difference(x.begin(), x.end(), deltas.begin());
     deltas.erase(deltas.begin());
     
@@ -74,9 +74,9 @@ float CubicSpline1D::calc_der2(float t) {
     return 2.0 * c[i] + 6.0 * d[i] * dx;
 }
 
-void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &TM_b, 
-                                std::vector<double> &TM_c, std::vector<double> &TM_d, 
-                                std::vector<double> &deltas) {
+void CubicSpline1D::assignValue(std::vector<float> &TM_a, std::vector<float> &TM_b, 
+                                std::vector<float> &TM_c, std::vector<float> &TM_d, 
+                                std::vector<float> &deltas) {
     //initalize the vector for first and last elements
     TM_a[0] = 0;
     TM_a[nx-1] = 0;
@@ -92,12 +92,12 @@ void CubicSpline1D::assignValue(std::vector<double> &TM_a, std::vector<double> &
         TM_c[i+1] = deltas[i+1];
         TM_d[i+1] = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 * 
             (a[i + 1] - a[i]) / deltas[i];
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("assignValue::TM_a", TM_a[i+i]);
-            Recorder::getInstance()->saveData<double>("assignValue::TM_b", TM_b[i+1]);
-            Recorder::getInstance()->saveData<double>("assignValue::TM_c", TM_c[i+1]);
-            Recorder::getInstance()->saveData<double>("assignValue::TM_d", TM_d[i+1]);
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("assignValue::TM_a", TM_a[i+i]);
+        //     Recorder::getInstance()->saveData<float>("assignValue::TM_b", TM_b[i+1]);
+        //     Recorder::getInstance()->saveData<float>("assignValue::TM_c", TM_c[i+1]);
+        //     Recorder::getInstance()->saveData<float>("assignValue::TM_d", TM_d[i+1]);
+        // #endif
     }
 }
 

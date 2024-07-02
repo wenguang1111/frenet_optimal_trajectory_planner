@@ -2,7 +2,7 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plt
 
-file_path = 'variable_double.csv'
+file_path = 'variable_float.csv'
 data = pd.read_csv(file_path)
 
 column_stats = {}

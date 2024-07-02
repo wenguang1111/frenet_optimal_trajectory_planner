@@ -5,8 +5,6 @@
 #include <tuple>
 #include <vector>
 
-#include "tool/fp_datatype.h"
-
 using namespace std;
 
 typedef struct { 
@@ -14,13 +12,13 @@ typedef struct {
 } Point;
 
 typedef struct { 
-    fixp_x x;
-    fixp_y y;
+    float x;
+    float y;
 } Point_FP;
 
 typedef struct {
-    fixp_x x;
-    fixp_y y;
+    float x;
+    float y;
 } Vector2D;
 
 typedef struct {
@@ -33,9 +31,9 @@ inline float norm(float x, float y) {
     return sqrt(pow(x, 2) + pow(y, 2));
 }
 
-inline fixp_x norm_FP(fixp_x x, fixp_y y) {
-    return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
-}
+// inline fixp_x norm_FP(fixp_x x, fixp_y y) {
+//     return sqrt(static_cast<float>(x*x) + static_cast<float>(y*y));
+// }
 
 inline void as_unit_vector(tuple<float, float>& vec) {
     float magnitude = norm(get<0>(vec), get<1>(vec));

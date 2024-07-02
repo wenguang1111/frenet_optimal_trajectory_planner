@@ -169,7 +169,14 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_velocity += abs(lat_qp.calc_first_derivative(t));
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));
-                t += fot_hp->dt;
+                t += fot_hp->dt;      
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", fp->t.back());
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", fp->d.back());
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_d", fp->d_d.back());
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_dd", fp->d_dd.back());
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_ddd", fp->d_ddd.back());
+                #endif
             }
 
             // velocity keeping
@@ -186,6 +193,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 tfp->d_d.assign(fp->d_d.begin(), fp->d_d.end());
                 tfp->d_dd.assign(fp->d_dd.begin(), fp->d_dd.end());
                 tfp->d_ddd.assign(fp->d_ddd.begin(), fp->d_ddd.end());
+
                 QuarticPolynomial lon_qp = QuarticPolynomial(
                     fot_ic->s0, fot_ic->c_speed, 0.0, tv, 0.0, ti);
 
@@ -198,6 +206,12 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     longitudinal_acceleration +=
                         abs(lon_qp.calc_second_derivative(tp));
                     longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));	
+                    #ifdef USE_RECORDER
+                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s", tfp->s.back());
+                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_d", tfp->s_d.back());
+                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_dd", tfp->s_dd.back());
+                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_ddd", tfp->s_ddd.back());
+                    #endif
                 }
 
                 num_paths++;
@@ -271,10 +285,10 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 
 void FrenetOptimalTrajectory::setObstacles() {
     // Construct obstacles
-    vector<fixp_x> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
-    vector<fixp_y> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
-    vector<fixp_x> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
-    vector<fixp_y> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
+    vector<float> llx(fot_ic->o_llx, fot_ic->o_llx + fot_ic->no);
+    vector<float> lly(fot_ic->o_lly, fot_ic->o_lly + fot_ic->no);
+    vector<float> urx(fot_ic->o_urx, fot_ic->o_urx + fot_ic->no);
+    vector<float> ury(fot_ic->o_ury, fot_ic->o_ury + fot_ic->no);
 
     for (int i = 0; i < fot_ic->no; i++) {
         addObstacle(Point_FP(llx[i], lly[i]), Point_FP(urx[i], ury[i]));

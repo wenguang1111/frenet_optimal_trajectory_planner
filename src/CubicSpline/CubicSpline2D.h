@@ -20,11 +20,11 @@ public:
     float find_s(float x, float y, float s0);
 
 private:
-    vector<double> s;
+    vector<float> s;
     CubicSpline1D sx, sy;
-    void calc_s(const vector<double>& x,
-                const vector<double>& y);
-    vector<vector<double>> remove_collinear_points(vector<float> x,
+    void calc_s(const vector<float>& x,
+                const vector<float>& y);
+    vector<vector<float>> remove_collinear_points(vector<float> x,
         vector<float> y);
     bool are_collinear(float x1, float y1, float x2, float y2, float x3, float y3);
 };

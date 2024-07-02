@@ -1,5 +1,4 @@
 #include "Car.h"
-#include "cordic.h"
 
 // Set the pose of the car
 void Car::setPose(Pose p) {

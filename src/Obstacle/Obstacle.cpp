@@ -15,11 +15,11 @@ Obstacle::Obstacle(Point_FP first_point, Point_FP second_point, float obstacle_c
         first_point = second_point;
         second_point = tmp;
     } else if (first_point.x < second_point.x && first_point.y > second_point.y) {
-        fixp_y height = first_point.y - second_point.y;
+        float height = first_point.y - second_point.y;
         first_point.y -= height;
         second_point.y += height;
     } else if (first_point.x > second_point.x && first_point.y < second_point.y) {
-        fixp_x length = first_point.x - second_point.x;
+        float length = first_point.x - second_point.x;
         first_point.x -= length;
         second_point.x += length;
     }
