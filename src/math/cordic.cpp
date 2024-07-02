@@ -37,34 +37,9 @@
 //******************************************************************************
 # include "cordic.h"
 # include "math.h"
-# include <iostream>
 // Table of arctan's for use with CORDIC algorithm
 // Store in decimal representation N = ((2^16)*angle_deg) / 180
-#define ATAN_TAB_N 14
-#define ITERATION 13
-#define PI int_2_13(M_PI)
-#define PI_2 int_2_13(M_PI_2)
-#define PI_4 int_2_13(M_PI_4)
-#define magic_number cnl::scaled_integer<int16_t, cnl::power<-13>>(0.60725293)
-// int atantable[ATAN_TAB_N] = {  0x4000,   //atan(2^0) = 45 degrees
-//                                 0x25C8,   //atan(2^-1) = 26.5651
-//                                 0x13F6,   //atan(2^-2) = 14.0362
-//                                 0x0A22,   //7.12502
-//                                 0x0516,   //3.57633
-//                                 0x028B,   //1.78981
-//                                 0x0145,   //0.895174
-//                                 0x00A2,   //0.447614
-//                                 0x0051,   //0.223808
-//                                 0x0029,   //0.111904
-//                                 0x0014,   //0.05595
-//                                 0x000A,   //0.0279765
-//                                 0x0005,   //0.0139882
-//                                 0x0003,   //0.0069941
-//                                 0x0002,   //0.0035013
-//                                 0x0001    //0.0017485
-// };
-
-int_2_13 atantable[ATAN_TAB_N] = {  int_2_13(0.78539816),   //atan(2^0) =  0.78539816 rad
+int_2_13 atantable[ATAN_TAB_N]={  int_2_13(0.78539816),   //atan(2^0) =  0.78539816 rad
                                 int_2_13(0.46364761),   //atan(2^-1) = 0.46364761 rad
                                 int_2_13(0.24497866),   //atan(2^-2) = 0.24497866 rad
                                 int_2_13(0.12435499),   //0.12435499 rad
@@ -80,15 +55,30 @@ int_2_13 atantable[ATAN_TAB_N] = {  int_2_13(0.78539816),   //atan(2^0) =  0.785
                                 int_2_13(0.00012207)   //0.00012207 rad
 };
 
-// Function to computer sine/cosine using CORDIC
-// Inputs: 
-//  theta = any (integer) angle in degrees
-//  iterations =  number of iterations for CORDIC algorithm, up to 16, 
-//                the ideal value seems to be 13
-//  *sin_result = pointer to where you want the sine result
-//  *cos_result = pointer to where you want the cosine result
+int_3_12 normilize_yaw(int_3_12 theta)
+{
+  if(theta < int_3_12(-PI))
+  {
+    theta += ((-theta+int_3_12(PI))/int_3_12(2*PI))*int_3_12(2*PI);
+  }
+  if(theta > int_3_12(PI))
+  {
+    theta -= ((theta+int_3_12(PI))/int_3_12(2*PI))*int_3_12(2*PI);
+  }
+  return theta;
+}
 
-int_2_13 cordic_sin(int_2_13 theta){
+int_2_13 cordic_cos(int_3_12 theta)
+{
+  return cordic_cos_normalized(normilize_yaw(theta));
+}
+
+int_2_13 cordic_sin(int_3_12 theta)
+{
+  return cordic_sin_normalized(normilize_yaw(theta));
+}
+
+int_2_13 cordic_sin_normalized(int_2_13 theta){
   short sigma,quadAdj,i,shift;
   int_2_13 s, x1, x2, y;
   int_2_13 *atanptr = atantable;
@@ -162,7 +152,7 @@ int_2_13 cordic_sin(int_2_13 theta){
   return ans;
 }
 
-int_2_13 cordic_cos(int_2_13 theta){
+int_2_13 cordic_cos_normalized(int_2_13 theta){
   short sigma,quadAdj,i,shift;
   int_2_13 s, x1, x2, y;
   int_2_13 *atanptr = atantable;
@@ -234,164 +224,5 @@ int_2_13 cordic_cos(int_2_13 theta){
   
   //Adjust for sign change if angle was in quadrant 3 or 4
   ans = quadAdj * ans;
-  return ans;
-}
-
-template<typename T>
-int_2_13 cordic_atan(T y,  T x){
-  int_2_13 z;
-  T x1, x2, y_temp;
-  int_2_13 *atanptr = atantable;
-  char iterations=ITERATION;
-  
-  if (x == 0) {
-    if (y > 0) return PI_2;
-    if (y < 0) return -PI_2;
-    return 0;
-  }
-
-  x1 = x;
-  y_temp = y;
-  
-  //Initial angle
-  z = 0;
-
-  for (short i=0; i<iterations; i++){
-    if(y_temp < 0){
-      x2 = x1 - (y_temp >> i);
-      y_temp = y_temp + (x1 >> i);
-      x1 = x2;
-      z -= *atanptr++;
-    } else{
-      x2 = x1 + (y_temp >> i);
-      y_temp = y_temp - (x1 >> i);
-      x1 = x2;
-      z += *atanptr++;
-    }
-  }
-  return z;
-}
-
-float cordic_sqrt(float number)
-{
-  float An = 0.82816;
-  float magic_num = 0.364503; //1/(4*An*An)
-  float x = number + magic_num;
-  float y = number - magic_num;
-  short loop_max = 10;
-  int d_j=0;
-  int j=0;
-  for(int i=0; i<loop_max;i++)
-  {
-    j=i+1;
-    if(y>=0)
-    {
-      d_j = -1;
-    }
-    else
-    {
-      d_j=1;
-    }
-    x = x + y*(d_j>>j);
-    y = y + x*(d_j>>j);
-  }
-  return x;
-}
-
-//https://de.mathworks.com/help/fixedpoint/ug/compute-square-root-using-cordic.html
-template<typename T>
-T cordic_sqrt(T input)
-{
-  T ans;
-  DataRange range = DataRange::in_range;
-  short factor=0;
-  uint_2_14 number=input; 
-  if(input<0.5)
-  {
-    range = DataRange::under_range;
-    factor=1;
-    T u = input<<(2*factor);;
-    while (u<0.5)
-    {
-      factor++;
-      u = input<<(2*factor);
-      if(u>=0.5)
-      {
-        break;
-      } 
-    }
-    number = input<<(2*factor);
-  }
-  else if(input>=2.0)
-  {
-    range = DataRange::abrove_range;
-    factor=1;
-    T u = input>>(2*factor);
-    while (u>=2)
-    {
-      factor++;
-      u = input>>(2*factor);
-      if(u<2)
-      {
-        break;
-      }
-    }
-    number = input>>(2*factor);
-  }
-
-  std::cout << "number= " << number << std::endl;
-  int_2_13 x = number + int_2_13(1);
-  int_2_13 y = number - int_2_13(1);
-
-  short k = 3;
-  short n = 1;
-
-  while(n <= 20 ){
-
-    int_2_13 xn = y>>n;
-    int_2_13 yn = x>>n;
-
-    if(y < 0){ 
-        x = x + xn;
-        y = y + yn; 
-    }
-    else
-    {
-        x = x - xn;
-        y = y - yn;
-    }
-
-    if(n !=4 && n!=13){
-        //k = k-1;
-    }
-    else{
-      xn = y>>n;   // recalculate!
-      yn = x>>n;
-        //k = 3;
-        if(y < 0){ 
-            x = x + xn;
-            y = y + yn;
-        }
-        else
-        {
-            x = x - xn;
-            y = y - yn;
-        }
-    }
-    std::cout <<"x_fix = "<<x<< std::endl;
-    std::cout <<"y_fix = "<<y<< std::endl;
-    n++; 
-  }
-  std::cout << "factor = " << factor << std::endl;
-  if(range == DataRange::abrove_range)
-  {
-    ans = x<<(factor-1);
-    ans *= 1.207497;
-  }
-  else 
-  {
-    ans = x>>(factor+1);
-    ans *= 1.207497;
-  }
   return ans;
 }
