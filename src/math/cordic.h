@@ -135,10 +135,10 @@ T cordic_sqrt(T input)
   int_2_13 x = number + int_2_13(1);
   int_2_13 y = number - int_2_13(1);
 
-  short k = 3;
+  // short k = 3;
   short n = 1;
 
-  while(n <= 20 ){
+  while(n <= ITERATION ){
 
     int_2_13 xn = y>>n;
     int_2_13 yn = x>>n;
