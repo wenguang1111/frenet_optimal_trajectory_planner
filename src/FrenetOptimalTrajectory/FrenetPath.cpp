@@ -33,13 +33,14 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         // fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<float>("to_global_path::ix", ix.back());
-            Recorder::getInstance()->saveData<float>("to_global_path::iy", iy.back());
-            Recorder::getInstance()->saveData<float>("to_global_path::x", x.back());
-            Recorder::getInstance()->saveData<float>("to_global_path::y", y.back());
-            Recorder::getInstance()->saveData<float>("to_global_path::iyaw", iyaw.back());
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
+        //     Recorder::getInstance()->saveData<float>("ix", ix.back());
+        //     Recorder::getInstance()->saveData<float>("iy", iy.back());
+        //     Recorder::getInstance()->saveData<float>("x", x.back());
+        //     Recorder::getInstance()->saveData<float>("y", y.back());
+        //     Recorder::getInstance()->saveData<float>("iyaw", iyaw.back());
+        // #endif
     }
 
     // not enough points to construct a valid path
@@ -53,18 +54,17 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dy = static_cast<float>(y[i+1] - y[i]);
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<float>("to_global_path::yaw", yaw.back());
-            Recorder::getInstance()->saveData<float>("to_global_path::ds", ds.back());
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
+        //     Recorder::getInstance()->saveData<float>("ds", ds.back());
+        // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
-    #ifdef USE_RECORDER
-        Recorder::getInstance()->saveData<float>("to_global_path::yaw", yaw.back());
-        Recorder::getInstance()->saveData<float>("to_global_path::ds", ds.back());
-    #endif
-
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
+    //     Recorder::getInstance()->saveData<float>("ds", ds.back());
+    // #endif
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -75,9 +75,9 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
             dyaw += M_PI;
         }
         c.push_back(dyaw / ds[i]);
-        #ifdef USE_RECORDER
-        Recorder::getInstance()->saveData<float>("to_global_path::c", c.back());
-    #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("c", c.back());
+        // #endif
     }
 
     return true;

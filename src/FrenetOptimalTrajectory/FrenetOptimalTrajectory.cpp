@@ -170,13 +170,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
                 lateral_jerk += abs(lat_qp.calc_third_derivative(t));
                 t += fot_hp->dt;      
-                #ifdef USE_RECORDER
-                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", fp->t.back());
-                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", fp->d.back());
-                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_d", fp->d_d.back());
-                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_dd", fp->d_dd.back());
-                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_ddd", fp->d_ddd.back());
-                #endif
+                // #ifdef USE_RECORDER
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", fp->t.back());
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", fp->d.back());
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_d", fp->d_d.back());
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_dd", fp->d_dd.back());
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_ddd", fp->d_ddd.back());
+                // #endif
             }
 
             // velocity keeping
@@ -206,17 +206,17 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     longitudinal_acceleration +=
                         abs(lon_qp.calc_second_derivative(tp));
                     longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));	
-                    #ifdef USE_RECORDER
-                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s", tfp->s.back());
-                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_d", tfp->s_d.back());
-                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_dd", tfp->s_dd.back());
-                        Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_ddd", tfp->s_ddd.back());
-                    #endif
+                    // #ifdef USE_RECORDER
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s", tfp->s.back());
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_d", tfp->s_d.back());
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_dd", tfp->s_dd.back());
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_ddd", tfp->s_ddd.back());
+                    // #endif
                 }
-
                 num_paths++;
                 // delete if failure or invalid path
                 bool success = tfp->to_global_path(csp);
+
                 num_viable_paths++;
                 if (!success) {
                     // deallocate memory and continue

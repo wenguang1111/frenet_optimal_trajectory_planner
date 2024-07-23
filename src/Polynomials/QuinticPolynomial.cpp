@@ -31,14 +31,23 @@ QuinticPolynomial::QuinticPolynomial(float xs, float vxs, float axs,
     a4=7*K1/t3-15*K0/t4-4*K2/t2;
     a5=2*K2/t3+6*K0/t5-3*K1/t4; //TODO: The t2-t4 can be removed by using pow() of fp. version.
     // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::K", K);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::K0", K0);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::K1", K1);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::K2", K2);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::t2", t2);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::t3", t3);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::t4", t4);
-    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::t5", t5);
+    //     Recorder::getInstance()->saveData<float>("K", K);
+    //     Recorder::getInstance()->saveData<float>("K0", K0);
+    //     Recorder::getInstance()->saveData<float>("K1", K1);
+    //     Recorder::getInstance()->saveData<float>("K2", K2);
+    //     Recorder::getInstance()->saveData<float>("a0", a0);
+    //     Recorder::getInstance()->saveData<float>("a1", a1);
+    //     Recorder::getInstance()->saveData<float>("a2", a2);
+    //     Recorder::getInstance()->saveData<float>("a3", a3);
+    //     Recorder::getInstance()->saveData<float>("a4", a4);
+    //     Recorder::getInstance()->saveData<float>("a5", a5);
+    //     Recorder::getInstance()->saveData<float>("xs", xs);
+    //     Recorder::getInstance()->saveData<float>("vxs", vxs);
+    //     Recorder::getInstance()->saveData<float>("axs", axs);
+    //     Recorder::getInstance()->saveData<float>("xe", xe);
+    //     Recorder::getInstance()->saveData<float>("vxe", vxe);
+    //     Recorder::getInstance()->saveData<float>("axe", axe);
+    //     Recorder::getInstance()->saveData<float>("t", t);
     // #endif
 }
 
