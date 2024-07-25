@@ -4,8 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patch
 import argparse
+import pandas as pd
+import os
+import math
 from pathlib import Path
 
+def getWaypoints():
+    positions=[[0, 50], [20, 50], [35, 50]]
+    for x in range(50, 100):
+        y = math.sqrt(2500 - (x - 50)**2)
+        positions.append((x, y))
+    return positions
 
 # Run fot planner
 def fot(show_animation=True,
@@ -16,15 +25,17 @@ def fot(show_animation=True,
         's0':
         0,
         'target_speed':
-        20,
+        10,
         'wp': [[0, 0], [50, 0], [120, 0]],  #way point
-        'obs': [[1,3,4,6],[0,-5,2,-3],[3,3,5,6],[3,-5,6,-3],[4,3,6,6],[5,-5,6,-3], [7,3,10,6],[7,-5,10,-3],
-                [12,3,14,6],[16,3,22,6],[10,-10,12,-8],[12,-12,15,-8],
-                [25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
-                [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
-                [56,-4,58,-5],[56,1,58,5],[59,-4,61,-5],[59,1,61,5],[62,-4,63,-5],
-                [62,1,63,5],[65,-4,68,-5],[85, -4, 90, 1], [85, 6, 90, 10]],
-        'pos': [0, 0],
+        # 'obs': [[1,3,4,6],[0,-5,2,-3],[3,3,5,6],[3,-5,6,-3],[4,3,6,6],[5,-5,6,-3], [7,3,10,6],[7,-5,10,-3],
+        #         [12,3,14,6],[16,3,22,6],[10,-10,12,-8],[12,-12,15,-8],
+        #         [25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
+        #         [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
+        #         [56,-4,58,-5],[56,1,58,5],[59,-4,61,-5],[59,1,61,5],
+        #         [62,1,63,5],[65,-4,68,-5],[85, -4, 90, 1], [85, 6, 90, 10]],
+        # 'wp': getWaypoints(),  #way point
+        'obs': [[20,-3,25,3]],
+        'pos': [0, 50],
         'vel': [0, 0],
     }  # paste output from debug log
 
@@ -43,14 +54,14 @@ def fot(show_animation=True,
         "max_curvature": 15.0,
         "max_road_width_l": 6.0,
         "max_road_width_r": 6.0,
-        "d_road_w": 0.2,
-        "dt": 0.2,
+        "d_road_w": 0.5,
+        "dt": 0.5,
         "maxt": 5,
         "mint": 2,
         "d_t_s": 0.1,
-        "n_s_sample": 5.0,
+        "n_s_sample": 1.0,
         "obstacle_clearance": 0.1,
-        "kd": 1.0,
+        "kd": 10.0,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
@@ -72,6 +83,30 @@ def fot(show_animation=True,
     total_time = 0
     total_time_c = 0
     time_list = []
+
+    result_x_list = []
+    result_y_list = []
+    speeds_list = []
+    ix_list = []
+    iy_list = []
+    iyaw_list = []
+    d_list = []
+    s_list = []
+    speeds_x_list = []
+    speeds_y_list = []
+    # misc_list = []
+    # costs_list = []
+    # success_list = []
+
+    symbol = "*"
+
+    # ----------------Debug-------------
+    print(os.getpid())
+    #-----------------------------------
+    n_path=(hyperparameters['max_road_width_l']+hyperparameters['max_road_width_r'])/hyperparameters['d_road_w'] \
+            *(hyperparameters['maxt']-hyperparameters['mint'])/hyperparameters['dt']*2*hyperparameters['n_s_sample']
+    print("Number clear sampling paths: {}".format(n_path))
+    
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
@@ -82,9 +117,22 @@ def fot(show_animation=True,
         end_time = time.time() - start_time
         # print("Time taken: {} s".format(end_time))
         print("Time take by c module:{} ms".format(runtime_c))
+        # print(costs)
         total_time += end_time
         total_time_c += runtime_c
         time_list.append(runtime_c)
+        # -----------------------------for debug print------------------------------
+        result_x_list.append([str(item) for item in result_x] + [symbol])
+        result_y_list.append([str(item) for item in result_y] + [symbol])
+        speeds_list.append([str(item) for item in speeds] + [symbol])
+        ix_list.append([str(item) for item in ix] + [symbol])
+        iy_list.append([str(item) for item in iy] + [symbol])
+        iyaw_list.append([str(item) for item in iyaw] + [symbol])
+        d_list.append([str(item) for item in d] + [symbol])
+        s_list.append([str(item) for item in s] + [symbol])
+        speeds_x_list.append([str(item) for item in speeds_x] + [symbol])
+        speeds_y_list.append([str(item) for item in speeds_y] + [symbol])
+        # ----------------------------------------------------------
 
         # reconstruct initial_conditions
         if success:
@@ -128,6 +176,39 @@ def fot(show_animation=True,
                 Path("img/frames").mkdir(parents=True, exist_ok=True)
                 plt.savefig("img/frames/{}.jpg".format(i))
             plt.pause(0.1)
+
+    # -----------------------------for debug print -----------------------------
+    flat_x_list = [item for sublist in result_x_list for item in sublist]
+    flat_y_list = [item for sublist in result_y_list for item in sublist]
+    flat_speeds_list = [item for sublist in speeds_list for item in sublist]
+    flat_ix_list = [item for sublist in ix_list for item in sublist]
+    flat_iy_list = [item for sublist in iy_list for item in sublist]
+    flat_iyaw_list = [item for sublist in iyaw_list for item in sublist]
+    flat_d_list = [item for sublist in d_list for item in sublist]
+    flat_s_list = [item for sublist in s_list for item in sublist]
+    flat_speeds_x_list = [item for sublist in speeds_x_list for item in sublist]
+    flat_speeds_y_list = [item for sublist in speeds_y_list for item in sublist]
+    
+    df_results = pd.DataFrame({
+        'result_x': flat_x_list,
+        'result_y': flat_y_list,
+        'speed': flat_speeds_list,
+        'ix': flat_ix_list,
+        'iy': flat_iy_list,
+        'iyaw': flat_iyaw_list,
+        'd': flat_d_list,
+        's': flat_s_list,
+        'speeds_x': flat_speeds_x_list,
+        'speeds_y': flat_speeds_y_list,
+        # 'misc': flat_misc_list,
+        # 'costs': flat_costs_list,
+        # 'success': flat_success_list
+    })
+    # Save the DataFrame to a CSV file
+    csv_file = 'output_value.csv'
+    df_results.to_csv(csv_file, index=False)
+    print(f'Results saved to {csv_file}')
+    # ----------------------------------------------------------
 
     print("Finish")
 

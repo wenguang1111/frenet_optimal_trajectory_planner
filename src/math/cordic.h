@@ -43,12 +43,17 @@
 
 extern int_2_13 atantable[ATAN_TAB_N]; 
 
+enum DataRange{
+  under_range = 1,
+  in_range = 2,
+  abrove_range =3 
+};
+
 int_2_13  cordic_sin(int_3_12 theta);
 int_2_13  cordic_cos(int_3_12  theta);
 int_2_13  cordic_sin_normalized(int_2_13 theta);
 int_2_13  cordic_cos_normalized(int_2_13 theta);
 int_3_12  normilize_yaw(int_3_12 theta);
-
 
 template<typename T>
 int_2_13 cordic_atan(T y,  T x){
@@ -83,6 +88,100 @@ int_2_13 cordic_atan(T y,  T x){
     }
   }
   return z;
+}
+
+//https://de.mathworks.com/help/fixedpoint/ug/compute-square-root-using-cordic.html
+template<typename T>
+T cordic_sqrt(T input)
+{
+  T ans;
+  DataRange range = DataRange::in_range;
+  short factor=0;
+  uint_2_14 number=input; 
+  if(input<0.5)
+  {
+    range = DataRange::under_range;
+    factor=1;
+    T u = input<<(2*factor);;
+    while (u<0.5)
+    {
+      factor++;
+      u = input<<(2*factor);
+      if(u>=0.5)
+      {
+        break;
+      } 
+    }
+    number = input<<(2*factor);
+  }
+  else if(input>=2.0)
+  {
+    range = DataRange::abrove_range;
+    factor=1;
+    T u = input>>(2*factor);
+    while (u>=2)
+    {
+      factor++;
+      u = input>>(2*factor);
+      if(u<2)
+      {
+        break;
+      }
+    }
+    number = input>>(2*factor);
+  }
+
+  int_2_13 x = number + int_2_13(1);
+  int_2_13 y = number - int_2_13(1);
+
+  // short k = 3;
+  short n = 1;
+
+  while(n <= ITERATION ){
+
+    int_2_13 xn = y>>n;
+    int_2_13 yn = x>>n;
+
+    if(y < 0){ 
+        x = x + xn;
+        y = y + yn; 
+    }
+    else
+    {
+        x = x - xn;
+        y = y - yn;
+    }
+
+    if(n !=4 && n!=13){
+        //k = k-1;
+    }
+    else{
+      xn = y>>n;   // recalculate!
+      yn = x>>n;
+        //k = 3;
+        if(y < 0){ 
+            x = x + xn;
+            y = y + yn;
+        }
+        else
+        {
+            x = x - xn;
+            y = y - yn;
+        }
+    }
+    n++; 
+  }
+  if(range == DataRange::abrove_range)
+  {
+    ans = x<<(factor-1);
+    ans *= 1.207497;
+  }
+  else 
+  {
+    ans = x>>(factor+1);
+    ans *= 1.207497;
+  }
+  return ans;
 }
 
 #endif /* CORDIC_H */

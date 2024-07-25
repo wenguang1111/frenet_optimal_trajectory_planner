@@ -36,6 +36,14 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         fy = iy_ + di * cordic_sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
+            Recorder::getInstance()->saveData<float>("ix", static_cast<float>(ix.back()));
+            Recorder::getInstance()->saveData<float>("iy", static_cast<float>(iy.back()));
+            Recorder::getInstance()->saveData<float>("x", static_cast<float>(x.back()));
+            Recorder::getInstance()->saveData<float>("y", static_cast<float>(y.back()));
+            Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(iyaw.back()));
+        #endif
     }
     // not enough points to construct a valid path
     if (x.size() <= 1) {
@@ -47,10 +55,18 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dx = x[i+1] - x[i];
         dy = y[i+1] - y[i];
         yaw.push_back(cordic_atan<fixp_x>(dy, dx));
-        ds.push_back(sqrt(dx*dx+dy*dy));
+        ds.push_back(norm<fixp_ds>(dx,dy));
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("yaw",  static_cast<float>(yaw.back()));
+            Recorder::getInstance()->saveData<float>("ds",  static_cast<float>(ds.back()));
+        #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(yaw.back()));
+    //     Recorder::getInstance()->saveData<float>("ds", static_cast<float>(ds.back()));
+    // #endif
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -68,6 +84,9 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         {
             c.push_back(cnl::quotient(dyaw, ds[i]));
         }
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("c", static_cast<float>(c.back()));
+        #endif
     }
     return true;
 }
@@ -116,10 +135,10 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
         fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
-            fixp_x d1 = norm(llx - x[i], lly - y[i]);
-            fixp_x d2 = norm(llx - x[i], ury - y[i]);
-            fixp_x d3 = norm(urx - x[i], ury - y[i]);
-            fixp_x d4 = norm(urx - x[i], lly - y[i]);
+            fixp_x d1 = norm<fixp_x>(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm<fixp_x>(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm<fixp_x>(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm<fixp_x>(urx - x[i], lly - y[i]);
 
             fixp_x closest = min({d1, d2, d3, d4});
             // only check for collision if one corner of bounding box is
@@ -154,10 +173,10 @@ FrenetPath::inverse_distance_to_obstacles(
         fixp_y ury = obstacle->bbox.second.y;
 
         for (size_t i = 0; i < x.size(); i++) {
-            fixp_x d1 = norm(llx - x[i], lly - y[i]);
-            fixp_x d2 = norm(llx - x[i], ury - y[i]);
-            fixp_x d3 = norm(urx - x[i], ury - y[i]);
-            fixp_x d4 = norm(urx - x[i], lly - y[i]);
+            fixp_x d1 = norm<fixp_x>(llx - x[i], lly - y[i]);
+            fixp_x d2 = norm<fixp_x>(llx - x[i], ury - y[i]);
+            fixp_x d3 = norm<fixp_x>(urx - x[i], ury - y[i]);
+            fixp_x d4 = norm<fixp_x>(urx - x[i], lly - y[i]);
 
             fixp_x closest = min({d1, d2, d3, d4});
 

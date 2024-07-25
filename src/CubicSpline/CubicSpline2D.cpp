@@ -37,7 +37,7 @@ void CubicSpline2D::calc_s(const vector<fixp_x>& x,
     fixp_cum_sum cum_sum = 0.0;
     s.push_back(cum_sum);
     for (int i = 0; i < nx - 1; i++) {
-        cum_sum += norm(dx[i], dy[i]);
+        cum_sum += norm<fixp_x>(dx[i], dy[i]);
         // #ifdef USE_RECORDER
         //     Recorder::getInstance()->saveData<double>("CubicSpline2D::calc_s::cum_sum", cum_sum);
         // #endif
@@ -84,7 +84,7 @@ fixp_s CubicSpline2D::find_s(fixp_x x, fixp_y y, fixp_s s0) {
     do {
         fixp_x px = calc_x(si);
         fixp_y py = calc_y(si);
-        fixp_x dist = norm(x - px, y - py);
+        fixp_x dist = norm<fixp_x>(x - px, y - py);
         if (dist < closest) {
             closest = dist;
             s_closest = si;

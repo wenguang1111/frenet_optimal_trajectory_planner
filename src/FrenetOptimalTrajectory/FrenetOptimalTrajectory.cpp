@@ -117,6 +117,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             lateral_jerk = 0;
 
             fp = new FrenetPath(fot_hp);
+
             QuinticPolynomial lat_qp = QuinticPolynomial(
                 fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, di, 0.0, 0.0, ti);
             // construct frenet path
@@ -132,6 +133,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 lateral_acceleration += abs(fp->d_dd.back());
                 lateral_jerk += abs(fp->d_ddd.back());
                 t += fot_hp->dt;
+                // #ifdef USE_RECORDER
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", static_cast<float>(fp->t.back()));
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", static_cast<float>(fp->d.back()));
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_d", static_cast<float>(fp->d_d.back()));
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_dd", static_cast<float>(fp->d_dd.back()));
+                //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_ddd", static_cast<float>(fp->d_ddd.back()));
+                // #endif
             }
             // velocity keeping
             tv = fot_ic->target_speed - fot_hp->d_t_s * fot_hp->n_s_sample;
@@ -156,8 +164,14 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     tfp->s_dd.push_back(lon_qp.calc_second_derivative(tp));
                     tfp->s_ddd.push_back(lon_qp.calc_third_derivative(tp));
                     longitudinal_acceleration +=
-                        abs(tfp->s_dd.back());
-                    longitudinal_jerk += abs(tfp->s_ddd.back());	
+                        abs(lon_qp.calc_second_derivative(tp));
+                    longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));
+                    // #ifdef USE_RECORDER
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s", static_cast<float>(tfp->s.back()));
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_d", static_cast<float>(tfp->s_d.back()));
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_dd", static_cast<float>(tfp->s_dd.back()));
+                    //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_ddd", static_cast<float>(tfp->s_ddd.back()));
+                    // #endif
                 }
                 num_paths++;
                 debug += 1;
@@ -181,9 +195,9 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 bool valid_path = tfp->is_valid_path(obstacles);
                 if(!valid_path)
                 {
-                    #ifdef USE_RECORDER
-                        Recorder::getInstance()->saveData<double>("noValid", debug+600000);
-                    #endif
+                    // #ifdef USE_RECORDER
+                    //     Recorder::getInstance()->saveData<double>("noValid", debug+600000);
+                    // #endif
                 }
                 if (!valid_path) {
                     delete tfp;

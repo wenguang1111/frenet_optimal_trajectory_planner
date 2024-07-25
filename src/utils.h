@@ -79,20 +79,16 @@ struct Rectangle{
         return *this;
     }
     Vector2D points[4];
-} ;
+};
 
-// typedef vector<float> Pose;
-
-// inline fixp_x norm(fixp_x x, fixp_y y) {
-//     return cnl::sqrt(x*x + y*y);
-// }
-//FIXME: use fixed_x instead of float
-inline fixp_x norm(fixp_x x, fixp_y y) {
-    return sqrt(static_cast<float>(x)*static_cast<float>(x) + static_cast<float>(y)*static_cast<float>(y));
+template <typename T>
+inline T norm(T x, T y) {
+    return cnl::sqrt(x*x+y*y);
+    // return cnl::sqrt(x*x + y*y);
 }
 
 inline float norm_floating(float x, float y) {
-    return std::sqrt(pow(x, 2) + pow(y, 2));
+    return sqrt(pow(x, 2) + pow(y, 2));
 }
 
 inline void as_unit_vector(tuple<float, float>& vec) {

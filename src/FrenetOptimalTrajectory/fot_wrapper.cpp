@@ -187,7 +187,7 @@ extern "C" {
         fixp_y y_fp = y;
         fixp_s s0_fp = s0;
         fixp_s s_fp = csp->find_s(x_fp, y_fp, s0_fp);
-        fixp_x distance = norm(csp->calc_x(s_fp) - x_fp, csp->calc_y(s_fp) - y_fp);
+        fixp_x distance = norm<fixp_x>(csp->calc_x(s_fp) - x_fp, csp->calc_y(s_fp) - y_fp);
         tuple<float, float> bvec ((static_cast<float>(csp->calc_x(s_fp) - x_fp) / distance),
                 (static_cast<float>(csp->calc_y(s_fp) - y_fp) / distance));
         // normal spline vector

@@ -42,12 +42,17 @@ CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
         d.push_back(cnl::quotient((c[i + 1] - c[i]), (fixp_x(3.0) * deltas[i])));
         b.push_back(cnl::quotient((a[i + 1] - a[i]), deltas[i]) - 
             cnl::quotient(deltas[i]*(c[i + 1] + fixp_x(2.0) * c[i]), fixp_x(3.0)));
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::deltas", deltas[i]);
+        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::b", b[i1]);
+        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::d", d[i1]);
+        // #endif
     }
 }
 
 // Calculate the 0th derivative evaluated at t
 fixp_x CubicSpline1D::calc_der0(fixp_s t) {
-    if (t < x.front() || t >= (x.back()+fixp_position_error)) {
+    if (t < x.front()-fixp_position_error || t >= (x.back()+fixp_position_error)) {
         validPath = false;
         return std::numeric_limits<fixp_x>::max();//FIXME: there could make bug
     }
@@ -59,7 +64,7 @@ fixp_x CubicSpline1D::calc_der0(fixp_s t) {
 
 // Calculate the 1st derivative evaluated at t
 fixp_dx CubicSpline1D::calc_der1(fixp_s t) {
-    if (t < x.front() || t >= (x.back()+fixp_position_error)) {
+    if (t < x.front()-fixp_position_error || t >= (x.back()+fixp_position_error)) {
         validPath = false;
         return std::numeric_limits<fixp_dx>::max();//FIXME: there could make bug
     }
