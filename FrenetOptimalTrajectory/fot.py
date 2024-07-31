@@ -26,16 +26,16 @@ def fot(show_animation=True,
         0,
         'target_speed':
         10,
-        # 'wp': [[0, 0], [50, 0], [120, 0]],  #way point
+        'wp': [[0, 0], [50, 0], [100, 0]],  #way point
         # 'obs': [[1,3,4,6],[0,-5,2,-3],[3,3,5,6],[3,-5,6,-3],[4,3,6,6],[5,-5,6,-3], [7,3,10,6],[7,-5,10,-3],
         #         [12,3,14,6],[16,3,22,6],[10,-10,12,-8],[12,-12,15,-8],
         #         [25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
         #         [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
         #         [56,-4,58,-5],[56,1,58,5],[59,-4,61,-5],[59,1,61,5],
         #         [62,1,63,5],[65,-4,68,-5],[85, -4, 90, 1], [85, 6, 90, 10]],
-        'wp': getWaypoints(),  #way point
+        # 'wp': getWaypoints(),  #way point
         'obs': [[20,-3,25,3]],
-        'pos': [0, 50],
+        'pos': [0, 0],
         'vel': [0, 0],
     }  # paste output from debug log
 
@@ -59,9 +59,9 @@ def fot(show_animation=True,
         "maxt": 5,
         "mint": 2,
         "d_t_s": 0.1,
-        "n_s_sample": 1.0,
+        "n_s_sample": 2.0,
         "obstacle_clearance": 0.1,
-        "kd": 10.0,
+        "kd": 1.0,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
@@ -101,8 +101,11 @@ def fot(show_animation=True,
     symbol = "*"
 
     # ----------------Debug-------------
-    print(os.getpid()) 
+    print(os.getpid())
     #-----------------------------------
+    n_path=(hyperparameters['max_road_width_l']+hyperparameters['max_road_width_r'])/hyperparameters['d_road_w'] \
+            *(hyperparameters['maxt']-hyperparameters['mint'])/hyperparameters['dt']*2*hyperparameters['n_s_sample']
+    print("Number clear sampling paths: {}".format(n_path))
     
     for i in range(sim_loop):
         # run FOT and keep time
@@ -114,7 +117,7 @@ def fot(show_animation=True,
         end_time = time.time() - start_time
         # print("Time taken: {} s".format(end_time))
         print("Time take by c module:{} ms".format(runtime_c))
-        print(costs)
+        # print(costs)
         total_time += end_time
         total_time_c += runtime_c
         time_list.append(runtime_c)

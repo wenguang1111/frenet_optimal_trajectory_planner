@@ -37,10 +37,13 @@ void CubicSpline2D::calc_s(const vector<float>& x,
     s.push_back(cum_sum);
     for (int i = 0; i < nx - 1; i++) {
         cum_sum += norm(dx[i], dy[i]);
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_s::cum_sum", cum_sum);
-        // #endif
         s.push_back(cum_sum);
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_s::cum_sum", cum_sum);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_s::dx", dx.back());
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_s::dy", dy.back());
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_s::s", s.back());
+        #endif
     }
     s.erase(unique(s.begin(), s.end()), s.end());
 }
@@ -63,13 +66,13 @@ float CubicSpline2D::calc_curvature(float t){
     float ddy = sy.calc_der2(t);
     float k = (ddy * dx - ddx * dy) /
             pow(pow(dx, 2) + pow(dy, 2), 1.5);
-    // #ifdef USE_RECORDER
-    //         Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::dx", dx);
-    //         Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::ddx", ddx);
-    //         Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::dy", dy);
-    //         Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::ddy", ddy);
-    //         Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::k", k);
-    // #endif
+    #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::dx", dx);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::ddx", ddx);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::dy", dy);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::ddy", ddy);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_curvature::k", k);
+    #endif
     return k;
 }
 
@@ -78,11 +81,11 @@ float CubicSpline2D::calc_yaw(float t) {
     float dx = sx.calc_der1(t);
     float dy = sy.calc_der1(t);
     float yaw = atan2(dy, dx);
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::dx", dx);
-    //     Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::dy", dy);
-    //     Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::yaw", yaw);
-    // #endif
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::dx", dx);
+        Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::dy", dy);
+        Recorder::getInstance()->saveData<float>("CubicSpline2D::calc_yaw::yaw", yaw);
+    #endif
     return yaw;
 }
 
@@ -101,13 +104,13 @@ float CubicSpline2D::find_s(float x, float y, float s0) {
             s_closest = si;
         }
         si += 0.1;
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::px", px);
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::py", py);
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::s_closest", s_closest);
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::closest", closest);
-        //     Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::dist", dist);
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::px", px);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::py", py);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::s_closest", s_closest);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::closest", closest);
+            Recorder::getInstance()->saveData<float>("CubicSpline2D::find_s::dist", dist);
+        #endif
     } while (si < s.back());
     return s_closest;
 }
@@ -147,8 +150,8 @@ bool CubicSpline2D::are_collinear(float x1, float y1, float x2, float y2,
     float a = x1 * (y2 - y3) +
                x2 * (y3 - y1) +
                x3 * (y1 - y2);
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("CubicSpline2D::are_collinear::a", a);
-    // #endif
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<float>("CubicSpline2D::are_collinear::a", a);
+    #endif
     return a <= 0.01;
 }

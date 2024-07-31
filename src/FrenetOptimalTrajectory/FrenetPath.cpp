@@ -29,18 +29,23 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         di = d[i];
         fx = ix_ + di * cos(iyaw_ + M_PI_2);
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
-        // fx = ix_ + di * cos(iyaw_ + M_PI_2);
-        // fy = iy_ + di * sin(iyaw_ + M_PI_2);
+
         x.push_back(fx);
         y.push_back(fy);
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
-        //     Recorder::getInstance()->saveData<float>("ix", ix.back());
-        //     Recorder::getInstance()->saveData<float>("iy", iy.back());
-        //     Recorder::getInstance()->saveData<float>("x", x.back());
-        //     Recorder::getInstance()->saveData<float>("y", y.back());
-        //     Recorder::getInstance()->saveData<float>("iyaw", iyaw.back());
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("FrenetPath::s_i", s_i);
+            Recorder::getInstance()->saveData<float>("FrenetPath::ix_", ix_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::iy_", iy_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::iyaw_", iyaw_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::i", static_cast<float>(i));
+            Recorder::getInstance()->saveData<float>("FrenetPath::ix", ix.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::iy", iy.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::x", x.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::y", y.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::iyaw", iyaw.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::fx", fx);
+            Recorder::getInstance()->saveData<float>("FrenetPath::fy", fy);
+        #endif
     }
 
     // not enough points to construct a valid path
@@ -54,17 +59,15 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         dy = static_cast<float>(y[i+1] - y[i]);
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
-        //     Recorder::getInstance()->saveData<float>("ds", ds.back());
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("FrenetPath::dx", dx);
+            Recorder::getInstance()->saveData<float>("FrenetPath::dy", dy);
+            Recorder::getInstance()->saveData<float>("FrenetPath::yaw", yaw.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::ds", ds.back());
+        #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
-    //     Recorder::getInstance()->saveData<float>("ds", ds.back());
-    // #endif
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -75,9 +78,10 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
             dyaw += M_PI;
         }
         c.push_back(dyaw / ds[i]);
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("c", c.back());
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("FrenetPath::dyaw", dyaw);
+            Recorder::getInstance()->saveData<float>("FrenetPath::c", c.back());
+        #endif
     }
 
     return true;
@@ -126,6 +130,13 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
         float lly = obstacle->bbox.first.y;
         float urx = obstacle->bbox.second.x;
         float ury = obstacle->bbox.second.y;
+
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("FrenetPath::llx", llx);
+            Recorder::getInstance()->saveData<float>("FrenetPath::lly", lly);
+            Recorder::getInstance()->saveData<float>("FrenetPath::urx", urx);
+            Recorder::getInstance()->saveData<float>("FrenetPath::ury", ury);
+        #endif
 
         for (size_t i = 0; i < x.size(); i++) {
             float d1 = norm(llx - x[i], lly - y[i]);

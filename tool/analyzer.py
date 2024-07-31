@@ -8,13 +8,20 @@ data = pd.read_csv(file_path)
 column_stats = {}
 TOTAL_BITS = 16
 
-def calculate_fixed_point_data_type(value):
-    if value==0:
-        int_bits=1
+def calculate_fixed_point_data_type(value, uint):
+    if uint == True:
+        extra_bit = 0
     else:
-        int_bits = math.ceil(math.log2(math.ceil(abs(value))))+1
-    frac_bits = TOTAL_BITS - int_bits -1
-    data_type = f'int_{int_bits}_{frac_bits}'
+        extra_bit = 1
+    if value==0:
+        int_bits=0
+    else:
+        int_bits = math.ceil(math.log2(math.ceil(abs(value))))
+    frac_bits = TOTAL_BITS - int_bits - extra_bit
+    if uint==True:
+        data_type = f'uint_{int_bits}_{frac_bits}'
+    else:
+        data_type = f'int_{int_bits}_{frac_bits}'
     
     return data_type
 
@@ -35,5 +42,5 @@ for column, stats in column_stats.items():
     print("num_cal/max(num_call[i]):", stats['num_cal']/max_num_cal*100)
     print("max_value:", stats['max_value'])
     print("min_value:", stats['min_value'])
-    print("data_type:",calculate_fixed_point_data_type(max(abs(stats['max_value']), abs(stats['min_value']))))
+    print("data_type:",calculate_fixed_point_data_type(max(abs(stats['max_value']), abs(stats['min_value'])), stats['max_value']>=0 and stats['min_value']>=0))
     print("\n")

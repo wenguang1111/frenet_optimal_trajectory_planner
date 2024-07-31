@@ -4,51 +4,15 @@
 #endif
 
 #include <cmath>
+#include <iostream>
 
 QuinticPolynomial::QuinticPolynomial(float xs, float vxs, float axs,
         float xe, float vxe, float axe, float t):
         a0(xs), a1(vxs) {
     a2 = axs / 2.0;
-
-    //Gaussian elimination
-    float K;
-    float K0;
-    float K1;
-    float K2;
-    float t2;
-    float t3;
-    float t4;
-    float t5;
-    t2=pow(t,2);
-    t3=pow(t,3);
-    t4=pow(t,4);
-    t5=pow(t,5);
-    K=a0+a1*t+a2*t2;
-    K0=xe-K;
-    K1=vxe-2*a2*t-a1;
-    K2=axe-2*a2;
-    a3=10*K0/t3-4*K1/t2+2*K2/t;
-    a4=7*K1/t3-15*K0/t4-4*K2/t2;
-    a5=2*K2/t3+6*K0/t5-3*K1/t4; //TODO: The t2-t4 can be removed by using pow() of fp. version.
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("K", K);
-    //     Recorder::getInstance()->saveData<float>("K0", K0);
-    //     Recorder::getInstance()->saveData<float>("K1", K1);
-    //     Recorder::getInstance()->saveData<float>("K2", K2);
-    //     Recorder::getInstance()->saveData<float>("a0", a0);
-    //     Recorder::getInstance()->saveData<float>("a1", a1);
-    //     Recorder::getInstance()->saveData<float>("a2", a2);
-    //     Recorder::getInstance()->saveData<float>("a3", a3);
-    //     Recorder::getInstance()->saveData<float>("a4", a4);
-    //     Recorder::getInstance()->saveData<float>("a5", a5);
-    //     Recorder::getInstance()->saveData<float>("xs", xs);
-    //     Recorder::getInstance()->saveData<float>("vxs", vxs);
-    //     Recorder::getInstance()->saveData<float>("axs", axs);
-    //     Recorder::getInstance()->saveData<float>("xe", xe);
-    //     Recorder::getInstance()->saveData<float>("vxe", vxe);
-    //     Recorder::getInstance()->saveData<float>("axe", axe);
-    //     Recorder::getInstance()->saveData<float>("t", t);
-    // #endif
+    a3 = (-3*axs+2*axe+(-6*vxs-4*vxe+10*(xe-xs)/t)/t)/t;
+    a4 = (9.0/2.0*axs-4*axe+(7*vxe+8*vxs+15*(xs-xe)/t)/t)/(t*t);
+    a5 = (2*axe-2*axs+(-3*vxe-3*vxs+6*(xe-xs)/t)/t)/(t*t*t);
 }
 
 float QuinticPolynomial::calc_point(float t) {
@@ -67,4 +31,34 @@ float QuinticPolynomial::calc_second_derivative(float t) {
 
 float QuinticPolynomial::calc_third_derivative(float t) {
     return 6 * a3 + 24 * a4 * t + 60 * a5 * pow(t, 2);
+}
+
+float QuinticPolynomial::getA0()
+{
+    return a0;
+}
+
+float QuinticPolynomial::getA1()
+{
+    return a1;
+}
+
+float QuinticPolynomial::getA2()
+{
+    return a2;
+}
+
+float QuinticPolynomial::getA3()
+{
+    return a3;
+}
+
+float QuinticPolynomial::getA4()
+{
+    return a4;
+}
+
+float QuinticPolynomial::getA5()
+{
+    return a5;
 }
