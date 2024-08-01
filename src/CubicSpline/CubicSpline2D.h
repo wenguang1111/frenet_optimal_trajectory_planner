@@ -18,6 +18,10 @@ public:
     float calc_curvature(float t);
     float calc_yaw(float t);
     float find_s(float x, float y, float s0);
+    inline float getEndOfS()
+    {
+        return s.back();
+    }
 
 private:
     vector<float> s;

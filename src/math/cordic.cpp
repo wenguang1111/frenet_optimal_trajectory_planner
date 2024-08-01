@@ -39,51 +39,68 @@
 # include "math.h"
 // Table of arctan's for use with CORDIC algorithm
 // Store in decimal representation N = ((2^16)*angle_deg) / 180
-int_2_13 atantable[ATAN_TAB_N]={  int_2_13(0.78539816),   //atan(2^0) =  0.78539816 rad
-                                int_2_13(0.46364761),   //atan(2^-1) = 0.46364761 rad
-                                int_2_13(0.24497866),   //atan(2^-2) = 0.24497866 rad
-                                int_2_13(0.12435499),   //0.12435499 rad
-                                int_2_13(0.06241881),   //0.06241881 rad
-                                int_2_13(0.03123983),   //0.03123983 rad
-                                int_2_13(0.01562373),   //0.01562373 rad
-                                int_2_13(0.00781234),   //0.00781234 rad
-                                int_2_13(0.00390623),   //0.00390623 rad
-                                int_2_13(0.00195312),   //0.00195312 rad
-                                int_2_13(0.00097656),   //0.00097656 rad
-                                int_2_13(0.00048828),   //0.00048828 rad
-                                int_2_13(0.00024414),   //0.00024414 rad
-                                int_2_13(0.00012207)   //0.00012207 rad
+Trignometric atantable[ATAN_TAB_N]={  Trignometric(0.78539816),   //atan(2^0) =  0.78539816 rad
+                                Trignometric(0.46364761),   //atan(2^-1) = 0.46364761 rad
+                                Trignometric(0.24497866),   //atan(2^-2) = 0.24497866 rad
+                                Trignometric(0.12435499),   //0.12435499 rad
+                                Trignometric(0.06241881),   //0.06241881 rad
+                                Trignometric(0.03123983),   //0.03123983 rad
+                                Trignometric(0.01562373),   //0.01562373 rad
+                                Trignometric(0.00781234),   //0.00781234 rad
+                                Trignometric(0.00390623),   //0.00390623 rad
+                                Trignometric(0.00195312),   //0.00195312 rad
+                                Trignometric(0.00097656),   //0.00097656 rad
+                                Trignometric(0.00048828),   //0.00048828 rad
+                                Trignometric(0.00024414),   //0.00024414 rad
+                                Trignometric(0.00012207),   //0.00012207 rad
+                                Trignometric(0.000061035),
+                                Trignometric(0.000030518),
+                                Trignometric(0.000015259),
+                                Trignometric(0.000007629),
+                                Trignometric(0.000003815),
+                                Trignometric(0.000001907),
+                                Trignometric(0.000000954),
+                                Trignometric(0.000000477),
+                                Trignometric(0.000000238),
+                                Trignometric(0.000000119),
+                                Trignometric(0.00000006),
+                                Trignometric(0.00000003),
+                                Trignometric(0.000000015),
+                                Trignometric(0.0000000075),
+                                Trignometric(0.000000004),
+                                Trignometric(0.000000002),
+                                Trignometric(0.000000001)                        
 };
 
-int_3_12 normilize_yaw(int_3_12 theta)
+Trignometric normilize_yaw(Trignometric theta)
 {
-  if(theta < int_3_12(-PI))
+  if(theta < Trignometric(-PI))
   {
-    theta += ((-theta+int_3_12(PI))/int_3_12(2*PI))*int_3_12(2*PI);
+    theta += ((-theta+Trignometric(PI))/Trignometric(2*PI))*Trignometric(2*PI);
   }
-  if(theta > int_3_12(PI))
+  if(theta > Trignometric(PI))
   {
-    theta -= ((theta+int_3_12(PI))/int_3_12(2*PI))*int_3_12(2*PI);
+    theta -= ((theta+Trignometric(PI))/Trignometric(2*PI))*Trignometric(2*PI);
   }
   return theta;
 }
 
-int_2_13 cordic_cos(int_3_12 theta)
+Trignometric cordic_cos(Trignometric theta)
 {
   return cordic_cos_normalized(normilize_yaw(theta));
 }
 
-int_2_13 cordic_sin(int_3_12 theta)
+Trignometric cordic_sin(Trignometric theta)
 {
   return cordic_sin_normalized(normilize_yaw(theta));
 }
 
-int_2_13 cordic_sin_normalized(int_2_13 theta){
+Trignometric cordic_sin_normalized(Trignometric theta){
   short sigma,quadAdj,i,shift;
-  int_2_13 s, x1, x2, y;
-  int_2_13 *atanptr = atantable;
-  int_2_13 ans=0;
-  char iterations=ITERATION;
+  Trignometric s, x1, x2, y;
+  Trignometric *atanptr = atantable;
+  Trignometric ans=0;
+  char iterations=Trigonometric_Precision;
 
   //Limit iterations to number of atan values in our table
   iterations = (iterations > ATAN_TAB_N) ? ATAN_TAB_N : iterations;
@@ -152,12 +169,12 @@ int_2_13 cordic_sin_normalized(int_2_13 theta){
   return ans;
 }
 
-int_2_13 cordic_cos_normalized(int_2_13 theta){
+Trignometric cordic_cos_normalized(Trignometric theta){
   short sigma,quadAdj,i,shift;
-  int_2_13 s, x1, x2, y;
-  int_2_13 *atanptr = atantable;
-  int_2_13 ans=0;
-  char iterations=ITERATION;
+  Trignometric s, x1, x2, y;
+  Trignometric *atanptr = atantable;
+  Trignometric ans=0;
+  char iterations=Trigonometric_Precision;
   
   //Limit iterations to number of atan values in our table
   iterations = (iterations > ATAN_TAB_N) ? ATAN_TAB_N : iterations;

@@ -35,7 +35,10 @@
 #define fixp_quinticpolynomial_t4 int_11_4
 #define fixp_quinticpolynomial_t5 int_13_2
 #define fixp_cum_sum int_8_7
+#define Trignometric int_64_30
+#define Trigonometric_Precision 30
 
+typedef cnl::scaled_integer<int64_t, cnl::power<-Trigonometric_Precision>>  Trignometric;
 typedef cnl::scaled_integer<int16_t, cnl::power<-7>>  int_8_7;
 typedef cnl::scaled_integer<int16_t, cnl::power<-8>>  int_7_8;
 typedef cnl::scaled_integer<int16_t, cnl::power<-9>> int_6_9;

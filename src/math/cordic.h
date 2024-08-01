@@ -34,14 +34,13 @@
 #include "cnl/all.h"
 #include "tool/fp_datatype.h" 
 
-#define ATAN_TAB_N 14
-#define ITERATION 13
-#define PI int_2_13(M_PI)
-#define PI_2 int_2_13(M_PI_2)
-#define PI_4 int_2_13(M_PI_4)
-#define magic_number cnl::scaled_integer<int16_t, cnl::power<-13>>(0.60725293)
+#define ATAN_TAB_N Trigonometric_Precision+1
+#define PI Trignometric(M_PI)
+#define PI_2 Trignometric(M_PI_2)
+#define PI_4 Trignometric(M_PI_4)
+#define magic_number cnl::scaled_integer<int32_t, cnl::power<-Trigonometric_Precision>>(0.60725293)
 
-extern int_2_13 atantable[ATAN_TAB_N]; 
+extern Trignometric atantable[ATAN_TAB_N]; 
 
 enum DataRange{
   under_range = 1,
@@ -49,19 +48,19 @@ enum DataRange{
   abrove_range =3 
 };
 
-int_2_13  cordic_sin(int_3_12 theta);
-int_2_13  cordic_cos(int_3_12  theta);
-int_2_13  cordic_sin_normalized(int_2_13 theta);
-int_2_13  cordic_cos_normalized(int_2_13 theta);
-int_3_12  normilize_yaw(int_3_12 theta);
+Trignometric  cordic_sin(Trignometric theta);
+Trignometric  cordic_cos(Trignometric  theta);
+Trignometric  cordic_sin_normalized(Trignometric theta);
+Trignometric  cordic_cos_normalized(Trignometric theta);
+Trignometric  normilize_yaw(Trignometric theta);
 
 
 template<typename T>
-int_2_13 cordic_atan(T y,  T x){
-  int_2_13 z;
+Trignometric cordic_atan(T y,  T x){
+  Trignometric z;
   T x1, x2, y_temp;
-  int_2_13 *atanptr = atantable;
-  char iterations=ITERATION;
+  Trignometric *atanptr = atantable;
+  char iterations=Trigonometric_Precision;
   
   if (x == 0) {
     if (y > 0) return PI_2;
@@ -132,16 +131,16 @@ T cordic_sqrt(T input)
     number = input>>(2*factor);
   }
 
-  int_2_13 x = number + int_2_13(1);
-  int_2_13 y = number - int_2_13(1);
+  Trignometric x = number + Trignometric(1);
+  Trignometric y = number - Trignometric(1);
 
   // short k = 3;
   short n = 1;
 
-  while(n <= ITERATION ){
+  while(n <= Trigonometric_Precision ){
 
-    int_2_13 xn = y>>n;
-    int_2_13 yn = x>>n;
+    Trignometric xn = y>>n;
+    Trignometric yn = x>>n;
 
     if(y < 0){ 
         x = x + xn;

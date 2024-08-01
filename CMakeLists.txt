@@ -105,12 +105,37 @@ include_directories("${CMAKE_SOURCE_DIR}/src"
 #                src/math/cordic.cpp
 #                src/math/cordic.h)
 
+add_executable(CubicSpline_Analyse
+               src/CubicSpline_Analyse.cpp
+               src/CubicSpline/CubicSpline1D.cpp
+               src/CubicSpline/CubicSpline1D.h
+               src/CubicSpline/CubicSpline2D.cpp
+               src/CubicSpline/CubicSpline2D.h
+               src/CubicSpline/CubicSpline1D_fx.cpp
+               src/CubicSpline/CubicSpline1D_fx.h
+               src/CubicSpline/CubicSpline2D_fx.cpp
+               src/CubicSpline/CubicSpline2D_fx.h
+               src/CubicSpline/TriDiagonalMatrixSolver.h
+               src/CubicSpline/TriDiagonalMatrixSolver.cpp
+               src/CubicSpline/TriDiagonalMatrixSolver_fx.h
+               src/CubicSpline/TriDiagonalMatrixSolver_fx.cpp
+               src/utils.h
+               src/math/cordic.cpp
+               src/math/cordic.h
+               ${recorder_file})
+
 add_executable(Polynomial_Analyse
                src/Polynomial_Analyse.cpp
                src/Polynomials/QuinticPolynomial.cpp
                src/Polynomials/QuinticPolynomial.h
                src/Polynomials/QuinticPolynomial_fx.cpp
                src/Polynomials/QuinticPolynomial_fx.h
+               ${recorder_file})
+
+add_executable(Cordic_Analyse
+               src/Cordic_Analyse.cpp
+               src/math/cordic.cpp
+               src/math/cordic.h
                ${recorder_file})
                
 # target_link_libraries(FrenetOptimalTrajectory Eigen3::Eigen Qt5::Widgets Qt5::Gui)
