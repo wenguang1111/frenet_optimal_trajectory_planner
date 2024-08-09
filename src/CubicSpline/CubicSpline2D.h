@@ -22,6 +22,18 @@ public:
     {
         return s.back();
     }
+    inline std::vector<float> getX_A(){return sx.getA();}
+    inline std::vector<float> getX_B(){return sx.getB();}
+    inline std::vector<float> getX_C(){return sx.getC();}
+    inline std::vector<float> getX_D(){return sx.getD();}
+    inline std::vector<float> getX_X(){return sx.getX();}
+    inline std::vector<float> getX_Y(){return sx.getY();}
+    inline std::vector<float> getY_A(){return sy.getA();}
+    inline std::vector<float> getY_B(){return sy.getB();}
+    inline std::vector<float> getY_C(){return sy.getC();}
+    inline std::vector<float> getY_D(){return sy.getD();}
+    inline std::vector<float> getY_X(){return sy.getX();}
+    inline std::vector<float> getY_Y(){return sy.getY();}
 
 private:
     vector<float> s;

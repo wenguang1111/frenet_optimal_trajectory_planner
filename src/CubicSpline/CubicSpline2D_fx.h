@@ -13,15 +13,28 @@ class CubicSpline2D_fx {
 public:
     CubicSpline2D_fx();
     CubicSpline2D_fx(const vector<fp_type> &x, const vector<fp_type> &y);
-    fp_type calc_x(fp_type t);
-    fp_type calc_y(fp_type t);
-    fp_type calc_yaw(fp_type t);
+    fp_type calc_x(fp_time t);
+    fp_type calc_y(fp_time t);
+    Trignometric calc_yaw(fp_time t);
     fp_type find_s(fp_type x, fp_type y, fp_type s0);
     bool isValidPath();
     inline fp_type getEndOfS()
     {
         return s.back();
     }
+    inline std::vector<fp_type> getX_A(){return sx.getA();}
+    inline std::vector<fp_type> getX_B(){return sx.getB();}
+    inline std::vector<fp_type> getX_C(){return sx.getC();}
+    inline std::vector<fp_type> getX_D(){return sx.getD();}
+    inline std::vector<fp_type> getX_X(){return sx.getX();}
+    inline std::vector<fp_type> getX_Y(){return sx.getY();}
+    inline std::vector<fp_type> getY_A(){return sy.getA();}
+    inline std::vector<fp_type> getY_B(){return sy.getB();}
+    inline std::vector<fp_type> getY_C(){return sy.getC();}
+    inline std::vector<fp_type> getY_D(){return sy.getD();}
+    inline std::vector<fp_type> getY_X(){return sy.getX();}
+    inline std::vector<fp_type> getY_Y(){return sy.getY();}
+
 
 private:
     vector<fp_type> s;

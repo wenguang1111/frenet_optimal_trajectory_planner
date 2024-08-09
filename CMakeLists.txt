@@ -132,8 +132,39 @@ add_executable(Polynomial_Analyse
                src/Polynomials/QuinticPolynomial_fx.h
                ${recorder_file})
 
+add_executable(Quartic_Analyse
+               src/Quartic_Analyse.cpp
+               src/Polynomials/QuarticPolynomial.cpp
+               src/Polynomials/QuarticPolynomial.h
+               src/Polynomials/QuarticPolynomial_fx.cpp
+               src/Polynomials/QuarticPolynomial_fx.h
+               ${recorder_file})
+
 add_executable(Cordic_Analyse
                src/Cordic_Analyse.cpp
+               src/math/cordic.cpp
+               src/math/cordic.h
+               ${recorder_file})
+
+add_executable(Frenet_Analyse
+               src/CubicSpline_Analyse.cpp
+               src/CubicSpline/CubicSpline1D.cpp
+               src/CubicSpline/CubicSpline1D.h
+               src/CubicSpline/CubicSpline2D.cpp
+               src/CubicSpline/CubicSpline2D.h
+               src/FrenetOptimalTrajectory/FrenetPath.cpp
+               src/FrenetOptimalTrajectory/FrenetPath.h
+               src/FrenetOptimalTrajectory/FrenetPath_fx.cpp
+               src/FrenetOptimalTrajectory/FrenetPath_fx.h
+               src/CubicSpline/CubicSpline1D_fx.cpp
+               src/CubicSpline/CubicSpline1D_fx.h
+               src/CubicSpline/CubicSpline2D_fx.cpp
+               src/CubicSpline/CubicSpline2D_fx.h
+               src/CubicSpline/TriDiagonalMatrixSolver.h
+               src/CubicSpline/TriDiagonalMatrixSolver.cpp
+               src/CubicSpline/TriDiagonalMatrixSolver_fx.h
+               src/CubicSpline/TriDiagonalMatrixSolver_fx.cpp
+               src/utils.h
                src/math/cordic.cpp
                src/math/cordic.h
                ${recorder_file})

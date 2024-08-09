@@ -40,7 +40,7 @@
 #define PI_4 Trignometric(M_PI_4)
 #define magic_number cnl::scaled_integer<int32_t, cnl::power<-Trigonometric_Precision>>(0.60725293)
 
-extern Trignometric atantable[ATAN_TAB_N]; 
+extern Trignometric atantable[31]; 
 
 enum DataRange{
   under_range = 1,

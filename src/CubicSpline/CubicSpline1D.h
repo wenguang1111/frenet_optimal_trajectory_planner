@@ -13,6 +13,12 @@ public:
     float calc_der0(float t);
     float calc_der1(float t);
     float calc_der2(float t);
+    inline std::vector<float> getA(){return a;}
+    inline std::vector<float> getB(){return b;}
+    inline std::vector<float> getC(){return c;}
+    inline std::vector<float> getD(){return d;}
+    inline std::vector<float> getX(){return x;}
+    inline std::vector<float> getY(){return y;}
 private:
     std::vector<float> a, b, c, d, w, x, y;
     std::vector<float> tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d;

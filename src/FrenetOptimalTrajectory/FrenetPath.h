@@ -1,16 +1,44 @@
 #ifndef FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_H
 #define FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_H
 
-#include "py_cpp_struct.h"
 #include "CubicSpline2D.h"
-#include "Obstacle.h"
-#include "Car.h"
+#include "tool/fp_datatype.h"
 
 #include <vector>
 #include <tuple>
 
 using namespace std;
-using namespace Eigen;
+
+struct Trajectory
+{
+    vector<float> x;
+    vector<float> y;
+    vector<float> yaw;
+};
+
+struct FrenetHyperparameters {
+    float max_speed;
+    float max_accel;
+    float max_curvature;
+    float max_road_width_l;
+    float max_road_width_r;
+    float d_road_w; //delta_road_width
+    float dt;
+    float maxt;
+    float mint;
+    float d_t_s;
+    float n_s_sample;
+    float obstacle_clearance;
+    float kd;
+    float kv;
+    float ka;
+    float kj;
+    float kt;
+    float ko;
+    float klat;
+    float klon;
+    int num_threads;
+};
 
 class FrenetPath {
 public:
@@ -59,11 +87,7 @@ public:
     float cf = 0.0;
 
     FrenetPath(FrenetHyperparameters *fot_hp_);
-    bool to_global_path(CubicSpline2D* csp);
-    bool is_valid_path(const vector<Obstacle *> obstacles);
-    bool is_collision(const vector<Obstacle *> obstacles);
-    float inverse_distance_to_obstacles(
-        const vector<Obstacle *> obstacles);
+    Trajectory to_global_path(CubicSpline2D* csp);
 
 private:
     // Hyperparameters

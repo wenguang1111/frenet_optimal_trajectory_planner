@@ -39,7 +39,9 @@ void CubicSpline2D_fx::calc_s(const vector<fp_type>& x,
     for (int i = 0; i < nx - 1; i++) {
         cum_sum += norm<fp_type>(dx[i], dy[i]);
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<double>("CubicSpline2D::calc_s::cum_sum", cum_sum);
+        //     Recorder::getInstance()->saveData<float>("dx_fx", static_cast<float>(dx.back()));
+        //     Recorder::getInstance()->saveData<float>("dy_fx", static_cast<float>(dy.back()));
+        //     Recorder::getInstance()->saveData<float>("s_fx", static_cast<float>(s.back()));
         // #endif
         s.push_back(cum_sum);
     }
@@ -47,12 +49,12 @@ void CubicSpline2D_fx::calc_s(const vector<fp_type>& x,
 }
 
 // Calculate the x position along the spline at given t
-fp_type CubicSpline2D_fx::calc_x(fp_type t) {
+fp_type CubicSpline2D_fx::calc_x(fp_time t) {
     return sx.calc_der0(t);
 }
 
 // Calculate the y position along the spline at given t
-fp_type CubicSpline2D_fx::calc_y(fp_type t) {
+fp_type CubicSpline2D_fx::calc_y(fp_time t) {
     return sy.calc_der0(t);
 }
 
@@ -68,10 +70,15 @@ fp_type CubicSpline2D_fx::calc_y(fp_type t) {
 // }
 
 // Calculate the yaw along the spline at given t
-fp_type CubicSpline2D_fx::calc_yaw(fp_type t) {
+Trignometric CubicSpline2D_fx::calc_yaw(fp_time t) {
     fp_type dx = sx.calc_der1(t);
     fp_type dy = sy.calc_der1(t);
-    fp_type yaw = cordic_atan<fp_type>(dy, dx);
+    Trignometric yaw = cordic_atan<Trignometric>(dy, dx);
+    // #ifdef USE_RECORDER
+        
+    //     Recorder::getInstance()->saveData<float>("yaw_dx_fx", static_cast<float>(dx));
+    //     Recorder::getInstance()->saveData<float>("yaw_dy_fx", static_cast<float>(dy));
+    // #endif
     return yaw;
 }
 
@@ -115,6 +122,10 @@ CubicSpline2D_fx::remove_collinear_points(vector<fp_type> x, vector<fp_type> y) 
         }
         x_.push_back(static_cast<fp_type>(x[i]));
         y_.push_back(static_cast<fp_type>(y[i]));
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("x_fx",static_cast<float>(x_.back()));
+        //     Recorder::getInstance()->saveData<float>("y_fx",static_cast<float>(y_.back()));
+        // #endif
     }
     // make sure to add the last point in case all points are collinear
     x_.push_back(x.back());
@@ -133,7 +144,7 @@ bool CubicSpline2D_fx::are_collinear(fp_type x1, fp_type y1, fp_type x2, fp_type
     // #ifdef USE_RECORDER
     //     Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
     // #endif
-    return a <= 0.01;
+    return a <= 0.001;
 }
 
 bool CubicSpline2D_fx::isValidPath()

@@ -15,15 +15,17 @@ QuarticPolynomial::QuarticPolynomial(float xs, float vxs, float axs,
     K2=axe-2*a2;
     a3 = K1/pow(t,2) - K2/(3*t);
     a4 = K2/(4*pow(t,2))-K1/(2*pow(t,3));
-    #ifdef USE_RECORDER
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::K1", K1);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::K2", K2);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::a0", a0);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::a1", a1);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::a2", a2);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::a3", a3);
-        Recorder::getInstance()->saveData<float>("QuarticPolynomial::a4", a4);
-    #endif
+    //a3= ((-axe-2axs)/3+(vxe-vxs)/t)/t;
+    //a4=((axe+axs)/4+(vxs-vxe)/(2*t))/t;
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::K1", K1);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::K2", K2);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a0", a0);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a1", a1);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a2", a2);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a3", a3);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a4", a4);
+    // #endif
 }
 
 float QuarticPolynomial::calc_point(float t) {

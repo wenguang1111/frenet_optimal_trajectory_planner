@@ -39,7 +39,7 @@
 # include "math.h"
 // Table of arctan's for use with CORDIC algorithm
 // Store in decimal representation N = ((2^16)*angle_deg) / 180
-Trignometric atantable[ATAN_TAB_N]={  Trignometric(0.78539816),   //atan(2^0) =  0.78539816 rad
+Trignometric atantable[31]={  Trignometric(0.78539816),   //atan(2^0) =  0.78539816 rad
                                 Trignometric(0.46364761),   //atan(2^-1) = 0.46364761 rad
                                 Trignometric(0.24497866),   //atan(2^-2) = 0.24497866 rad
                                 Trignometric(0.12435499),   //0.12435499 rad

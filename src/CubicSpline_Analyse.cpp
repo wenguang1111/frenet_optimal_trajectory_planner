@@ -8,8 +8,10 @@
 #endif
 #include <random>
 #include <iostream>
-#define size 10
+#define loop_n 1000
 #define waypoint_size 10
+#define N 100
+#define Distance 50
 
 std::vector<float> getWaypoints_x()
 {
@@ -41,24 +43,30 @@ std::vector<float> getWaypoints_y()
 
 int main()
 {
-    std::vector<float> way_x,way_y;
-    std::vector<fp_type> way_x_fx,way_y_fx;
+
 
     std::random_device rd; // Obtain a random number from hardware
     std::mt19937 eng(rd()); // Seed the generator
 
     // Define the range
-    std::uniform_real_distribution<> distr_waypoint_x(0.0, 10.0);
-    std::uniform_real_distribution<> distr_waypoint_y(-10.0, 10.0);
+    // std::uniform_real_distribution<> distr_waypoint_x(0.0, 5.0);
+    std::uniform_real_distribution<> distr_waypoint_y(-3.0, 3.0);
     // std::uniform_real_distribution<> distr_t(0.0, 10.0);
 
-    for(int i=0; i<size;i++)
+    for(int i=0; i<loop_n;i++)
     {
+        std::vector<float> way_x,way_y;
+        std::vector<fp_type> way_x_fx,way_y_fx;
+        
         way_x_fx.push_back(0.0);
         way_y_fx.push_back(0.0);
-        for(int j=0;j<10;j++)
+        way_x.push_back(static_cast<float>(way_x_fx.back()));
+        way_y.push_back(static_cast<float>(way_y_fx.back()));
+        fp_type wp_x = Distance/waypoint_size;
+
+        for(int j=1;j<waypoint_size;j++)
         {
-            way_x_fx.push_back(way_x_fx.back() + distr_waypoint_x(eng));
+            way_x_fx.push_back(way_x_fx.back() + wp_x);
             way_y_fx.push_back(way_y_fx.back() + distr_waypoint_y(eng));
             // t_fx[i] = 10;
             // way_x[j] += static_cast<float>(way_x_fx[j]);
@@ -68,24 +76,75 @@ int main()
         }
         CubicSpline2D a = CubicSpline2D(way_x,way_y);
         CubicSpline2D_fx b = CubicSpline2D_fx(way_x_fx,way_y_fx);
-        
-        fp_type dert = b.getEndOfS();
-        float test = a.getEndOfS();
-        std::cout << "s_fx=" << dert << std::endl;
-        std::cout << "s=" << test << std::endl;
 
+        fp_type s_total = std::min(static_cast<float>(b.getEndOfS()), a.getEndOfS());
+        fp_type dert = (s_total-10)/N;
+        fp_type start = 2.0;
+        while(start<s_total)
+        {
+            float x = a.calc_x(static_cast<float>(start));
+            float y = a.calc_y(static_cast<float>(start));
+            float yaw =a.calc_yaw(static_cast<float>(start));
+            fp_type x_fx = b.calc_x(start);
+            fp_type y_fx = b.calc_y(start);
+            fp_type yaw_fx = b.calc_yaw(start);
+            // if(x_fx!=std::numeric_limits<fp_type>::max() && y_fx!=std::numeric_limits<fp_type>::max() && x!=NAN && y!=NAN)
+            // {
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<float>("x", x);
+                    Recorder::getInstance()->saveData<float>("y", y);
+                    Recorder::getInstance()->saveData<float>("yaw", yaw);
+                    Recorder::getInstance()->saveData<float>("x_fx", static_cast<float>(x_fx));
+                    Recorder::getInstance()->saveData<float>("y_fx", static_cast<float>(y_fx));
+                    Recorder::getInstance()->saveData<float>("yaw_fx", static_cast<float>(yaw_fx));
+                    Recorder::getInstance()->saveData<float>("d_x", std::abs(static_cast<float>(x_fx)-x));
+                    Recorder::getInstance()->saveData<float>("d_y", std::abs(static_cast<float>(y_fx)-y));
+                    Recorder::getInstance()->saveData<float>("d_yaw", std::abs(static_cast<float>(yaw_fx)-yaw));
+                #endif
+            // }
+            start+=dert;
+        }
 
-        // QuinticPolynomial_fx b = QuinticPolynomial_fx(xs_fx[i], vxs_fx[i], axs_fx[i], xe_fx[i], vxe_fx[i], axe_fx[i], t_fx[i]);
-        // float dert_t = t[i]/100;
-        // for(int j=0;j<100;j++)
+        // for(int i=0;i<b.getX_D().size();i++)
         // {
-        //     float time = dert_t*j;
-        //     float d_s = std::abs(a.calc_point(time)-static_cast<float>(b.calc_point_fx(time)))/std::abs(a.calc_point(time));
-        //     float d_v = std::abs(a.calc_first_derivative(time)-static_cast<float>(b.calc_first_derivative_fx(time)))/std::abs(a.calc_first_derivative(time));
-        //     float d_a = std::abs(a.calc_second_derivative(time)-static_cast<float>(b.calc_second_derivative_fx(time)))/std::abs(a.calc_second_derivative(time));
-        //     float d_jerk = std::abs(a.calc_third_derivative(time)-static_cast<float>(b.calc_third_derivative_fx(time)))/std::abs(a.calc_third_derivative(time));
         //     #ifdef USE_RECORDER
-        //         Recorder::getInstance()->saveData<float>("d_0[%]", d_s*100);
+        //         Recorder::getInstance()->saveData<float>("X_A", a.getX_A()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_B", a.getX_B()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_C", a.getX_C()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_D", a.getX_D()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_X", a.getX_X()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_Y", a.getX_Y()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_A", a.getY_A()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_B", a.getY_B()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_C", a.getY_C()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_D", a.getY_D()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_X", a.getY_X()[i]);
+        //         Recorder::getInstance()->saveData<float>("Y_Y", a.getY_Y()[i]);
+        //         Recorder::getInstance()->saveData<float>("X_A_fx", static_cast<float>(b.getX_A()[i]));
+        //         Recorder::getInstance()->saveData<float>("X_B_fx", static_cast<float>(b.getX_B()[i]));
+        //         Recorder::getInstance()->saveData<float>("X_C_fx", static_cast<float>(b.getX_C()[i]));
+        //         Recorder::getInstance()->saveData<float>("X_D_fx", static_cast<float>(b.getX_D()[i]));
+        //         Recorder::getInstance()->saveData<float>("X_X_fx", static_cast<float>(b.getX_X()[i]));
+        //         Recorder::getInstance()->saveData<float>("X_Y_fx", static_cast<float>(b.getX_Y()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_A_fx", static_cast<float>(b.getY_A()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_B_fx", static_cast<float>(b.getY_B()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_C_fx", static_cast<float>(b.getY_C()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_D_fx", static_cast<float>(b.getY_D()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_X_fx", static_cast<float>(b.getY_X()[i]));
+        //         Recorder::getInstance()->saveData<float>("Y_Y_fx", static_cast<float>(b.getY_Y()[i]));
+
+        //         Recorder::getInstance()->saveData<float>("d_X_A", std::abs(a.getX_A()[i]-static_cast<float>(b.getX_A()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_X_B", std::abs(a.getX_B()[i]-static_cast<float>(b.getX_B()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_X_C", std::abs(a.getX_C()[i]-static_cast<float>(b.getX_C()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_X_D", std::abs(a.getX_D()[i]-static_cast<float>(b.getX_D()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_X_X", std::abs(a.getX_X()[i]-static_cast<float>(b.getX_X()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_X_Y", std::abs(a.getX_Y()[i]-static_cast<float>(b.getX_Y()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_A", std::abs(a.getY_A()[i]-static_cast<float>(b.getY_A()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_B", std::abs(a.getY_B()[i]-static_cast<float>(b.getY_B()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_C", std::abs(a.getY_C()[i]-static_cast<float>(b.getY_C()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_D", std::abs(a.getY_D()[i]-static_cast<float>(b.getY_D()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_X", std::abs(a.getY_X()[i]-static_cast<float>(b.getY_X()[i])));
+        //         Recorder::getInstance()->saveData<float>("d_Y_Y", std::abs(a.getY_Y()[i]-static_cast<float>(b.getY_Y()[i])));
         //     #endif
         // }
     }

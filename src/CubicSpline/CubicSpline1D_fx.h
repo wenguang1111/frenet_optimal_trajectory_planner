@@ -2,25 +2,8 @@
 #define FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE1D_FX_H
 
 #include "cnl/all.h"
+#include "tool/fp_datatype.h" 
 #include <vector>
-
-#define fp_type int_64_25
-typedef cnl::scaled_integer<int64_t, cnl::power<-25>>  int_64_25; 
-typedef cnl::scaled_integer<int64_t, cnl::power<-22>>  int_64_22; 
-typedef cnl::scaled_integer<int64_t, cnl::power<-21>>  int_64_21; 
-typedef cnl::scaled_integer<int64_t, cnl::power<-20>>  int_64_20; 
-typedef cnl::scaled_integer<int64_t, cnl::power<-16>>  int_64_16;
-typedef cnl::scaled_integer<int64_t, cnl::power<-15>>  int_64_15; 
-typedef cnl::scaled_integer<int64_t, cnl::power<-14>>  int_64_14;
-typedef cnl::scaled_integer<int64_t, cnl::power<-13>>  int_64_13;
-typedef cnl::scaled_integer<int64_t, cnl::power<-12>>  int_64_12;
-typedef cnl::scaled_integer<int64_t, cnl::power<-11>>  int_64_11;
-typedef cnl::scaled_integer<int64_t, cnl::power<-10>>  int_64_10;
-typedef cnl::scaled_integer<int64_t, cnl::power<-9>>  int_64_9;
-typedef cnl::scaled_integer<int64_t, cnl::power<-8>>  int_64_8;
-typedef cnl::scaled_integer<int64_t, cnl::power<-7>>  int_64_7;
-typedef cnl::scaled_integer<int64_t, cnl::power<-6>>  int_64_6;
-typedef cnl::scaled_integer<int16_t, cnl::power<-13>> int_2_13;
 
 // 1-dimensional cubic spline class.
 // For technical details see: http://mathworld.wolfram.com/CubicSpline.html
@@ -29,9 +12,15 @@ public:
     int nx;
     CubicSpline1D_fx();
     CubicSpline1D_fx(const std::vector<fp_type>& v1, const std::vector<fp_type>& v2);
-    fp_type calc_der0(fp_type t);
-    fp_type calc_der1(fp_type t);
+    fp_type calc_der0(fp_time t);
+    fp_type calc_der1(fp_time t);
     bool isValidPath();
+    inline std::vector<fp_type> getA(){return a;}
+    inline std::vector<fp_type> getB(){return b;}
+    inline std::vector<fp_type> getC(){return c;}
+    inline std::vector<fp_type> getD(){return d;}
+    inline std::vector<fp_type> getX(){return x;}
+    inline std::vector<fp_type> getY(){return y;}
 private:
     std::vector<fp_type> x;
     std::vector<fp_type> y;

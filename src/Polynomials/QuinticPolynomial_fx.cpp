@@ -29,9 +29,6 @@ QuinticPolynomial_fx::QuinticPolynomial_fx(fp_type xs, fp_type vxs, fp_type axs,
     a5*=inverse;
     a5*=inverse;
     a5*=inverse;
-    // a3 = (-3*axs+2*axe+(-6*vxs-4*vxe+10*(xe-xs)*inverse)*inverse)*inverse;
-    // a4 = (9.0/2.0*axs-4*axe+(7*vxe+8*vxs+15*(xs-xe)*inverse)*inverse)*(inverse*inverse);
-    // a5 = (2*axe-2*axs+(-3*vxe-3*vxs+6*(xe-xs)*inverse)*inverse)*(inverse*inverse*inverse);
 }
 
 fp_type QuinticPolynomial_fx::calc_point_fx(fp_type t) {
