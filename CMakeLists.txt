@@ -22,7 +22,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Eigen3)
 
-option(USE_RECORDER "Use recorder" OFF)
+option(USE_RECORDER "Use recorder" ON)
 option(ANALYZE_VECTORIZATION "Detect if vectorization is successful" OFF)
 
 set(recorder_file ${recorder_file})
@@ -147,7 +147,7 @@ add_executable(Cordic_Analyse
                ${recorder_file})
 
 add_executable(Frenet_Analyse
-               src/CubicSpline_Analyse.cpp
+               src/Frenet_Analyse.cpp
                src/CubicSpline/CubicSpline1D.cpp
                src/CubicSpline/CubicSpline1D.h
                src/CubicSpline/CubicSpline2D.cpp
@@ -164,6 +164,14 @@ add_executable(Frenet_Analyse
                src/CubicSpline/TriDiagonalMatrixSolver.cpp
                src/CubicSpline/TriDiagonalMatrixSolver_fx.h
                src/CubicSpline/TriDiagonalMatrixSolver_fx.cpp
+               src/Polynomials/QuarticPolynomial.cpp
+               src/Polynomials/QuarticPolynomial.h
+               src/Polynomials/QuarticPolynomial_fx.cpp
+               src/Polynomials/QuarticPolynomial_fx.h
+               src/Polynomials/QuinticPolynomial.cpp
+               src/Polynomials/QuinticPolynomial.h
+               src/Polynomials/QuinticPolynomial_fx.cpp
+               src/Polynomials/QuinticPolynomial_fx.h
                src/utils.h
                src/math/cordic.cpp
                src/math/cordic.h

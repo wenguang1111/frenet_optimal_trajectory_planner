@@ -9,67 +9,87 @@
 
 const short COLLISION_CHECK_THRESHOLD = 6; // don't check unless within 6m
 
-FrenetPath::FrenetPath(FrenetHyperparameters_fx *fot_hp_){
+FrenetPath_fx::FrenetPath_fx(FrenetHyperparameters_fx* fot_hp_){
     fot_hp = fot_hp_;
 }
 
 // Convert the frenet path to global path in terms of x, y, yaw, velocity
-Trajectory_fx FrenetPath::to_global_path(CubicSpline2D_fx* csp) {
+bool FrenetPath_fx::to_global_path(CubicSpline2D_fx* csp) {
     fp_type ix_, iy_;
     fp_type iyaw_;
     fp_type di;
     fp_type fx,dx;
     fp_type fy,dy;
+    Trajectory_fx traj;
     // calc global positions
     for (size_t i = 0; i < s.size(); i++) {
         fp_type s_i = s[i];
         ix_ = csp->calc_x(s_i);
         iy_ = csp->calc_y(s_i);
-        //if (isnan(ix_) || isnan(iy_)) break; //FIXME: maybe create bug after deletion
         if (csp->isValidPath()!=true) break; 
         iyaw_ = csp->calc_yaw(s_i);
         ix.push_back(ix_);
-        iy.push_back(iy_);
+        iy.push_back(iy_); 
         iyaw.push_back(iyaw_);
         di = d[i];
         fx = ix_ + di * cordic_cos(iyaw_ + M_PI_2);
         fy = iy_ + di * cordic_sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
-        #ifdef USE_RECORDER
+        traj.x.push_back(fx);
+        traj.y.push_back(fy);
+        // #ifdef USE_RECORDER
             // Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
             // Recorder::getInstance()->saveData<float>("ix", static_cast<float>(ix.back()));
             // Recorder::getInstance()->saveData<float>("iy", static_cast<float>(iy.back()));
-            Recorder::getInstance()->saveData<float>("x", static_cast<float>(x.back()));
-            Recorder::getInstance()->saveData<float>("y", static_cast<float>(y.back()));
+            // Recorder::getInstance()->saveData<float>("x", static_cast<float>(x.back()));
+            // Recorder::getInstance()->saveData<float>("y", static_cast<float>(y.back()));
             // Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(iyaw.back()));
-        #endif
+        // #endif
     }
     // // not enough points to construct a valid path
-    // if (x.size() <= 1) {
-    //     return false;
-    // }
+    if (x.size() <= 1) {
+        return false;
+    }
 
     // calc yaw and ds
     for (size_t i = 0; i < x.size() - 1; i++) {
         dx = x[i+1] - x[i];
         dy = y[i+1] - y[i];
         yaw.push_back(cordic_atan<fp_type>(dy, dx));
+        traj.yaw.push_back(yaw.back());
         ds.push_back(norm<fp_type>(dx,dy));
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<float>("yaw",  static_cast<float>(yaw.back()));
+        // #ifdef USE_RECORDER
+            // Recorder::getInstance()->saveData<float>("yaw",  static_cast<float>(yaw.back()));
             // Recorder::getInstance()->saveData<float>("ds",  static_cast<float>(ds.back()));
-        #endif
+        // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
-    #ifdef USE_RECORDER
-        Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(yaw.back()));
+    traj.yaw.push_back(yaw.back());
+    // #ifdef USE_RECORDER
+        // Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(yaw.back()));
         // Recorder::getInstance()->saveData<float>("ds", static_cast<float>(ds.back()));
-    #endif
-    Trajectory_fx traj;
-    traj.x=x;
-    traj.y=y;
-    traj.yaw=yaw;
-    return traj;
+    // #endif
+    return true;
+}
+
+bool FrenetPath_fx::is_valid_path() {
+    if (any_of(s_d.begin(), s_d.end(),
+            [this](auto i){return abs(i) > fot_hp->max_speed;})) {
+        return false;
+    }
+    // max accel check
+    else if (any_of(s_dd.begin(), s_dd.end(),
+            [this](auto i){return abs(i) > fot_hp->max_accel;})) {
+        return false;
+    }
+    // max curvature check
+    else if (any_of(c.begin(), c.end(),
+            [this](auto i){return abs(i) > fot_hp->max_curvature;})) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }

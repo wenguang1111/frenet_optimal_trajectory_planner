@@ -1,5 +1,5 @@
-#ifndef FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_H
-#define FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_H
+#ifndef FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_FX_H
+#define FRENET_OPTIMAL_TRAJECTORY_FRENETPATH__FX_H
 
 #include "CubicSpline2D_fx.h"
 #include "tool/fp_datatype.h"
@@ -40,7 +40,7 @@ struct FrenetHyperparameters_fx {
     int num_threads;
 };
 
-class FrenetPath {
+class FrenetPath_fx {
 public:
     // Frenet attributes
     vector<fp_type> t;          // time
@@ -86,12 +86,13 @@ public:
     // final cost
     fp_type cf = 0.0;
 
-    FrenetPath(FrenetHyperparameters_fx* fot_hp_);
-    Trajectory_fx to_global_path(CubicSpline2D_fx* csp);
+    FrenetPath_fx(FrenetHyperparameters_fx* fot_hp_);
+    bool to_global_path(CubicSpline2D_fx* csp);
+    bool is_valid_path();
 
 private:
     // Hyperparameters
     FrenetHyperparameters_fx *fot_hp;
 };
 
-#endif //FRENET_OPTIMAL_TRAJECTORY_FRENETPATH_H
+#endif //FRENET_OPTIMAL_TRAJECTORY_FRENETPATH__FX_H
