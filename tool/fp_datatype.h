@@ -35,9 +35,10 @@
 #define fixp_quinticpolynomial_t4 int_11_4
 #define fixp_quinticpolynomial_t5 int_13_2
 #define fixp_cum_sum int_8_7
-#define Trigonometric_Precision 15
-#define Time_Precision 15
-#define Standard_precision 16
+#define Dummy 25
+#define Trigonometric_Precision Dummy
+#define Time_Precision Dummy
+#define Standard_precision Dummy
 typedef cnl::scaled_integer<int64_t, cnl::power<-Trigonometric_Precision>>  Trignometric;
 typedef cnl::scaled_integer<int64_t, cnl::power<-Standard_precision>>  fp_type;
 typedef cnl::scaled_integer<int64_t, cnl::power<-Time_Precision>>  fp_time;

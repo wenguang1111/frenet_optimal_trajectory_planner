@@ -77,6 +77,8 @@ float CubicSpline1D::calc_der0(float t) {
     //     Recorder::getInstance()->saveData<float>("b", b[i]);
     //     Recorder::getInstance()->saveData<float>("c", c[i]);
     //     Recorder::getInstance()->saveData<float>("d", d[i]);
+    //     Recorder::getInstance()->saveData<float>("ans", ans);
+    //     Recorder::getInstance()->saveData<float>("factor", x[i]);
     // #endif
     return ans;
 }

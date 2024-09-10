@@ -100,7 +100,7 @@ Trignometric cordic_sin_normalized(Trignometric theta){
   Trignometric s, x1, x2, y;
   Trignometric *atanptr = atantable;
   Trignometric ans=0;
-  char iterations=Trigonometric_Precision;
+  int iterations=Trigonometric_Precision;
 
   //Limit iterations to number of atan values in our table
   iterations = (iterations > ATAN_TAB_N) ? ATAN_TAB_N : iterations;

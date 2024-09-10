@@ -92,6 +92,8 @@ fp_type CubicSpline1D_fx::calc_der0(fp_time t) {
     //     Recorder::getInstance()->saveData<float>("b_fx", static_cast<float>(b[i]));
     //     Recorder::getInstance()->saveData<float>("c_fx", static_cast<float>(c[i]));
     //     Recorder::getInstance()->saveData<float>("d_fx", static_cast<float>(d[i]));
+    //     Recorder::getInstance()->saveData<float>("ans_fx", static_cast<float>(ans));
+    //     Recorder::getInstance()->saveData<float>("factor_fx", static_cast<float>(x[i]));
     // #endif
     return ans;
 }

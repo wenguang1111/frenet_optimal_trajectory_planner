@@ -1,13 +1,15 @@
 #include "cnl/all.h"
 #include "QuinticPolynomial.h"
 #include "QuinticPolynomial_fx.h"
+#include "RoundingQuintic_fx.h"
 #ifdef USE_RECORDER
     #include "tool/recorder.h"
 #endif
 #include <random>
 #include <iostream>
-#define size 1000
+#define size 100
 #define Timelength 5
+#define time_interval 0.125
 
  
 int main()
@@ -46,10 +48,11 @@ int main()
         axe[i] = static_cast<float>(axe_fx[i]);
         t[i] =static_cast<float>(t_fx[i]);
         QuinticPolynomial a = QuinticPolynomial(xs[i], vxs[i], axs[i], xe[i], vxe[i], axe[i], t[i]);
-        
         QuinticPolynomial_fx b = QuinticPolynomial_fx(xs_fx[i], vxs_fx[i], axs_fx[i], xe_fx[i], vxe_fx[i], axe_fx[i], t_fx[i]);
-        fp_type dert_t = 0.1;
-        for(int j=0;j<100;j++)
+
+        fp_type dert_t = time_interval;
+        int total_step = Timelength/time_interval;
+        for(int j=0;j<total_step;j++)
         {
             fp_type time_fx = dert_t*j;
             float time = static_cast<float>(time_fx);
@@ -57,6 +60,8 @@ int main()
             // float d_v = std::abs(a.calc_first_derivative(time)-static_cast<float>(b.calc_first_derivative_fx(time)))/std::abs(a.calc_first_derivative(time));
             // float d_a = std::abs(a.calc_second_derivative(time)-static_cast<float>(b.calc_second_derivative_fx(time)))/std::abs(a.calc_second_derivative(time));
             // float d_jerk = std::abs(a.calc_third_derivative(time)-static_cast<float>(b.calc_third_derivative_fx(time)))/std::abs(a.calc_third_derivative(time));
+            std::vector<float> rounding_result = calc_Quintic<Dummy>(to_rep(b.getA0()), to_rep(b.getA1()), to_rep(b.getA2()),
+                                                 to_rep(b.getA3()), to_rep(b.getA4()), to_rep(b.getA5()), to_rep(time_fx));
             #ifdef USE_RECORDER
                 // Recorder::getInstance()->saveData<float>("d_0[%]", d_s*100);
                 // Recorder::getInstance()->saveData<float>("d_1[%]", d_v*100);
@@ -71,6 +76,10 @@ int main()
                 Recorder::getInstance()->saveData<float>("w_1_1", static_cast<float>(b.calc_first_derivative_fx(time)));
                 Recorder::getInstance()->saveData<float>("w_2_2", static_cast<float>(b.calc_second_derivative_fx(time)));
                 Recorder::getInstance()->saveData<float>("w_3_3", static_cast<float>(b.calc_third_derivative_fx(time)));
+                Recorder::getInstance()->saveData<float>("w_0_0_0", rounding_result[3]);
+                Recorder::getInstance()->saveData<float>("w_1_1_1", rounding_result[2]);
+                Recorder::getInstance()->saveData<float>("w_2_2_2", rounding_result[1]);
+                Recorder::getInstance()->saveData<float>("w_3_3_3", rounding_result[0]);
                 Recorder::getInstance()->saveData<float>("t", time);
                 Recorder::getInstance()->saveData<float>("float_a0", a.getA0());
                 Recorder::getInstance()->saveData<float>("float_a1", a.getA1());
@@ -88,6 +97,15 @@ int main()
                 Recorder::getInstance()->saveData<float>("zelt_1", static_cast<float>(std::abs(a.calc_first_derivative(time)-static_cast<float>(b.calc_first_derivative_fx(time)))));
                 Recorder::getInstance()->saveData<float>("zelt_2", static_cast<float>(std::abs(a.calc_second_derivative(time)-static_cast<float>(b.calc_second_derivative_fx(time)))));
                 Recorder::getInstance()->saveData<float>("zelt_3", static_cast<float>(std::abs(a.calc_third_derivative(time)-static_cast<float>(b.calc_third_derivative_fx(time)))));
+                Recorder::getInstance()->saveData<float>("zelt_0_0", static_cast<float>(std::abs(a.calc_point(time)-rounding_result[3])));
+                Recorder::getInstance()->saveData<float>("zelt_1_1", static_cast<float>(std::abs(a.calc_first_derivative(time)-rounding_result[2])));
+                Recorder::getInstance()->saveData<float>("zelt_2_2", static_cast<float>(std::abs(a.calc_second_derivative(time)-rounding_result[1])));
+                Recorder::getInstance()->saveData<float>("zelt_3_3", static_cast<float>(std::abs(a.calc_third_derivative(time)-rounding_result[0])));
+
+                Recorder::getInstance()->saveData<float>("Percent_0", static_cast<float>(std::abs(a.calc_point(time)-rounding_result[3]))/static_cast<float>(std::abs(a.calc_point(time)-static_cast<float>(b.calc_point_fx(time)))));
+                Recorder::getInstance()->saveData<float>("Percent_1", static_cast<float>(std::abs(a.calc_first_derivative(time)-rounding_result[2]))/static_cast<float>(std::abs(a.calc_first_derivative(time)-static_cast<float>(b.calc_first_derivative_fx(time)))));
+                Recorder::getInstance()->saveData<float>("Percent_2", static_cast<float>(std::abs(a.calc_second_derivative(time)-rounding_result[1]))/static_cast<float>(std::abs(a.calc_second_derivative(time)-static_cast<float>(b.calc_second_derivative_fx(time)))));
+                Recorder::getInstance()->saveData<float>("Percent_3", static_cast<float>(std::abs(a.calc_third_derivative(time)-rounding_result[0]))/static_cast<float>(std::abs(a.calc_third_derivative(time)-static_cast<float>(b.calc_third_derivative_fx(time)))));
             #endif
         }
     }

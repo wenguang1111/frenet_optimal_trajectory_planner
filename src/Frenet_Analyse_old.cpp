@@ -24,6 +24,7 @@
 
 using namespace std;
 #define delta_distance 0.25
+#define time_interval 0.125
 
 fp_type calculateY_type_one(fp_type x)
 {
@@ -47,6 +48,13 @@ fp_type calculateY_type_three(fp_type x)
 }
 
 fp_type calculateY_type_four(fp_type x)
+{
+    float y = sqrt(100.0 - pow(static_cast<float>(x-50),2));
+    fp_type ans=y;
+    return ans;
+}
+
+fp_type calculateY_type_five(fp_type x)
 {
     float y = sqrt(100.0 - pow(static_cast<float>(x-50),2));
     fp_type ans=y;
@@ -98,9 +106,9 @@ int main() {
     int num_viable_paths = 0;
     int start_di_index = 0;
     int end_di_index =24;
-    float max_road_width_l=6.0;
-    float max_road_width_r=6.0;
-    float d_road_w = 2;
+    float max_road_width_l=12.0;
+    float max_road_width_r=12.0;
+    float d_road_w = 0.5;
     float maxt = 5;
     float mint = 5;
     //-------------Parameters-----------------------
@@ -135,17 +143,17 @@ int main() {
     //---------------------------------------
     FrenetHyperparameters fot_hp;
     FrenetHyperparameters_fx fot_hp_fx;
-    fot_hp.max_speed=200.0;
-    fot_hp.max_accel=50.0;
-    fot_hp.max_curvature=15.0;
+    fot_hp.max_speed=400.0;
+    fot_hp.max_accel=500.0;
+    fot_hp.max_curvature=500.0;
     fot_hp.max_road_width_l=max_road_width_l;
     fot_hp.max_road_width_r=max_road_width_r;
     fot_hp.d_road_w=d_road_w;
-    fot_hp.dt=0.1;
+    fot_hp.dt=time_interval;
     fot_hp.maxt=maxt;
     fot_hp.mint=mint;
     fot_hp.d_t_s=5;
-    fot_hp.n_s_sample=1;
+    fot_hp.n_s_sample=0;
 
     fot_hp_fx.max_speed=fot_hp.max_speed;
     fot_hp_fx.max_accel=fot_hp.max_accel;
@@ -166,7 +174,9 @@ int main() {
     while ((di < -max_road_width_l + end_di_index * d_road_w) &&
            (di <= max_road_width_r)) {
         ti = mint;
-
+        #ifdef USE_RECORDER
+                Recorder::getInstance()->saveData<float>("ti",ti);
+        #endif
         while (ti <= maxt) {
             fp = new FrenetPath(&fot_hp);
             fp_fx = new FrenetPath_fx(&fot_hp_fx);
@@ -240,15 +250,7 @@ int main() {
                     continue;
                 }
                 num_viable_paths++;
-                // bool valid_path = tfp->is_valid_path();
-                // bool valid_path_fx = tfp_fx->is_valid_path();
-                // if(!valid_path||!valid_path_fx)
-                // {
-                //     delete tfp;
-                //     delete tfp_fx;
-                //     tv += fot_hp.d_t_s;
-                //     continue;
-                // }
+
                 std::cout << "tfp->t size = "<< tfp->t.size()<<std::endl;
                 int length = tfp->t.size();
                 for(int k=0; k<length; k++)
@@ -263,9 +265,9 @@ int main() {
                         Recorder::getInstance()->saveData<float>("x_fx",static_cast<float>(tfp_fx->x[k]));
                         Recorder::getInstance()->saveData<float>("y_fx",static_cast<float>(tfp_fx->y[k]));
                         Recorder::getInstance()->saveData<float>("yaw_fx",static_cast<float>(tfp_fx->yaw[k]));
-                        Recorder::getInstance()->saveData<float>("dx",std::abs(tfp->x[k]-static_cast<float>(tfp_fx->x[k])));
-                        Recorder::getInstance()->saveData<float>("dy",std::abs(tfp->y[k]-static_cast<float>(tfp_fx->y[k])));
-                        Recorder::getInstance()->saveData<float>("dyaw",std::abs(tfp->yaw[k]-static_cast<float>(tfp_fx->yaw[k])));
+                        Recorder::getInstance()->saveData<float>("zelt_x",std::abs(tfp->x[k]-static_cast<float>(tfp_fx->x[k])));
+                        Recorder::getInstance()->saveData<float>("zelt_y",std::abs(tfp->y[k]-static_cast<float>(tfp_fx->y[k])));
+                        Recorder::getInstance()->saveData<float>("zelt_yaw",std::abs(tfp->yaw[k]-static_cast<float>(tfp_fx->yaw[k])));
                     #endif 
                 }
 
@@ -273,7 +275,6 @@ int main() {
                 delete tfp;
             }
             ti += fot_hp.dt;
-            // make sure to deallocate
             delete fp;
         }
         di += fot_hp.d_road_w;
