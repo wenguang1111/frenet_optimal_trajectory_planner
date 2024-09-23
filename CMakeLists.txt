@@ -132,6 +132,16 @@ add_executable(Polynomial_Analyse
                src/Polynomials/QuinticPolynomial_fx.h
                ${recorder_file})
 
+add_executable(Rounding_Analyse
+               src/Rounding_Analyse.cpp
+               src/Polynomials/QuinticPolynomial.cpp
+               src/Polynomials/QuinticPolynomial.h
+               src/Polynomials/QuinticPolynomial_fx.cpp
+               src/Polynomials/QuinticPolynomial_fx.h
+               src/Polynomials/RoundingQuintic_fx.h
+               ${recorder_file})
+               
+
 add_executable(Quartic_Analyse
                src/Quartic_Analyse.cpp
                src/Polynomials/QuarticPolynomial.cpp

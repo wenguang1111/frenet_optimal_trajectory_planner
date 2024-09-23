@@ -27,7 +27,6 @@ int main()
     // std::uniform_real_distribution<> distr_vxs(0.0, 100.0);
     // std::uniform_real_distribution<> distr_axs(-50.0, 50.0);
 
-
     for(int i=0; i<size;i++)
     {
         xs_fx[i] = distr_xs(eng);

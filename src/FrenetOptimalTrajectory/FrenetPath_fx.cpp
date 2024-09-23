@@ -56,7 +56,8 @@ bool FrenetPath_fx::to_global_path(CubicSpline2D_fx* csp) {
     for (size_t i = 0; i < x.size() - 1; i++) {
         dx = x[i+1] - x[i];
         dy = y[i+1] - y[i];
-        yaw.push_back(cordic_atan<fp_type>(dy, dx));
+        // yaw.push_back(cordic_atan<fp_type>(dy, dx));
+        yaw.push_back(atan2(static_cast<float>(dy), static_cast<float>(dx)));
         traj.yaw.push_back(yaw.back());
         ds.push_back(norm<fp_type>(dx,dy));
         // #ifdef USE_RECORDER

@@ -34,20 +34,21 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         y.push_back(fy);
         // traj.x.push_back(fx);
         // traj.y.push_back(fy);
-        // #ifdef USE_RECORDER
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::s_i", s_i);
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::ix_", ix_);
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::iy_", iy_);
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::iyaw_", iyaw_);
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::i", static_cast<float>(i));
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::ix", ix.back());
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::iy", iy.back());
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::x", x.back());
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::y", y.back());
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::iyaw", iyaw.back());
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::fx", fx);
-        //     // Recorder::getInstance()->saveData<float>("FrenetPath::fy", fy);
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::di", di);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::s_i", s_i);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ix_", ix_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iy_", iy_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iyaw_", iyaw_);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::i", static_cast<float>(i));
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ix", ix.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iy", iy.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::x", x.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::y", y.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iyaw", iyaw.back());
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::fx", fx);
+            Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::fy", fy);
+        #endif
     }
 
     // not enough points to construct a valid path
@@ -63,10 +64,10 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         ds.push_back(hypot(dx, dy));
         // traj.yaw.push_back(yaw.back());
         // #ifdef USE_RECORDER
-            // Recorder::getInstance()->saveData<float>("FrenetPath::dx", dx);
-            // Recorder::getInstance()->saveData<float>("FrenetPath::dy", dy);
-            // Recorder::getInstance()->saveData<float>("FrenetPath::yaw", yaw.back());
-            // Recorder::getInstance()->saveData<float>("FrenetPath::ds", ds.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::dx", dx);
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::dy", dy);
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::yaw", yaw.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::ds", ds.back());
         // #endif
     }
     yaw.push_back(yaw.back());

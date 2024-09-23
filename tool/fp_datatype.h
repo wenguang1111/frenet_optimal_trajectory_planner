@@ -1,4 +1,5 @@
 #include "cnl/scaled_integer.h"
+#include <cnl/rounding.h>
 
 #define fixp_t uint_6_10
 #define fixp_d int_3_12
@@ -35,7 +36,7 @@
 #define fixp_quinticpolynomial_t4 int_11_4
 #define fixp_quinticpolynomial_t5 int_13_2
 #define fixp_cum_sum int_8_7
-#define Dummy 25
+#define Dummy 10
 #define Trigonometric_Precision Dummy
 #define Time_Precision Dummy
 #define Standard_precision Dummy
@@ -81,3 +82,4 @@ typedef cnl::scaled_integer<uint16_t, cnl::power<-7>> uint_9_7;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-6>> uint_10_6;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-5>> uint_11_5;
 
+// typedef cnl::rounding_integer<uint16_t, cnl::nearest_rounding_tag> rounding_7_9;

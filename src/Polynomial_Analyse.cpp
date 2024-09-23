@@ -8,6 +8,7 @@
 #include <iostream>
 #define size 1000
 #define Timelength 5
+#define time_interval 0.125
 
  
 int main()
@@ -48,8 +49,10 @@ int main()
         QuinticPolynomial a = QuinticPolynomial(xs[i], vxs[i], axs[i], xe[i], vxe[i], axe[i], t[i]);
         
         QuinticPolynomial_fx b = QuinticPolynomial_fx(xs_fx[i], vxs_fx[i], axs_fx[i], xe_fx[i], vxe_fx[i], axe_fx[i], t_fx[i]);
-        fp_type dert_t = 0.1;
-        for(int j=0;j<100;j++)
+        
+        fp_type dert_t = time_interval;
+        int total_step = Timelength/time_interval;
+        for(int j=0;j<total_step;j++)
         {
             fp_type time_fx = dert_t*j;
             float time = static_cast<float>(time_fx);
