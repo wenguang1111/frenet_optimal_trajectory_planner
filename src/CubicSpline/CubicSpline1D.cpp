@@ -31,16 +31,16 @@ CubicSpline1D::CubicSpline1D(const vector<float>& v1, //s
     tridionalmatrix_c.resize(nx);
     tridionalmatrix_d.resize(nx);
     assignValue(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, deltas);
-    // #ifdef USE_RECORDER
-    // for(int i=0;i<nx;i++)
-    //     {
-    //         Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
-    //         Recorder::getInstance()->saveData<float>("TM_a", tridionalmatrix_a[i]);
-    //         Recorder::getInstance()->saveData<float>("TM_b", tridionalmatrix_b[i]);
-    //         Recorder::getInstance()->saveData<float>("TM_c", tridionalmatrix_c[i]);
-    //         Recorder::getInstance()->saveData<float>("TM_d", tridionalmatrix_d[i]);
-    //     }  
-    // #endif
+    #ifdef USE_RECORDER
+    for(int i=0;i<nx;i++)
+        {
+            Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
+            Recorder::getInstance()->saveData<float>("tridionalmatrix_a", tridionalmatrix_a[i]);
+            Recorder::getInstance()->saveData<float>("tridionalmatrix_b", tridionalmatrix_b[i]);
+            Recorder::getInstance()->saveData<float>("tridionalmatrix_c", tridionalmatrix_c[i]);
+            Recorder::getInstance()->saveData<float>("tridionalmatrix_d", tridionalmatrix_d[i]);
+        }  
+    #endif
     solveTriDiagonalMatrix(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, c, nx);
 
     // construct attribute b, d
@@ -49,17 +49,17 @@ CubicSpline1D::CubicSpline1D(const vector<float>& v1, //s
         b.push_back((a[i + 1] - a[i]) / deltas[i] - deltas[i] *
         (c[i + 1] + 2.0 * c[i]) / 3.0);
     }
-    // #ifdef USE_RECORDER
-    // for(int i=0;i<nx;i++)
-    //     {
-    //         Recorder::getInstance()->saveData<float>("i", i);
-    //         Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
-    //         Recorder::getInstance()->saveData<float>("a", a[i]);
-    //         Recorder::getInstance()->saveData<float>("b", b[i]);
-    //         Recorder::getInstance()->saveData<float>("d", d[i]);
-    //         Recorder::getInstance()->saveData<float>("c", c[i]);
-    //     }  
-    // #endif
+    #ifdef USE_RECORDER
+    for(int i=0;i<nx;i++)
+        {
+            Recorder::getInstance()->saveData<float>("i", i);
+            Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
+            Recorder::getInstance()->saveData<float>("a", a[i]);
+            Recorder::getInstance()->saveData<float>("b", b[i]);
+            Recorder::getInstance()->saveData<float>("d", d[i]);
+            Recorder::getInstance()->saveData<float>("c", c[i]);
+        }  
+    #endif
 }
 #include <iostream>
 // Calculate the 0th derivative evaluated at t
@@ -71,15 +71,15 @@ float CubicSpline1D::calc_der0(float t) {
     int i = search_index(t) - 1;
     float dx = t - x[i];
     float ans = a[i] + b[i] * dx + c[i] * pow(dx, 2) + d[i] * pow(dx, 3);
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("time", t);
-    //     Recorder::getInstance()->saveData<float>("a", a[i]);
-    //     Recorder::getInstance()->saveData<float>("b", b[i]);
-    //     Recorder::getInstance()->saveData<float>("c", c[i]);
-    //     Recorder::getInstance()->saveData<float>("d", d[i]);
-    //     Recorder::getInstance()->saveData<float>("ans", ans);
-    //     Recorder::getInstance()->saveData<float>("factor", x[i]);
-    // #endif
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<float>("time", t);
+        Recorder::getInstance()->saveData<float>("a", a[i]);
+        Recorder::getInstance()->saveData<float>("b", b[i]);
+        Recorder::getInstance()->saveData<float>("c", c[i]);
+        Recorder::getInstance()->saveData<float>("d", d[i]);
+        Recorder::getInstance()->saveData<float>("ans", ans);
+        Recorder::getInstance()->saveData<float>("factor", x[i]);
+    #endif
     return ans;
 }
 
@@ -91,9 +91,9 @@ float CubicSpline1D::calc_der1(float t) {
 
     int i = search_index(t) - 1;
     float dx = t - x[i];
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("calc_der1::deltas", dx);
-    // #endif
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<float>("calc_der1::deltas", dx);
+    #endif
 
     return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow(dx, 2);
 }
@@ -106,9 +106,9 @@ float CubicSpline1D::calc_der2(float t) {
 
     int i = search_index(t) - 1;
     float dx = t - x[i];
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("calc_der2::dx", dx);
-    // #endif
+    #ifdef USE_RECORDER
+        Recorder::getInstance()->saveData<float>("calc_der2::dx", dx);
+    #endif
 
     return 2.0 * c[i] + 6.0 * d[i] * dx;
 }
@@ -131,13 +131,13 @@ void CubicSpline1D::assignValue(std::vector<float> &TM_a, std::vector<float> &TM
         TM_c[i+1] = deltas[i+1];
         TM_d[i+1] = 3.0 * (a[i + 2] - a[i + 1]) / deltas[i + 1] - 3.0 * 
             (a[i + 1] - a[i]) / deltas[i];
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
-        //     Recorder::getInstance()->saveData<float>("TM_a", TM_a[i+i]);
-        //     Recorder::getInstance()->saveData<float>("TM_b", TM_b[i+1]);
-        //     Recorder::getInstance()->saveData<float>("TM_c", TM_c[i+1]);
-        //     Recorder::getInstance()->saveData<float>("TM_d", TM_d[i+1]);
-        // #endif
+        #ifdef USE_RECORDER
+            Recorder::getInstance()->saveData<float>("deltas", deltas[i]);
+            Recorder::getInstance()->saveData<float>("TM_a", TM_a[i+i]);
+            Recorder::getInstance()->saveData<float>("TM_b", TM_b[i+1]);
+            Recorder::getInstance()->saveData<float>("TM_c", TM_c[i+1]);
+            Recorder::getInstance()->saveData<float>("TM_d", TM_d[i+1]);
+        #endif
     }
 }
 

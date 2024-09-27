@@ -13,6 +13,19 @@ QuinticPolynomial::QuinticPolynomial(float xs, float vxs, float axs,
     a3 = (-3*axs+2*axe+(-6*vxs-4*vxe+10*(xe-xs)/t)/t)/t;
     a4 = (9.0/2.0*axs-4*axe+(7*vxe+8*vxs+15*(xs-xe)/t)/t)/(t*t);
     a5 = (2*axe-2*axs+(-3*vxe-3*vxs+6*(xe-xs)/t)/t)/(t*t*t);
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::xs", xs);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::vxs", vxs);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::axs", axs);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::xe", xe);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::vxe", vxe);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::axe", axe);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::t", t);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::a2",a2);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::a3",a3);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::a4",a4);
+    //     Recorder::getInstance()->saveData<float>("QuinticPolynomial::QuinticPolynomial::a5",a5);
+    // #endif 
 }
 
 float QuinticPolynomial::calc_point(float t) {

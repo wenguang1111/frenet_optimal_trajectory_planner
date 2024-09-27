@@ -20,22 +20,18 @@ int main()
     std::mt19937 eng(rd()); // Seed the generator
 
     // Define the range
-    std::uniform_real_distribution<> distr_xs(-100.0, 100.0);
-    std::uniform_real_distribution<> distr_vxs(-300.0, 300.0);
-    std::uniform_real_distribution<> distr_axs(-50.0, 50.0);
-    // std::uniform_real_distribution<> distr_xs(0.0, 100.0);
-    // std::uniform_real_distribution<> distr_vxs(0.0, 100.0);
-    // std::uniform_real_distribution<> distr_axs(-50.0, 50.0);
-
+    std::uniform_real_distribution<> distr_xs(-10.0, 10.0);
+    std::uniform_real_distribution<> distr_vxs(-50.0, 50.0);
+    std::uniform_real_distribution<> distr_axs(-20.0, 20.0); //Research on Yaw Moment Control System for Race Cars Using Drive and Brake Torques (https://www.mdpi.com/2624-8921/5/2/29)
 
     for(int i=0; i<size;i++)
     {
         xs_fx[i] = distr_xs(eng);
         xe_fx[i] = distr_xs(eng);
-        // xe_fx[i] = xs_fx[i]+50;
+
         vxs_fx[i] = distr_vxs(eng);
         vxe_fx[i] = distr_vxs(eng);
-        // vxe_fx[i] = vxs_fx[i]+40;
+
         axs_fx[i] = distr_axs(eng);
         axe_fx[i] = distr_axs(eng);
         t_fx[i] = Timelength;

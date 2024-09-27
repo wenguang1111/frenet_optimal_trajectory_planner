@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 import plt_config
-
 
 file_path = 'tool/Summary_T5_polynomial.csv'  # replace with your actual file path
 df_poly = pd.read_csv(file_path)
@@ -17,6 +17,9 @@ plt.plot(df_cubic['BitWidth'], df_cubic['max_x'], color='green', marker='o', lin
 plt.plot(df_cubic['BitWidth'], df_cubic['max_y'],color='green', marker='s', linestyle='-', label=r'$max(y)$')  # red color, circle marker
 plt.plot(df_frenet['BitWidth'], df_frenet['max_x'], color='blue', marker='o', linestyle='-', label=r'$max(x)$')  # red color, circle marker
 plt.plot(df_frenet['BitWidth'], df_frenet['max_y'],color='blue', marker='s', linestyle='-', label=r'$max(y)$')  # red color, circle marker
+
+# Set logarithmic scale for y-axis (log base 2)
+plt.yscale('log', base=10)
 
 plt.xlabel('Bit Width [bit]')
 plt.ylabel('Precision Loss [m]')

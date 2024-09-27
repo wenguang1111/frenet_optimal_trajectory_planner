@@ -18,6 +18,12 @@ QuarticPolynomial::QuarticPolynomial(float xs, float vxs, float axs,
     //a3= ((-axe-2axs)/3+(vxe-vxs)/t)/t;
     //a4=((axe+axs)/4+(vxs-vxe)/(2*t))/t;
     // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::xs", xs);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::vxs", vxs);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::axs", axs);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::vxe", vxe);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::axe", axe);
+    //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::t", t);
     //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::K1", K1);
     //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::K2", K2);
     //     Recorder::getInstance()->saveData<float>("QuarticPolynomial::a0", a0);

@@ -69,7 +69,7 @@ void generatePath(float long_v_1,float long_v_2, float displacement_referencepat
     int start_di_index = 0;
      int end_di_index =(max_road_width_l+max_road_width_r)/d_road_w;
     float maxt = 2*DISTANCE/(long_v_1+long_v_2);
-    float mint = maxt-2;
+    float mint = maxt;
     //-------------Parameters-----------------------
     float c_d=0;
     float c_d_d =0;
@@ -110,7 +110,7 @@ void generatePath(float long_v_1,float long_v_2, float displacement_referencepat
     fot_hp.d_road_w=d_road_w;
     fot_hp.dt=time_interval;
     fot_hp.maxt=maxt;
-    fot_hp.mint=maxt-2;
+    fot_hp.mint=maxt;
     fot_hp.d_t_s=5;
     fot_hp.n_s_sample=0;
 
@@ -139,6 +139,10 @@ void generatePath(float long_v_1,float long_v_2, float displacement_referencepat
         while (ti <= maxt) {
             fp = new FrenetPath(&fot_hp);
             fp_fx = new FrenetPath_fx(&fot_hp_fx);
+ 
+            #ifdef USE_RECORDER
+                Recorder::getInstance()->saveData<float>("generatePath::generatePath::ti", ti);
+            #endif 
 
             QuinticPolynomial lat_qp = QuinticPolynomial(
                 c_d, c_d_d, c_d_dd, di, 0.0, 0.0, ti);
@@ -179,6 +183,9 @@ void generatePath(float long_v_1,float long_v_2, float displacement_referencepat
                 tfp_fx->d_dd.assign(fp_fx->d_dd.begin(), fp_fx->d_dd.end());
                 tfp_fx->d_ddd.assign(fp_fx->d_ddd.begin(), fp_fx->d_ddd.end());
 
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<float>("generatePath::generatePath::ti", ti);
+                #endif 
                 QuarticPolynomial lon_qp = QuarticPolynomial(
                     s0, c_speed, 0.0, tv, 0.0, ti);
                 QuarticPolynomial_fx lon_qp_fx = QuarticPolynomial_fx(
