@@ -68,6 +68,7 @@
 #define fixp_obstacle_clearance uint_2_14
 #define fixp_vx int_5_10
 #define fixp_forward_speed int_5_10
+#define fixp_30_33 int_30_33
  
 typedef cnl::scaled_integer<int16_t, cnl::power<-14>> int_1_14;
 typedef cnl::scaled_integer<int16_t, cnl::power<-13>> int_2_13;
@@ -95,7 +96,8 @@ typedef cnl::scaled_integer<uint16_t, cnl::power<-7>> uint_9_7;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-6>> uint_10_6;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-5>> uint_11_5;
 typedef cnl::scaled_integer<uint16_t, cnl::power<-4>> uint_12_4;
-typedef cnl::scaled_integer<uint64_t, cnl::power<-10>> uint_54_10;
 typedef cnl::scaled_integer<uint32_t, cnl::power<-12>> uint_20_12;
+typedef cnl::scaled_integer<uint64_t, cnl::power<-10>> uint_54_10;
+typedef cnl::scaled_integer<uint64_t, cnl::power<-12>> int_30_33;
 
 #endif //FP_DATATYPE_H

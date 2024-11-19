@@ -23,7 +23,8 @@ void solveTriDiagonalMatrix(const std::vector<fixp_TM_a>& a, const std::vector<f
     for (short i = 1; i < n; ++i) {
         fixp_cubicspline_m m = cnl::quotient(fixp_cubicspline_m(1.0), (b[i] - a[i] * c_star[i - 1]));
         c_star[i] = c[i] * m;
-        d_star[i] = (d[i] - a[i] * d_star[i - 1]) * m;
+        d_star[i] = d[i] - a[i] * d_star[i - 1];
+        d_star[i] *=  m;
         // #ifdef USE_RECORDER
         //     Recorder::getInstance()->saveData<double>("solveTriDiagonalMatrix::c_star", c_star[i]);
         //     Recorder::getInstance()->saveData<double>("solveTriDiagonalMatrix::d_star", d_star[i]);

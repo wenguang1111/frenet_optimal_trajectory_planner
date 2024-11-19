@@ -31,6 +31,16 @@ CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
     tridionalmatrix_c.resize(nx);
     tridionalmatrix_d.resize(nx);
     assignValue(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, deltas);
+    // #ifdef USE_RECORDER
+    // for(int i=0;i<nx;i++)
+    //     {
+    //         Recorder::getInstance()->saveData<float>("deltas_fx", static_cast<float>(deltas[i]));
+    //         Recorder::getInstance()->saveData<float>("TM_a_fx",static_cast<float>(tridionalmatrix_a[i]));
+    //         Recorder::getInstance()->saveData<float>("TM_b_fx",static_cast<float>(tridionalmatrix_b[i]));
+    //         Recorder::getInstance()->saveData<float>("TM_c_fx",static_cast<float>(tridionalmatrix_c[i]));
+    //         Recorder::getInstance()->saveData<float>("TM_d_fx",static_cast<float>(tridionalmatrix_d[i]));
+    //     }  
+    // #endif
     solveTriDiagonalMatrix(tridionalmatrix_a, tridionalmatrix_b, tridionalmatrix_c, tridionalmatrix_d, c, nx);
 
     // construct attribute b, d
@@ -39,14 +49,14 @@ CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
         {
             std::cout << "CubicSpline1D Line 39 deltas is zero"<< std::endl;
         }
-        d.push_back(cnl::quotient((c[i + 1] - c[i]), (fixp_x(3.0) * deltas[i])));
-        b.push_back(cnl::quotient((a[i + 1] - a[i]), deltas[i]) - 
-            cnl::quotient(deltas[i]*(c[i + 1] + fixp_x(2.0) * c[i]), fixp_x(3.0)));
-        // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::deltas", deltas[i]);
-        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::b", b[i1]);
-        //     Recorder::getInstance()->saveData<double>("CubicSpline1D::d", d[i1]);
-        // #endif
+        fixp_30_33 dummy = 3*deltas[i];
+        d.push_back(cnl::quotient((c[i + 1] - c[i]), dummy));
+        dummy = c[i + 1] + 2* c[i];
+        dummy = cnl::quotient(dummy,fixp_30_33(3.0));
+        dummy = dummy*deltas[i];
+        fixp_30_33 test = a[i + 1] - a[i];
+        test = cnl::quotient(test, deltas[i]);
+        b.push_back(test - dummy);
     }
 }
 
@@ -58,8 +68,22 @@ fixp_x CubicSpline1D::calc_der0(fixp_s t) {
     }
 
     int i = search_index(t) - 1;
-    fixp_s dx = t - x[i];
-    return a[i] + b[i] * dx + c[i] * pow_2<fixp_s>(dx) + d[i] * pow_3<fixp_s>(dx);
+    fixp_30_33 dx = t - x[i];
+    fixp_30_33 ans = c[i] + d[i]*dx;
+    ans*=dx;
+    ans+=b[i];
+    ans*=dx;
+    ans+=a[i];
+    // #ifdef USE_RECORDER
+    //     Recorder::getInstance()->saveData<float>("time_fx", static_cast<float>(t));
+    //     Recorder::getInstance()->saveData<float>("a_fx", static_cast<float>(a[i]));
+    //     Recorder::getInstance()->saveData<float>("b_fx", static_cast<float>(b[i]));
+    //     Recorder::getInstance()->saveData<float>("c_fx", static_cast<float>(c[i]));
+    //     Recorder::getInstance()->saveData<float>("d_fx", static_cast<float>(d[i]));
+    //     Recorder::getInstance()->saveData<float>("ans_fx", static_cast<float>(ans));
+    //     Recorder::getInstance()->saveData<float>("factor_fx", static_cast<float>(x[i]));
+    // #endif
+    return ans;
 }
 
 // Calculate the 1st derivative evaluated at t
@@ -70,9 +94,12 @@ fixp_dx CubicSpline1D::calc_der1(fixp_s t) {
     }
 
     int i = search_index(t) - 1;
-    fixp_s dx = t - x[i];
-
-    return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow_2<fixp_s>(dx);
+    fixp_30_33 dx = t - x[i];
+    fixp_30_33 ans = 2*c[i]+3*d[i]*dx;
+    ans*=dx;
+    ans+=b[i];
+    // return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow_2<fp_type>(dx);
+    return ans;
 }
 
 // // Calculate the 2nd derivative evaluated at
@@ -107,13 +134,20 @@ void CubicSpline1D::assignValue(std::vector<fixp_TM_a> &TM_a, std::vector<fixp_T
         {
             std::cout << "CubicSpline1D Line 102 Divisior is zero"<< std::endl;
         }
-        TM_d[i+1] = cnl::quotient(fixp_x(3.0) * (a[i + 2] - a[i + 1]), deltas[i + 1]) - 
-                        cnl::quotient(fixp_x(3.0)*(a[i + 1] - a[i]), deltas[i]);
+        fixp_30_33 dummy = 0.0;
+        // TM_d[i+1] = cnl::quotient(fp_type(3.0) * (a[i + 2] - a[i + 1]), deltas[i + 1]) - 
+        //                 cnl::quotient(fp_type(3.0)*(a[i + 1] - a[i]), deltas[i]);
+        dummy = 3.0 * (a[i + 2] - a[i + 1]);           
+        dummy = cnl::quotient(dummy, deltas[i + 1]);
+        TM_d[i+1] = 3.0 *(a[i + 1] - a[i]);
+        TM_d[i+1] = cnl::quotient(TM_d[i+1], deltas[i]);
+        TM_d[i+1] =dummy-TM_d[i+1]; 
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<double>("assignValue::TM_a", TM_a[i+i]);
-        //     Recorder::getInstance()->saveData<double>("assignValue::TM_b", TM_b[i+1]);
-        //     Recorder::getInstance()->saveData<double>("assignValue::TM_c", TM_c[i+1]);
-        //     Recorder::getInstance()->saveData<double>("assignValue::TM_d", TM_d[i+1]);
+        //     Recorder::getInstance()->saveData<float>("deltas_fx", static_cast<float>(deltas[i]));
+        //     Recorder::getInstance()->saveData<float>("TM_a_fx",static_cast<float>(TM_a[i+i]));
+        //     Recorder::getInstance()->saveData<float>("TM_b_fx",static_cast<float>(TM_b[i+1]));
+        //     Recorder::getInstance()->saveData<float>("TM_c_fx",static_cast<float>(TM_c[i+1]));
+        //     Recorder::getInstance()->saveData<float>("TM_d_fx",static_cast<float>(TM_d[i+1]));
         // #endif
     }
 }
