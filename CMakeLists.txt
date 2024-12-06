@@ -75,8 +75,9 @@ add_library(FrenetOptimalTrajectory SHARED
             src/Car/Car.cpp
             src/Car/Car.h
             ${recorder_file}
-            src/math/cordic.cpp
-            src/math/cordic.h)
+            # src/math/cordic.cpp
+            # src/math/cordic.h
+            )
 
 add_executable(FrenetOptimalTrajectoryTest
                src/main.cpp
@@ -102,7 +103,8 @@ add_executable(FrenetOptimalTrajectoryTest
                src/Car/Car.cpp
                src/Car/Car.h
                ${recorder_file}
-               src/math/cordic.cpp
-               src/math/cordic.h)
+              #  src/math/cordic.cpp
+              #  src/math/cordic.h
+               )
 target_link_libraries(FrenetOptimalTrajectory Eigen3::Eigen Qt5::Widgets Qt5::Gui)
 target_link_libraries(FrenetOptimalTrajectoryTest Eigen3::Eigen Qt5::Widgets Qt5::Gui)

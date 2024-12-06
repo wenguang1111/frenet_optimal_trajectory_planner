@@ -4,7 +4,7 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
 #include "tool/recorder.h"
-#include "cordic.h"
+// #include "cordic.h"
 
 #include <stddef.h>
 #include <vector>
@@ -61,9 +61,13 @@ extern "C" {
                 fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
                 fot_rv->d[i] = static_cast<float>(best_frenet_path->d[i]);
                 fot_rv->s[i] = static_cast<float>(best_frenet_path->s[i]);
-                fot_rv->speeds_x[i] = cordic_cos(best_frenet_path->yaw[i]) *
+                // fot_rv->speeds_x[i] = cordic_cos(best_frenet_path->yaw[i]) *
+                //     fot_rv->speeds[i];
+                // fot_rv->speeds_y[i] = cordic_sin(best_frenet_path->yaw[i]) *
+                //     fot_rv->speeds[i];
+                fot_rv->speeds_x[i] = std::cos(best_frenet_path->yaw[i]) *
                     fot_rv->speeds[i];
-                fot_rv->speeds_y[i] = cordic_sin(best_frenet_path->yaw[i]) *
+                fot_rv->speeds_y[i] = std::sin(best_frenet_path->yaw[i]) *
                     fot_rv->speeds[i];
             }
 
