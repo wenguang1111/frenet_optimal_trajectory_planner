@@ -10,11 +10,11 @@ set(CMAKE_CXX_FLAGS "-march=native -O3 -pthread -Wall -DQT_NO_VERSION_TAGGING")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)" )
-  set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)|(aarch64)")
-  set(CNL_DIR "${CNL_DIR} /space/xuw/Installed/cnl/include")
-endif()
+# if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)" )
+#   set(CNL_DIR "${CNL_DIR} /home/wenguang/installed/cnl/include")
+# elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)|(aarch64)")
+#   set(CNL_DIR "${CNL_DIR} /space/xuw/Installed/cnl/include")
+# endif()
 
 
 find_package(Qt5Widgets REQUIRED)
@@ -42,7 +42,7 @@ include_directories(.)
 include_directories(
         ${CUSTOM_EIGEN}
 )
-include_directories(${CNL_DIR})
+# include_directories(${CNL_DIR})
 
 include_directories("${CMAKE_SOURCE_DIR}/src"
                     "${CMAKE_SOURCE_DIR}/src/CubicSpline"
