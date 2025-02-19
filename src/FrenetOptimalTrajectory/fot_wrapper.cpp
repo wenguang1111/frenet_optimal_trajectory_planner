@@ -94,6 +94,24 @@ extern "C" {
             fot_rv->costs[11] = best_frenet_path->cf;
         }
         fot_rv->runtime = time_taken;
+
+        //return all sample paths
+        std::fill(std::begin(fot_rv->sample_x), std::end(fot_rv->sample_x), 0.0f);
+        std::fill(std::begin(fot_rv->sample_y), std::end(fot_rv->sample_y), 0.0f);
+
+        vector<FrenetPath*> all_paths_ptr = fot.getAllPath();
+        vector<FrenetPath> all_paths;
+        for (FrenetPath* path_ptr : all_paths_ptr) {
+            all_paths.push_back(*path_ptr);
+        }
+        size_t sample_counter = 0;
+        for (FrenetPath path : all_paths){
+            for (size_t i = 0; i < path.x.size(); i++){
+                fot_rv->sample_x[sample_counter*MAX_PATH_LENGTH + i] = path.x[i];
+                fot_rv->sample_y[sample_counter*MAX_PATH_LENGTH + i] = path.y[i];
+            }
+            sample_counter++;
+        }
     }
 
     // Convert the initial conditions from cartesian space to frenet space

@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 const size_t MAX_PATH_LENGTH = 100;
+const size_t MAX_SAMPLE_SIZE = 100;
 
 struct FrenetInitialConditions {
     float s0; 
@@ -37,7 +38,10 @@ struct FrenetReturnValues {
     float params[MAX_PATH_LENGTH];
     float costs[MAX_PATH_LENGTH];
     float runtime;
+    float sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+    float sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
 };
+
 
 struct FrenetHyperparameters {
     float max_speed;

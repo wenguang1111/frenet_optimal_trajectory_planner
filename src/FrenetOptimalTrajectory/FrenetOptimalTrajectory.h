@@ -28,13 +28,14 @@
 
 using namespace std;
 using namespace Eigen;
-
+    
 class FrenetOptimalTrajectory {
 public:
     FrenetOptimalTrajectory(FrenetInitialConditions *fot_ic_,
                             FrenetHyperparameters *fot_hp_);
     ~FrenetOptimalTrajectory();
     FrenetPath *getBestPath();
+    vector<FrenetPath*> getAllPath();
     void setObstacles();
     void addObstacle(Point_FP first_point, Point_FP second_point);
 

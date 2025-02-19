@@ -3,6 +3,7 @@ from ctypes import c_float, c_int, c_size_t, POINTER, Structure, CDLL
 _c_float_p = POINTER(c_float)
 
 MAX_PATH_LENGTH = 100
+MAX_SAMPLE_SIZE = 100
 
 class FrenetInitialConditions(Structure):
     _fields_ = [
@@ -39,6 +40,8 @@ class FrenetReturnValues(Structure):
         ("params", c_float * MAX_PATH_LENGTH),
         ("costs", c_float * MAX_PATH_LENGTH),
         ("runtime", c_float)
+        ("sample_x", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
+        ("sample_y", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
     ]
 
 class FrenetHyperparameters(Structure):

@@ -301,3 +301,8 @@ void FrenetOptimalTrajectory::addObstacle(Point_FP first_point,
                                      std::move(second_point),
                                      fot_hp->obstacle_clearance));
 }
+
+vector<FrenetPath*> FrenetOptimalTrajectory::getAllPath()
+{
+    return frenet_paths;
+}
