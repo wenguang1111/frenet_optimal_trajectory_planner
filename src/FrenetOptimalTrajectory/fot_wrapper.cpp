@@ -110,6 +110,7 @@ extern "C" {
                 fot_rv->sample_x[sample_counter*MAX_PATH_LENGTH + i] = path.x[i];
                 fot_rv->sample_y[sample_counter*MAX_PATH_LENGTH + i] = path.y[i];
             }
+            fot_rv->sample_length[sample_counter] = path.x.size();
             sample_counter++;
         }
     }
