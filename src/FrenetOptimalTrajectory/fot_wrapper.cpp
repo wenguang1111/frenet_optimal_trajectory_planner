@@ -113,6 +113,7 @@ extern "C" {
             fot_rv->sample_length[sample_counter] = path.x.size();
             sample_counter++;
         }
+        fot_rv->sample_size = sample_counter;
     }
 
     // Convert the initial conditions from cartesian space to frenet space

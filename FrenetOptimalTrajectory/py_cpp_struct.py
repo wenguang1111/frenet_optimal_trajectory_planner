@@ -42,7 +42,8 @@ class FrenetReturnValues(Structure):
         ("runtime", c_float)
         ("sample_x", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
         ("sample_y", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
-        ("sample_lengths", c_size_t*MAX_SAMPLE_SIZE)
+        ("sample_lengths", c_size_t*MAX_SAMPLE_SIZE),
+        ("sample_size", c_size_t)
     ]
 
 class FrenetHyperparameters(Structure):
