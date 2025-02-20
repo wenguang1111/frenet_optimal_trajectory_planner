@@ -1,4 +1,5 @@
 import numpy as np
+import py_cpp_struct as pcs
 import os
 
 from ctypes import c_float, c_int, POINTER, Structure, CDLL, byref
@@ -98,6 +99,8 @@ def run_fot(initial_conditions, hyperparameters):
         costs (dict): costs of best frenet path, if it exists
         success (bool): whether a fot was found or not
         runtime (np.ndarray(float)): run time of run_fot in c
+        sample_x_data (np.ndarray(np.ndarray(float))): x positions of sample paths
+        sample_y_data (np.ndarray(np.ndarray(float))): y positions of samples paths
     """
     # parse initial conditions and convert to frenet coordinates
     fot_initial_conditions, misc = to_frenet_initial_conditions(
@@ -122,6 +125,18 @@ def run_fot(initial_conditions, hyperparameters):
     s = np.array([fot_rv.s[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+
+    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
+    if show_sampling_path:
+        sample_x_data = []
+        sample_y_data = []
+        sample_length_data = np.array([fot_rv.sample_length[i] for i in range(fot_rv.sample_size)]).astype(np.int32)
+        for i in range(fot_rv.sample_size):
+            sample_x_data.append([fot_rv.sample_x[i][j] for j in range(sample_length_data[i])])
+            sample_y_data.append([fot_rv.sample_y[i][j] for j in range(sample_length_data[i])])
+    
+
+
     params = {
         "s": fot_rv.params[0],
         "s_d": fot_rv.params[1],
@@ -148,9 +163,12 @@ def run_fot(initial_conditions, hyperparameters):
 
     runtime = fot_rv.runtime
 
-    return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
-           speeds_x, speeds_y, params, costs, success, runtime
-
+    if show_sampling_path==False:
+        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
+            speeds_x, speeds_y, params, costs, success, runtime
+    else:
+        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
+            speeds_x, speeds_y, params, costs, success, runtime, sample_x_data, sample_y_data
 
 def to_frenet_initial_conditions(initial_conditions):
     """ Convert the cartesian initial conditions into frenet initial conditions.

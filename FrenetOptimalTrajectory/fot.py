@@ -102,13 +102,22 @@ def fot(show_animation=True,
     total_time = 0
     total_time_c = 0
     time_list = []
+
+    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
+
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
         start_time = time.time()
-        result_x, result_y, speeds, ix, iy, iyaw, d, s, speeds_x, \
-            speeds_y, misc, costs, success, runtime_c = \
-            fot_wrapper.run_fot(initial_conditions, hyperparameters)
+        if show_sampling_path:
+            result_x, result_y, speeds, ix, iy, iyaw, d, s, speeds_x, \
+                speeds_y, misc, costs, success, runtime_c, sample_x, sample_y = \
+                fot_wrapper.run_fot(initial_conditions, hyperparameters)  
+        else:
+            result_x, result_y, speeds, ix, iy, iyaw, d, s, speeds_x, \
+                speeds_y, misc, costs, success, runtime_c = \
+                fot_wrapper.run_fot(initial_conditions, hyperparameters)
+                 
         end_time = time.time() - start_time
         # print("Time taken: {} s".format(end_time))
         print("Time take by c module:{} ms".format(runtime_c))
@@ -132,6 +141,10 @@ def fot(show_animation=True,
             print("Goal")
             break
 
+        if show_sampling_path:
+            for path_x, path_y in zip(sample_x, sample_y):
+                print(path_x, path_y)
+
         if show_animation:  # pragma: no cover
             plt.cla()
             # for stopping simulation with the esc key.
@@ -149,6 +162,9 @@ def fot(show_animation=True,
             plt.plot(result_x[1], result_y[1], "vc")
             plt.xlim(result_x[1] - area, result_x[1] + area)
             plt.ylim(result_y[1] - area, result_y[1] + area)
+            if show_sampling_path:
+                for path_x, path_y in zip(sample_x, sample_y):
+                    plt.plot(path_x, path_y, color='grey', linestyle='--', linewidth=0.5)
             plt.xlabel("X axis")
             plt.ylabel("Y axis")
             plt.title("v[m/s]:" +

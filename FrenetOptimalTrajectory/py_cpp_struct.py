@@ -43,7 +43,6 @@ class FrenetReturnValues(Structure):
         ("costs", c_float * MAX_PATH_LENGTH),
         ("runtime", c_float)
     ]
-
     if sample_path:
         _fields_.extend([
             ("sample_x", c_float * MAX_PATH_LENGTH * MAX_SAMPLE_SIZE),
@@ -51,7 +50,6 @@ class FrenetReturnValues(Structure):
             ("sample_length", c_size_t * MAX_SAMPLE_SIZE),
             ("sample_size", c_size_t)
         ])
-
 class FrenetHyperparameters(Structure):
     _fields_ = [
         ("max_speed", c_float),
