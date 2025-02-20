@@ -38,10 +38,12 @@ struct FrenetReturnValues {
     float params[MAX_PATH_LENGTH];
     float costs[MAX_PATH_LENGTH];
     float runtime;
-    float sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
-    float sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
-    size_t sample_length[MAX_SAMPLE_SIZE];
-    size_t sample_size;
+    #ifdef SAMPLING_PATH_ANALYSIS
+        float sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+        float sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+        size_t sample_length[MAX_SAMPLE_SIZE];
+        size_t sample_size;
+    #endif
 };
 
 

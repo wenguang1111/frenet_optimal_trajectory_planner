@@ -1,3 +1,4 @@
+import os
 from ctypes import c_float, c_int, c_size_t, POINTER, Structure, CDLL
 
 _c_float_p = POINTER(c_float)
@@ -5,6 +6,7 @@ _c_float_p = POINTER(c_float)
 MAX_PATH_LENGTH = 100
 MAX_SAMPLE_SIZE = 100
 
+sample_path = os.environ.get("SHOW_SAMPLING_PATH", False)
 class FrenetInitialConditions(Structure):
     _fields_ = [
         ("s0", c_float),
@@ -40,11 +42,15 @@ class FrenetReturnValues(Structure):
         ("params", c_float * MAX_PATH_LENGTH),
         ("costs", c_float * MAX_PATH_LENGTH),
         ("runtime", c_float)
-        ("sample_x", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
-        ("sample_y", c_float*MAX_PATH_LENGTH*MAX_SAMPLE_SIZE),
-        ("sample_lengths", c_size_t*MAX_SAMPLE_SIZE),
-        ("sample_size", c_size_t)
     ]
+
+    if sample_path:
+        _fields_.extend([
+            ("sample_x", c_float * MAX_PATH_LENGTH * MAX_SAMPLE_SIZE),
+            ("sample_y", c_float * MAX_PATH_LENGTH * MAX_SAMPLE_SIZE),
+            ("sample_length", c_size_t * MAX_SAMPLE_SIZE),
+            ("sample_size", c_size_t)
+        ])
 
 class FrenetHyperparameters(Structure):
     _fields_ = [

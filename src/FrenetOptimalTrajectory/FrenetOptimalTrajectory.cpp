@@ -16,7 +16,11 @@ using namespace std;
 
 // Compute the frenet optimal trajectory
 FrenetOptimalTrajectory::FrenetOptimalTrajectory(
-    FrenetInitialConditions *fot_ic_, FrenetHyperparameters *fot_hp_) {
+    FrenetInitialConditions *fot_ic_, FrenetHyperparameters *fot_hp_){ 
+    #ifdef SAMPLING_PATH_ANALYSIS
+        sample_counter = 0;
+    #endif
+
     auto start = chrono::high_resolution_clock::now();
     // parse the waypoints and obstacles
     fot_ic = fot_ic_;
@@ -135,6 +139,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
     FrenetPath *fp, *tfp;
     int num_paths = 0;
     int num_viable_paths = 0;
+    
     // float valid_path_time = 0;
 
     // initialize di, with start_di_index
@@ -147,6 +152,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         ti = fot_hp->mint;
         // lateral motion planning
         
+        #ifdef SAMPLING_PATH_ANALYSIS
+            FrenetPath* best_path_in_one_direction = new FrenetPath(fot_hp);
+            float min_cost = INFINITY;
+        #endif
+
         while (ti <= fot_hp->maxt) {
             lateral_deviation = 0;
             lateral_velocity = 0;
@@ -154,6 +164,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             lateral_jerk = 0;
 
             fp = new FrenetPath(fot_hp);
+            
             QuinticPolynomial lat_qp = QuinticPolynomial(
                 fot_ic->c_d, fot_ic->c_d_d, fot_ic->c_d_dd, di, 0.0, 0.0, ti);
 
@@ -262,6 +273,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 tfp->cf = fot_hp->klat * tfp->c_lateral +
                           fot_hp->klon * tfp->c_longitudinal +
                           fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                
+                #ifdef SAMPLING_PATH_ANALYSIS
+                    if (tfp->cf < min_cost){
+                        min_cost = tfp->cf;
+                        best_path_in_one_direction = tfp;
+                    }
+                #endif
 
                 if (multithreaded) {
                     // added mutex lock to prevent threads competing to write to
@@ -279,9 +297,28 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             // make sure to deallocate
             delete fp;
         }
+        #ifdef SAMPLING_PATH_ANALYSIS
+            saveBestPathInSameDirection(best_path_in_one_direction);
+            if (best_frenet_path != nullptr) {
+                sample_length[sample_counter] = (best_frenet_path->x).size();
+                sample_counter++;
+                delete best_path_in_one_direction;
+            } else {
+                sample_length[sample_counter] = 0;
+            }
+        #endif
         di += fot_hp->d_road_w;
     }
 }
+
+#ifdef SAMPLING_PATH_ANALYSIS
+    void FrenetOptimalTrajectory::saveBestPathInSameDirection(FrenetPath * path){
+        for (size_t i = 0; i < path->x.size(); i++){
+            sample_x[sample_counter*MAX_PATH_LENGTH + i] = path->x[i];
+            sample_y[sample_counter*MAX_PATH_LENGTH + i] = path->y[i];
+        }
+    }
+#endif
 
 void FrenetOptimalTrajectory::setObstacles() {
     // Construct obstacles

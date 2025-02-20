@@ -1,20 +1,42 @@
-import fot_wrapper
 import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patch
 import argparse
-import pandas as pd
 import os
-import math
+# import py_cpp_struct
 from pathlib import Path
 
-def getWaypoints():
-    positions=[[0, 50], [20, 50], [35, 50]]
-    for x in range(50, 100):
-        y = math.sqrt(2500 - (x - 50)**2)
-        positions.append((x, y))
-    return positions
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-d",
+    "--display",
+    action="store_true",
+    help="show animation, ensure you have X11 forwarding server open")
+parser.add_argument("-v",
+                    "--verbose",
+                    action="store_true",
+                    help="verbose mode, show all state info")
+parser.add_argument("-s",
+                    "--save",
+                    action="store_true",
+                    help="save each frame of simulation")
+parser.add_argument("-t",
+                    "--thread",
+                    type=int,
+                    default=0,
+                    help="set number of threads to run with")
+parser.add_argument(
+    "-dsp",
+    "--display_sampling_paths",
+    action="store_true",
+    help="show sampling paths in animation")
+args = parser.parse_args()
+
+os.environ["SHOW_SAMPLING_PATH"] = "1" if args.display_sampling_paths else "0"
+from py_cpp_struct import FrenetReturnValues
+import py_cpp_struct
+import fot_wrapper
 
 # Run fot planner
 def fot(show_animation=True,
@@ -25,57 +47,54 @@ def fot(show_animation=True,
         's0':
         0,
         'target_speed':
-        10,
-        # 'wp': [[0, 0], [50, 0], [120, 0]],  #way point
-        # 'obs': [[1,3,4,6],[0,-5,2,-3],[3,3,5,6],[3,-5,6,-3],[4,3,6,6],[5,-5,6,-3], [7,3,10,6],[7,-5,10,-3],
-        #         [12,3,14,6],[16,3,22,6],[10,-10,12,-8],[12,-12,15,-8],
-        #         [25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
-        #         [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
-        #         [56,-4,58,-5],[56,1,58,5],[59,-4,61,-5],[59,1,61,5],
-        #         [62,1,63,5],[65,-4,68,-5],[85, -4, 90, 1], [85, 6, 90, 10]],
-        'wp': getWaypoints(),  #way point
-        'obs': [[20,-3,25,3]],
-        'pos': [0, 50],
+        20,
+        'wp': [[0, 0], [50, 0], [150, 0]],
+        'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
+                [128, 2, 132, 6]],
+        'pos': [0, 0],
         'vel': [0, 0],
     }  # paste output from debug log
 
     initial_conditions = {
         'ps': conds['s0'],
         'target_speed': conds['target_speed'],
-        'pos': np.array(conds['pos']).astype(np.float32),
-        'vel': np.array(conds['vel']).astype(np.float32),
-        'wp': np.array(conds['wp']).astype(np.float32),
-        'obs': np.array(conds['obs']).astype(np.float32)
+        'pos': np.array(conds['pos']),
+        'vel': np.array(conds['vel']),
+        'wp': np.array(conds['wp']),
+        'obs': np.array(conds['obs'])
     }
 
     hyperparameters = {
         "max_speed": 25.0,
         "max_accel": 15.0,
         "max_curvature": 15.0,
-        "max_road_width_l": 6.0,
-        "max_road_width_r": 6.0,
-        "d_road_w": 0.5,
-        "dt": 0.5,
-        "maxt": 5,
-        "mint": 2,
-        "d_t_s": 0.1,
-        "n_s_sample": 1.0,
+        "max_road_width_l": 5.0,
+        "max_road_width_r": 5.0,
+        "d_road_w": 1,
+        "dt": 0.2,
+        "maxt": 4.0,
+        "mint": 2.0,
+        "d_t_s": 0.5,
+        "n_s_sample": 2.0,
         "obstacle_clearance": 0.1,
-        "kd": 10.0,
+        "kd": 1.0,
         "kv": 0.1,
         "ka": 0.1,
         "kj": 0.1,
         "kt": 0.1,
-        "ko": 10.0,
+        "ko": 0.1,
         "klat": 1.0,
         "klon": 1.0,
         "num_threads": num_threads,  # set 0 to avoid using threaded algorithm
+        #total path number = ((max_road_width_l+max_road_width_r)/d_road_w + 1)*(2*n_s_sample+1)*(maxt/dt+1)
     }
 
     # static elements of planner
     wx = initial_conditions['wp'][:, 0]
     wy = initial_conditions['wp'][:, 1]
-    obs = np.array(conds['obs']).astype(np.float32)
+    obs = np.array(conds['obs'])
+
+    print(os.getpid())
 
     # simulation config
     sim_loop = 200
@@ -83,27 +102,6 @@ def fot(show_animation=True,
     total_time = 0
     total_time_c = 0
     time_list = []
-
-    result_x_list = []
-    result_y_list = []
-    speeds_list = []
-    ix_list = []
-    iy_list = []
-    iyaw_list = []
-    d_list = []
-    s_list = []
-    speeds_x_list = []
-    speeds_y_list = []
-    # misc_list = []
-    # costs_list = []
-    # success_list = []
-
-    symbol = "*"
-
-    # ----------------Debug-------------
-    print(os.getpid()) 
-    #-----------------------------------
-    
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
@@ -114,27 +112,14 @@ def fot(show_animation=True,
         end_time = time.time() - start_time
         # print("Time taken: {} s".format(end_time))
         print("Time take by c module:{} ms".format(runtime_c))
-        print(costs)
         total_time += end_time
         total_time_c += runtime_c
         time_list.append(runtime_c)
-        # -----------------------------for debug print------------------------------
-        result_x_list.append([str(item) for item in result_x] + [symbol])
-        result_y_list.append([str(item) for item in result_y] + [symbol])
-        speeds_list.append([str(item) for item in speeds] + [symbol])
-        ix_list.append([str(item) for item in ix] + [symbol])
-        iy_list.append([str(item) for item in iy] + [symbol])
-        iyaw_list.append([str(item) for item in iyaw] + [symbol])
-        d_list.append([str(item) for item in d] + [symbol])
-        s_list.append([str(item) for item in s] + [symbol])
-        speeds_x_list.append([str(item) for item in speeds_x] + [symbol])
-        speeds_y_list.append([str(item) for item in speeds_y] + [symbol])
-        # ----------------------------------------------------------
 
         # reconstruct initial_conditions
         if success:
-            initial_conditions['pos'] = np.array([result_x[1], result_y[1]]).astype(np.float32)
-            initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]]).astype(np.float32)
+            initial_conditions['pos'] = np.array([result_x[1], result_y[1]])
+            initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]])
             initial_conditions['ps'] = misc['s']
             if show_info:
                 print(costs)
@@ -155,7 +140,7 @@ def fot(show_animation=True,
                 lambda event: [exit(0) if event.key == "escape" else None])
             plt.plot(wx, wy)
             if obs.shape[0] == 0:
-                obs = np.empty((0, 4)).astype(np.float32)
+                obs = np.empty((0, 4))
             ax = plt.gca()
             for o in obs:
                 rect = patch.Rectangle((o[0], o[1]), o[2] - o[0], o[3] - o[1])
@@ -174,39 +159,6 @@ def fot(show_animation=True,
                 plt.savefig("img/frames/{}.jpg".format(i))
             plt.pause(0.1)
 
-    # -----------------------------for debug print -----------------------------
-    flat_x_list = [item for sublist in result_x_list for item in sublist]
-    flat_y_list = [item for sublist in result_y_list for item in sublist]
-    flat_speeds_list = [item for sublist in speeds_list for item in sublist]
-    flat_ix_list = [item for sublist in ix_list for item in sublist]
-    flat_iy_list = [item for sublist in iy_list for item in sublist]
-    flat_iyaw_list = [item for sublist in iyaw_list for item in sublist]
-    flat_d_list = [item for sublist in d_list for item in sublist]
-    flat_s_list = [item for sublist in s_list for item in sublist]
-    flat_speeds_x_list = [item for sublist in speeds_x_list for item in sublist]
-    flat_speeds_y_list = [item for sublist in speeds_y_list for item in sublist]
-    
-    df_results = pd.DataFrame({
-        'result_x': flat_x_list,
-        'result_y': flat_y_list,
-        'speed': flat_speeds_list,
-        'ix': flat_ix_list,
-        'iy': flat_iy_list,
-        'iyaw': flat_iyaw_list,
-        'd': flat_d_list,
-        's': flat_s_list,
-        'speeds_x': flat_speeds_x_list,
-        'speeds_y': flat_speeds_y_list,
-        # 'misc': flat_misc_list,
-        # 'costs': flat_costs_list,
-        # 'success': flat_success_list
-    })
-    # Save the DataFrame to a CSV file
-    csv_file = 'output_value.csv'
-    df_results.to_csv(csv_file, index=False)
-    print(f'Results saved to {csv_file}')
-    # ----------------------------------------------------------
-
     print("Finish")
 
     print("======================= SUMMARY ========================")
@@ -218,27 +170,5 @@ def fot(show_animation=True,
 
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-d",
-        "--display",
-        action="store_true",
-        help="show animation, ensure you have X11 forwarding server open")
-    parser.add_argument("-v",
-                        "--verbose",
-                        action="store_true",
-                        help="verbose mode, show all state info")
-    parser.add_argument("-s",
-                        "--save",
-                        action="store_true",
-                        help="save each frame of simulation")
-    parser.add_argument("-t",
-                        "--thread",
-                        type=int,
-                        default=0,
-                        help="set number of threads to run with")
     args = parser.parse_args()
-
-    # run planner with args passed in
     fot(args.display, args.verbose, args.thread, args.save)

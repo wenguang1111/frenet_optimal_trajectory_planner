@@ -47,7 +47,7 @@ extern "C" {
             // write recorded data to csv file
             Recorder::getInstance()->writeDataToCSV();
         #endif
-        
+
         FrenetPath* best_frenet_path = fot.getBestPath();
         if (best_frenet_path && !best_frenet_path->x.empty()){
             fot_rv->success = 1;
@@ -95,25 +95,15 @@ extern "C" {
         }
         fot_rv->runtime = time_taken;
 
-        //return all sample paths
-        std::fill(std::begin(fot_rv->sample_x), std::end(fot_rv->sample_x), 0.0f);
-        std::fill(std::begin(fot_rv->sample_y), std::end(fot_rv->sample_y), 0.0f);
-
-        vector<FrenetPath*> all_paths_ptr = fot.getAllPath();
-        vector<FrenetPath> all_paths;
-        for (FrenetPath* path_ptr : all_paths_ptr) {
-            all_paths.push_back(*path_ptr);
-        }
-        size_t sample_counter = 0;
-        for (FrenetPath path : all_paths){
-            for (size_t i = 0; i < path.x.size(); i++){
-                fot_rv->sample_x[sample_counter*MAX_PATH_LENGTH + i] = path.x[i];
-                fot_rv->sample_y[sample_counter*MAX_PATH_LENGTH + i] = path.y[i];
-            }
-            fot_rv->sample_length[sample_counter] = path.x.size();
-            sample_counter++;
-        }
-        fot_rv->sample_size = sample_counter;
+        #ifdef SAMPLING_PATH_ANALYSIS
+            //init all sample paths
+            std::fill(std::begin(fot_rv->sample_x), std::end(fot_rv->sample_x), 0.0f);
+            std::fill(std::begin(fot_rv->sample_y), std::end(fot_rv->sample_y), 0.0f);
+            fot_rv->sample_size = fot.getSampleCounter();
+            std::copy(fot.getSampleLength(), fot.getSampleLength() + MAX_SAMPLE_SIZE, fot_rv->sample_length);
+            std::copy(fot.getSampleX(), fot.getSampleX() + MAX_PATH_LENGTH*MAX_SAMPLE_SIZE, fot_rv->sample_x);
+            std::copy(fot.getSampleX(), fot.getSampleX() + MAX_PATH_LENGTH*MAX_SAMPLE_SIZE, fot_rv->sample_x);
+        #endif
     }
 
     // Convert the initial conditions from cartesian space to frenet space

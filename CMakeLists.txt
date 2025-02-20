@@ -24,6 +24,7 @@ find_package(Eigen3)
 
 option(USE_RECORDER "Use recorder" OFF)
 option(ANALYZE_VECTORIZATION "Detect if vectorization is successful" OFF)
+option(SAMPLING_PATH_ANALYSIS "Return sampling paths for analysis" OFF)
 
 set(recorder_file ${recorder_file})
 if (USE_RECORDER)
@@ -36,6 +37,11 @@ if (ANALYZE_VECTORIZATION)
   MESSAGE(STATUS "ANALYZE_VECTORIZATION=ON")
   add_definitions(-DANALYZE_VECTORIZATION)
   set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Rpass-analysis=loop-vectorize")
+endif()
+
+if (SAMPLING_PATH_ANALYSIS)
+  MESSAGE(STATUS "SAMPLING_PATH_ANALYSIS=ON")
+  add_definitions(-DSAMPLING_PATH_ANALYSIS)
 endif()
 
 include_directories(.)

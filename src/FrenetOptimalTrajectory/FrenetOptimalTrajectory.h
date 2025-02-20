@@ -38,7 +38,13 @@ public:
     vector<FrenetPath*> getAllPath();
     void setObstacles();
     void addObstacle(Point_FP first_point, Point_FP second_point);
-
+    #ifdef SAMPLING_PATH_ANALYSIS
+        size_t getSampleCounter() { return sample_counter; }
+        size_t* getSampleLength() { return sample_length; }
+        float* getSampleX() { return sample_x; }
+        float* getSampleY() { return sample_y; }
+    #endif
+    
 private:
     FrenetInitialConditions *fot_ic;
     FrenetHyperparameters *fot_hp;
@@ -48,9 +54,16 @@ private:
     vector<Obstacle *> obstacles;
     vector<float> x, y; // way points
     vector<FrenetPath *> frenet_paths;
+    #ifdef SAMPLING_PATH_ANALYSIS
+        size_t sample_counter;
+        size_t sample_length[MAX_SAMPLE_SIZE];
+        float sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+        float sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+    #endif
     void calc_frenet_paths(int start_di_index, int end_di_index,
                            bool multithreaded);
     void threaded_calc_all_frenet_paths();
+    void saveBestPathInSameDirection(FrenetPath * path);
 };
 
 #endif // FRENET_OPTIMAL_TRAJECTORY_FRENET_OPTIMAL_TRAJECTORY_H
