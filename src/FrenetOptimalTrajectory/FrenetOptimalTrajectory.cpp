@@ -18,7 +18,7 @@ using namespace std;
 FrenetOptimalTrajectory::FrenetOptimalTrajectory(
     FrenetInitialConditions *fot_ic_, FrenetHyperparameters *fot_hp_){ 
     #ifdef SAMPLING_PATH_ANALYSIS
-        sample_counter = 0;
+        _sample_counter = 0;
     #endif
 
     auto start = chrono::high_resolution_clock::now();
@@ -66,9 +66,9 @@ FrenetOptimalTrajectory::FrenetOptimalTrajectory(
         }
     }
     auto end = chrono::high_resolution_clock::now();
-    float run_time =
-        chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-    run_time *= 1e-6;
+    // float run_time =
+    //     chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+    // run_time *= 1e-6;
     // cout << "Planning runtime " << run_time << "\n";
 }
 
@@ -277,20 +277,10 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 #ifdef SAMPLING_PATH_ANALYSIS
                     if (tfp->cf < min_cost){
                         min_cost = tfp->cf;
-                        best_path_in_one_direction = tfp;
+                        *best_path_in_one_direction = *tfp;
                     }
                 #endif
-
-                if (multithreaded) {
-                    // added mutex lock to prevent threads competing to write to
-                    // frenet_path
-                    mu->lock();
-                    frenet_paths.push_back(tfp);
-                    mu->unlock();
-                } else {
-                    frenet_paths.push_back(tfp);
-                }
-
+                frenet_paths.push_back(tfp);
                 tv += fot_hp->d_t_s;
             }
             ti += fot_hp->dt;
@@ -298,13 +288,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             delete fp;
         }
         #ifdef SAMPLING_PATH_ANALYSIS
-            saveBestPathInSameDirection(best_path_in_one_direction);
-            if (best_frenet_path != nullptr) {
-                sample_length[sample_counter] = (best_frenet_path->x).size();
-                sample_counter++;
+            if (best_path_in_one_direction != nullptr) {
+                saveBestPathInSameDirection(best_path_in_one_direction);
+                _sample_length[_sample_counter] = (best_path_in_one_direction->x).size();
+                _sample_counter++;
                 delete best_path_in_one_direction;
-            } else {
-                sample_length[sample_counter] = 0;
             }
         #endif
         di += fot_hp->d_road_w;
@@ -314,8 +302,8 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 #ifdef SAMPLING_PATH_ANALYSIS
     void FrenetOptimalTrajectory::saveBestPathInSameDirection(FrenetPath * path){
         for (size_t i = 0; i < path->x.size(); i++){
-            sample_x[sample_counter*MAX_PATH_LENGTH + i] = path->x[i];
-            sample_y[sample_counter*MAX_PATH_LENGTH + i] = path->y[i];
+            _sample_x[_sample_counter*MAX_PATH_LENGTH + i] = path->x[i];
+            _sample_y[_sample_counter*MAX_PATH_LENGTH + i] = path->y[i];
         }
     }
 #endif

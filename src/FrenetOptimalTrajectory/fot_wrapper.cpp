@@ -102,7 +102,7 @@ extern "C" {
             fot_rv->sample_size = fot.getSampleCounter();
             std::copy(fot.getSampleLength(), fot.getSampleLength() + MAX_SAMPLE_SIZE, fot_rv->sample_length);
             std::copy(fot.getSampleX(), fot.getSampleX() + MAX_PATH_LENGTH*MAX_SAMPLE_SIZE, fot_rv->sample_x);
-            std::copy(fot.getSampleX(), fot.getSampleX() + MAX_PATH_LENGTH*MAX_SAMPLE_SIZE, fot_rv->sample_x);
+            std::copy(fot.getSampleY(), fot.getSampleY() + MAX_PATH_LENGTH*MAX_SAMPLE_SIZE, fot_rv->sample_y);
         #endif
     }
 

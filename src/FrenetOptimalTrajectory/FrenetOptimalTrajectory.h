@@ -39,10 +39,10 @@ public:
     void setObstacles();
     void addObstacle(Point_FP first_point, Point_FP second_point);
     #ifdef SAMPLING_PATH_ANALYSIS
-        size_t getSampleCounter() { return sample_counter; }
-        size_t* getSampleLength() { return sample_length; }
-        float* getSampleX() { return sample_x; }
-        float* getSampleY() { return sample_y; }
+        size_t getSampleCounter() { return _sample_counter; }
+        size_t* getSampleLength() { return _sample_length; }
+        float* getSampleX() { return _sample_x; }
+        float* getSampleY() { return _sample_y; }
     #endif
     
 private:
@@ -55,10 +55,10 @@ private:
     vector<float> x, y; // way points
     vector<FrenetPath *> frenet_paths;
     #ifdef SAMPLING_PATH_ANALYSIS
-        size_t sample_counter;
-        size_t sample_length[MAX_SAMPLE_SIZE];
-        float sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
-        float sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE];
+        size_t _sample_counter;
+        size_t _sample_length[MAX_SAMPLE_SIZE] = {0};
+        float _sample_x[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE] = {0};
+        float _sample_y[MAX_PATH_LENGTH*MAX_SAMPLE_SIZE] = {0};
     #endif
     void calc_frenet_paths(int start_di_index, int end_di_index,
                            bool multithreaded);
