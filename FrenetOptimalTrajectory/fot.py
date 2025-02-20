@@ -141,10 +141,6 @@ def fot(show_animation=True,
             print("Goal")
             break
 
-        if show_sampling_path:
-            for path_x, path_y in zip(sample_x, sample_y):
-                print(path_x, path_y)
-
         if show_animation:  # pragma: no cover
             plt.cla()
             # for stopping simulation with the esc key.

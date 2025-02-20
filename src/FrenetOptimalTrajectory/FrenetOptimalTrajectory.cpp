@@ -288,7 +288,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
             delete fp;
         }
         #ifdef SAMPLING_PATH_ANALYSIS
-            if (best_path_in_one_direction != nullptr) {
+            if (best_path_in_one_direction->x.size() > 0){
                 saveBestPathInSameDirection(best_path_in_one_direction);
                 _sample_length[_sample_counter] = (best_path_in_one_direction->x).size();
                 _sample_counter++;
