@@ -7,10 +7,12 @@ MAX_PATH_LENGTH = 100
 MAX_SAMPLE_SIZE = 100
 
 sample_path = os.environ.get("SHOW_SAMPLING_PATH", False)
+# print('sample', sample_path)
 class FrenetInitialConditions(Structure):
     _fields_ = [
         ("s0", c_float),
         ("c_speed", c_float),
+        ("c_acceleration", c_float),
         ("c_d", c_float),
         ("c_d_d", c_float),
         ("c_d_dd", c_float),
@@ -32,6 +34,7 @@ class FrenetReturnValues(Structure):
         ("x_path", c_float * MAX_PATH_LENGTH),
         ("y_path", c_float * MAX_PATH_LENGTH),
         ("speeds", c_float * MAX_PATH_LENGTH),
+        ("accelerations", c_float * MAX_PATH_LENGTH),
         ("ix", c_float * MAX_PATH_LENGTH),
         ("iy", c_float * MAX_PATH_LENGTH),
         ("iyaw", c_float * MAX_PATH_LENGTH),

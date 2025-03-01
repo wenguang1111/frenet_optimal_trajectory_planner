@@ -205,8 +205,10 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 tfp->d_dd.assign(fp->d_dd.begin(), fp->d_dd.end());
                 tfp->d_ddd.assign(fp->d_ddd.begin(), fp->d_ddd.end());
 
+                // std::cout << fot_ic->c_acceleration << std::endl;
+
                 QuarticPolynomial lon_qp = QuarticPolynomial(
-                    fot_ic->s0, fot_ic->c_speed, 0.0, tv, 0.0, ti);
+                    fot_ic->s0, fot_ic->c_speed, fot_ic->c_acceleration, tv, 0.0, ti);
 
                 // longitudinal motion
                 for (float tp : tfp->t) {
@@ -238,11 +240,23 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
 
 
                 bool valid_path = tfp->is_valid_path(obstacles);
+                #ifdef USE_RECORDER
+                        Recorder::getInstance()->saveData<float>("sampled_velocity", tv);
+                        Recorder::getInstance()->saveData<float>("valid_path", static_cast<int>(valid_path));
+                #endif
+                // std::cout << "tv: " << tv << " valid_path: " << valid_path << std::endl;
                 if (!valid_path) {
                     delete tfp;
                     tv += fot_hp->d_t_s;
                     continue;
                 }
+
+                // d distance cost
+                double d_cost = 0.0;
+                for (size_t i = 0; i < tfp->d.size(); ++i) {
+                    d_cost += std::pow((0.25 * (0 - tfp->d[i])), 2);
+                }
+                d_cost += std::pow((20 * (0 - tfp->d.back())), 2);
 
                 // lateral costs
                 tfp->c_lateral_deviation = lateral_deviation;
@@ -270,9 +284,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 tfp->c_inv_dist_to_obstacles = tfp->inverse_distance_to_obstacles(obstacles);
 
                 // final cost
-                tfp->cf = fot_hp->klat * tfp->c_lateral +
-                          fot_hp->klon * tfp->c_longitudinal +
-                          fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                // tfp->cf = fot_hp->klat * tfp->c_lateral +
+                //           fot_hp->klon * tfp->c_longitudinal +
+                //           fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+
+                tfp->cf = d_cost + fot_hp->ko * tfp->c_inv_dist_to_obstacles;
                 
                 #ifdef SAMPLING_PATH_ANALYSIS
                     if (tfp->cf < min_cost){

@@ -1,5 +1,5 @@
 import numpy as np
-import py_cpp_struct as pcs
+# import py_cpp_struct as pcs
 import os
 
 from ctypes import c_float, c_int, POINTER, Structure, CDLL, byref
@@ -11,9 +11,9 @@ except:
     from frenet_optimal_trajectory_planner.FrenetOptimalTrajectory \
         .py_cpp_struct import FrenetInitialConditions, FrenetHyperparameters, \
          FrenetReturnValues
-
+# print(os.getcwd())
 try:
-    cdll = CDLL("build/libFrenetOptimalTrajectory.so")
+    cdll = CDLL("/home/kareem/my-frenet/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
 except:
     cdll = CDLL("{}/dependencies/frenet_optimal_trajectory_planner/"
                 "build/libFrenetOptimalTrajectory.so".format(
@@ -33,7 +33,7 @@ _run_fot.restype = None
 # func / return type declarations for C++ to_frenet_initial_conditions
 _to_frenet_initial_conditions = cdll.to_frenet_initial_conditions
 _to_frenet_initial_conditions.restype = None
-_to_frenet_initial_conditions.argtypes = (c_float, c_float, c_float,
+_to_frenet_initial_conditions.argtypes = (c_float, c_float, c_float, c_float,
                                           c_float, c_float, c_float,
                                           _c_float_p, _c_float_p, c_int,
                                           _c_float_p)
@@ -118,6 +118,7 @@ def run_fot(initial_conditions, hyperparameters):
     x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     speeds = np.array([fot_rv.speeds[i] for i in range(fot_rv.path_length)]).astype(np.float32)
+    accelerations = np.array([fot_rv.accelerations[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     ix = np.array([fot_rv.ix[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     iy = np.array([fot_rv.iy[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     iyaw = np.array([fot_rv.iyaw[i] for i in range(fot_rv.path_length)]).astype(np.float32)
@@ -127,7 +128,7 @@ def run_fot(initial_conditions, hyperparameters):
     speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
 
     show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
-    if show_sampling_path:
+    if int(show_sampling_path):
         sample_x_data = []
         sample_y_data = []
         sample_length_data = np.array([fot_rv.sample_length[i] for i in range(fot_rv.sample_size)]).astype(np.int32)
@@ -163,12 +164,13 @@ def run_fot(initial_conditions, hyperparameters):
 
     runtime = fot_rv.runtime
 
-    if show_sampling_path==False:
-        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
-            speeds_x, speeds_y, params, costs, success, runtime
-    else:
+    if int(show_sampling_path):
         return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
             speeds_x, speeds_y, params, costs, success, runtime, sample_x_data, sample_y_data
+        
+    else:
+        return x_path, y_path, speeds, accelerations, ix, iy, iyaw, d, s, \
+            speeds_x, speeds_y, params, costs, success, runtime
 
 def to_frenet_initial_conditions(initial_conditions):
     """ Convert the cartesian initial conditions into frenet initial conditions.
@@ -191,6 +193,7 @@ def to_frenet_initial_conditions(initial_conditions):
     vel = initial_conditions['vel']
     wp = initial_conditions['wp']
     obs = initial_conditions['obs']
+    acc = initial_conditions['acc']
     target_speed = initial_conditions['target_speed']
     if obs.shape[0] == 0:
         obs = np.empty((0, 4)).astype(np.float32)
@@ -205,12 +208,16 @@ def to_frenet_initial_conditions(initial_conditions):
     o_urx = np.copy(obs[:, 2]).astype(np.float32)
     o_ury = np.copy(obs[:, 3]).astype(np.float32)
     forward_speed = np.hypot(vx, vy).item()
+    
+    wx = np.ascontiguousarray(wx, dtype=np.float32)
+    wy = np.ascontiguousarray(wy, dtype=np.float32)
 
     # construct return array and convert initial conditions
-    misc = np.zeros(5).astype(np.float32)
+    misc = np.zeros(6).astype(np.float32)
     _to_frenet_initial_conditions(c_float(ps), c_float(x), c_float(y),
                                   c_float(vx), c_float(vy),
                                   c_float(forward_speed),
+                                  c_float(acc),
                                   wx.ctypes.data_as(_c_float_p),
                                   wy.ctypes.data_as(_c_float_p),
                                   c_int(len(wx)),
@@ -220,9 +227,10 @@ def to_frenet_initial_conditions(initial_conditions):
     return FrenetInitialConditions(
         misc[0],  # c_s
         misc[1],  # c_speed
-        misc[2],  # c_d
-        misc[3],  # c_d_d
-        misc[4],  # c_d_dd
+        misc[2],  # c_acceleration
+        misc[3],  # c_d
+        misc[4],  # c_d_d
+        misc[5],  # c_d_dd
         target_speed,  # target speed
         wx.ctypes.data_as(_c_float_p),  # waypoints x position
         wy.ctypes.data_as(_c_float_p),  # waypoints y position

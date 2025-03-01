@@ -8,6 +8,7 @@ const size_t MAX_SAMPLE_SIZE = 100;
 struct FrenetInitialConditions {
     float s0; 
     float c_speed;
+    float c_acceleration;
     float c_d;
     float c_d_d;
     float c_d_dd;
@@ -28,6 +29,7 @@ struct FrenetReturnValues {
     float x_path[MAX_PATH_LENGTH];
     float y_path[MAX_PATH_LENGTH];
     float speeds[MAX_PATH_LENGTH];
+    float accelerations[MAX_PATH_LENGTH];
     float ix[MAX_PATH_LENGTH];
     float iy[MAX_PATH_LENGTH];
     float iyaw[MAX_PATH_LENGTH];

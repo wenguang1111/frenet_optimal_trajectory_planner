@@ -56,9 +56,10 @@ extern "C" {
                 fot_rv->x_path[i] = static_cast<float>(best_frenet_path->x[i]);
                 fot_rv->y_path[i] = static_cast<float>(best_frenet_path->y[i]);
                 fot_rv->speeds[i] = static_cast<float>(best_frenet_path->s_d[i]);
+                fot_rv->accelerations[i] = static_cast<float>(best_frenet_path->s_dd[i]);
                 fot_rv->ix[i] = static_cast<float>(best_frenet_path->ix[i]);
                 fot_rv->iy[i] = static_cast<float>(best_frenet_path->iy[i]);
-                fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
+                fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->yaw[i]);
                 fot_rv->d[i] = static_cast<float>(best_frenet_path->d[i]);
                 fot_rv->s[i] = static_cast<float>(best_frenet_path->s[i]);
                 // fot_rv->speeds_x[i] = cordic_cos(best_frenet_path->yaw[i]) *
@@ -109,7 +110,7 @@ extern "C" {
     // Convert the initial conditions from cartesian space to frenet space
     void to_frenet_initial_conditions(
             float s0, float x, float y, float vx,
-            float vy, float forward_speed, float* xp, float* yp, int np,
+            float vy, float forward_speed, float forward_acceleration, float* xp, float* yp, int np,
             float* initial_conditions
             ) {
         vector<float> wx (xp, xp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
@@ -139,11 +140,12 @@ extern "C" {
         // get initial conditions in frenet frame
         initial_conditions[0] = s; // current longitudinal position s
         initial_conditions[1] = forward_speed; // speed [m/s]
+        initial_conditions[2] = forward_acceleration; // acceleration [m/s2]
         // lateral position c_d [m]
-        initial_conditions[2] = copysign(distance, dot(tvec, bvec));
+        initial_conditions[3] = copysign(distance, dot(tvec, bvec));
         // lateral speed c_d_d [m/s]
-        initial_conditions[3] = -forward_speed * dot(tvec, fvec);
-        initial_conditions[4] = 0.0; // lateral acceleration c_d_dd [m/s^2]
+        initial_conditions[4] = -forward_speed * dot(tvec, fvec);
+        initial_conditions[5] = 0.0; // lateral acceleration c_d_dd [m/s^2]
         // TODO: add lateral acceleration when CARLA 9.7 is patched (IMU)
 
         delete csp;
