@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Edmond Irani Liu, Fabian Höltke, Moritz Klischat" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps, SUMO Traffic Simulator" benchmarkID="DEU_Lohmar-47_1_T-1" date="2025-02-09">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Edmond Irani Liu, Fabian Höltke, Moritz Klischat" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps, SUMO Traffic Simulator" benchmarkID="DEU_Lohmar-47_1_T-1" date="2025-03-02">
   <location>
     <geoNameId>2876218</geoNameId>
     <gpsLatitude>50.83868</gpsLatitude>
     <gpsLongitude>7.21399</gpsLongitude>
   </location>
   <scenarioTags>
+    <critical/>
     <simulated/>
     <intersection/>
-    <critical/>
   </scenarioTags>
   <lanelet id="696">
     <leftBound>
@@ -41999,27 +41999,27 @@
     </initialState>
     <goalState>
       <time>
-        <intervalStart>33</intervalStart>
-        <intervalEnd>33</intervalEnd>
+        <intervalStart>99</intervalStart>
+        <intervalEnd>99</intervalEnd>
       </time>
       <position>
         <rectangle>
-          <length>2.0</length>
-          <width>1.0</width>
+          <length>3.0</length>
+          <width>3.0</width>
           <orientation>0.0</orientation>
           <center>
-            <x>26.7939</x>
-            <y>16.0628</y>
+            <x>78.8106</x>
+            <y>54.6479</y>
           </center>
         </rectangle>
       </position>
       <velocity>
-        <intervalStart>9.539</intervalStart>
-        <intervalEnd>9.539</intervalEnd>
+        <intervalStart>9.5887</intervalStart>
+        <intervalEnd>9.5887</intervalEnd>
       </velocity>
       <orientation>
-        <intervalStart>0.8124</intervalStart>
-        <intervalEnd>0.8124</intervalEnd>
+        <intervalStart>0.2442</intervalStart>
+        <intervalEnd>0.2442</intervalEnd>
       </orientation>
     </goalState>
   </planningProblem>

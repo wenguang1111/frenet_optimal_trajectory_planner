@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Edmond Irani Liu, Fabian Höltke, Moritz Klischat" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps, SUMO Traffic Simulator" benchmarkID="DEU_Flensburg-67_1_T-1" date="2025-02-09">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Edmond Irani Liu, Fabian Höltke, Moritz Klischat" affiliation="Technical University of Munich, Germany" source="OpenStreetMaps, SUMO Traffic Simulator" benchmarkID="DEU_Flensburg-67_1_T-1" date="2025-03-02">
   <location>
     <geoNameId>2926271</geoNameId>
     <gpsLatitude>54.78431</gpsLatitude>
     <gpsLongitude>9.43961</gpsLongitude>
   </location>
   <scenarioTags>
+    <critical/>
     <simulated/>
     <intersection/>
-    <critical/>
   </scenarioTags>
   <lanelet id="135">
     <leftBound>
@@ -47904,27 +47904,27 @@
     </initialState>
     <goalState>
       <time>
-        <intervalStart>33</intervalStart>
-        <intervalEnd>33</intervalEnd>
+        <intervalStart>99</intervalStart>
+        <intervalEnd>99</intervalEnd>
       </time>
       <position>
         <rectangle>
-          <length>2.0</length>
-          <width>1.0</width>
+          <length>3.0</length>
+          <width>3.0</width>
           <orientation>0.0</orientation>
           <center>
-            <x>-0.8888</x>
-            <y>-6.6465</y>
+            <x>12.8757</x>
+            <y>-14.5982</y>
           </center>
         </rectangle>
       </position>
       <velocity>
-        <intervalStart>1.2842</intervalStart>
-        <intervalEnd>1.2842</intervalEnd>
+        <intervalStart>3.0192</intervalStart>
+        <intervalEnd>3.0192</intervalEnd>
       </velocity>
       <orientation>
-        <intervalStart>-1.6929</intervalStart>
-        <intervalEnd>-1.6929</intervalEnd>
+        <intervalStart>-0.1435</intervalStart>
+        <intervalEnd>-0.1435</intervalEnd>
       </orientation>
     </goalState>
   </planningProblem>
