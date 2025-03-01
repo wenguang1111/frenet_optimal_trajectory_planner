@@ -15,16 +15,16 @@ from commonroad_utils.parser.utils import create_trajectory_from_list_states, vi
 os.environ["SHOW_SAMPLING_PATH"] = '0'
 
 scenario_path = os.getcwd() + '/commonroad_utils/Critical_Transformed/'
-scenario_name = 'DEU_Flensburg-67_1_T-1.xml'
+scenario_name = 'ESP_Inca-7_1_T-1.xml'
 # scenario_name = 'USA_US101-28_1_T-1.xml'
 
 scenario, planning_problem, pp_set = get_scenario(scenario_path, scenario_name)
 
-planning_problem.goal.state_list[0].position.center = np.array([2.0, -12.0])
+# planning_problem.goal.state_list[0].position.center = np.array([2.0, -12.0])
 # Get the initial and goal positions
 start_pos = planning_problem.initial_state.position
 goal_pos = planning_problem.goal.state_list[0].position.center
-print(start_pos, goal_pos)
+# print(start_pos, goal_pos)
 # Calculate X and Y components on the initial velocity
 inital_vel = planning_problem.initial_state.velocity
 initial_orientation = planning_problem.initial_state.orientation
@@ -34,19 +34,19 @@ initial_vel_y = inital_vel * np.sin(initial_orientation)
 parser = Parser(scenario=scenario, planning_problem=planning_problem,\
                   x_interval=Interval(-inf, inf), y_interval=Interval(-inf, inf))
 
-EPS = 0.5           # Epsilon of reached goal comparison
+EPS = 1.0           # Epsilon of reached goal comparison
 LEN_DRAW = 10     # The length of the drawn trajectory (Number of states)
 # print(planning_problem.initial_state.acceleration)
 conds = {
       's0': parser.parse_initial_position(x_only=True),
-      'target_speed': 15.0,
+      'target_speed': 10.0,
       # 'target_speed': planner.x_0.velocity,  # Uncomment to parsing the target speed from the scenario
       'acc': planning_problem.initial_state.acceleration,
       'wp': parser.parse_waypoints(initial_state=start_pos, goal_state=goal_pos),
       'obs': parser.parse_obstacles(time_step=0),
       'pos': parser.parse_initial_position(x_only=False),
-      # 'vel': [initial_vel_x, initial_vel_y], # Velocity in X and Y directions
-      'vel': [-0.0, -0.3], # Velocity in X and Y directions
+      'vel': [initial_vel_x, initial_vel_y], # Velocity in X and Y directions
+      # 'vel': [-0.0, -0.3], # Velocity in X and Y directions
 }
 
 print(initial_vel_x, initial_vel_y)
