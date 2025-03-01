@@ -8,7 +8,7 @@ try:
     from py_cpp_struct import FrenetInitialConditions, FrenetHyperparameters, \
         FrenetReturnValues
 except:
-    from frenet_optimal_trajectory_planner.FrenetOptimalTrajectory \
+    from FrenetOptimalTrajectory \
         .py_cpp_struct import FrenetInitialConditions, FrenetHyperparameters, \
          FrenetReturnValues
 # print(os.getcwd())
