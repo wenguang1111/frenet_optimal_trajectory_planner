@@ -288,7 +288,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 //           fot_hp->klon * tfp->c_longitudinal +
                 //           fot_hp->ko * tfp->c_inv_dist_to_obstacles;
 
-                tfp->cf = d_cost + fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                tfp->cf = fot_hp->kd * d_cost + fot_hp->ko * tfp->c_inv_dist_to_obstacles;
                 
                 #ifdef SAMPLING_PATH_ANALYSIS
                     if (tfp->cf < min_cost){
