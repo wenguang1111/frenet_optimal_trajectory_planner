@@ -208,7 +208,7 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 // std::cout << fot_ic->c_acceleration << std::endl;
 
                 QuarticPolynomial lon_qp = QuarticPolynomial(
-                    fot_ic->s0, fot_ic->c_speed, fot_ic->c_acceleration, tv, 0.0, ti);
+                    fot_ic->s0, fot_ic->c_speed, 0.0, tv, 0.0, ti);
 
                 // longitudinal motion
                 for (float tp : tfp->t) {
@@ -288,7 +288,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 //           fot_hp->klon * tfp->c_longitudinal +
                 //           fot_hp->ko * tfp->c_inv_dist_to_obstacles;
 
+                // when lon. jerk cost is enabled, it considers waiting a jerky motion and crashes
+                // when it's not negative accelerations are generated and too much lateral jerk
                 tfp->cf = fot_hp->kd * d_cost + fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                        // fot_hp->kj * tfp->c_longitudinal_jerk; 
+                        // fot_hp->kj * tfp->c_lateral_jerk;
                 
                 #ifdef SAMPLING_PATH_ANALYSIS
                     if (tfp->cf < min_cost){
