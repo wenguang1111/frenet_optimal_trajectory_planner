@@ -13,7 +13,7 @@ except:
          FrenetReturnValues
 # print(os.getcwd())
 try:
-    cdll = CDLL("/home/kareem/my-frenet/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
+    cdll = CDLL("/home/kareem/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
 except:
     cdll = CDLL("{}/dependencies/frenet_optimal_trajectory_planner/"
                 "build/libFrenetOptimalTrajectory.so".format(
@@ -165,7 +165,7 @@ def run_fot(initial_conditions, hyperparameters):
     runtime = fot_rv.runtime
 
     if int(show_sampling_path):
-        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
+        return x_path, y_path, speeds, accelerations, ix, iy, iyaw, d, s, \
             speeds_x, speeds_y, params, costs, success, runtime, sample_x_data, sample_y_data
         
     else:
