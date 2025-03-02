@@ -1,5 +1,6 @@
 import os
 import time
+import pickle
 from math import inf
 from typing import List
 import numpy as np
@@ -12,10 +13,10 @@ from commonroad_utils.parser.utils import create_trajectory_from_list_states, vi
 # import sys
 # sys.path.append('/home/wenguang/workplace/my-frenet/frenet_optimal_trajectory_planner/FrenetOptimalTrajectory')
 
-os.environ["SHOW_SAMPLING_PATH"] = '0'
+os.environ["SHOW_SAMPLING_PATH"] = '1'
 
 scenario_path = os.getcwd() + '/commonroad_utils/Critical_Transformed/'
-scenario_name = 'ESP_Inca-7_1_T-1.xml'
+scenario_name = 'DEU_Lohmar-47_1_T-1.xml'
 # scenario_name = 'USA_US101-28_1_T-1.xml'
 
 scenario, planning_problem, pp_set = get_scenario(scenario_path, scenario_name)
@@ -36,6 +37,8 @@ parser = Parser(scenario=scenario, planning_problem=planning_problem,\
 
 EPS = 1.0           # Epsilon of reached goal comparison
 LEN_DRAW = 10     # The length of the drawn trajectory (Number of states)
+SAVE = False
+LOAD = False
 # print(planning_problem.initial_state.acceleration)
 conds = {
       's0': parser.parse_initial_position(x_only=True),
@@ -46,7 +49,7 @@ conds = {
       'obs': parser.parse_obstacles(time_step=0),
       'pos': parser.parse_initial_position(x_only=False),
       'vel': [initial_vel_x, initial_vel_y], # Velocity in X and Y directions
-      # 'vel': [-0.0, -0.3], # Velocity in X and Y directions
+      # 'vel': [8.0, 0.2], # Velocity in X and Y directions
 }
 
 print(initial_vel_x, initial_vel_y)
@@ -62,8 +65,16 @@ initial_conditions = {
       'obs': np.array(conds['obs'])     # Comment to test with no obstacles
 }
 
+if SAVE:
+      with open(f'commonroad_utils/frenet_ic/{scenario_name[:-4]}.pkl', 'wb') as f:
+            pickle.dump(initial_conditions, f)
+            
+if LOAD:
+      with open(f'commonroad_utils/frenet_ic/{scenario_name[:-4]}.pkl', 'rb') as f:
+            initial_conditions = pickle.load(f)
+
 hyperparameters = {
-      "max_speed": 100.5,
+      "max_speed": 15.0,
       "max_accel": 15.0,
       "max_curvature": 100.0,
       "max_road_width_l": 1.75,
@@ -72,7 +83,7 @@ hyperparameters = {
       "dt": 0.2,
       "maxt": 2.0,
       "mint": 1.0,
-      "d_t_s": 0.1,
+      "d_t_s": 0.2,
       "n_s_sample": 10.0,
       "obstacle_clearance": -0.5,
       "kd": 0.1,
@@ -85,6 +96,14 @@ hyperparameters = {
       "klon": 1.0,
       "num_threads": 0
 }
+
+if SAVE:
+      with open(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.pkl', 'wb') as f:
+            pickle.dump(hyperparameters, f)
+            
+if LOAD:
+      with open(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.pkl', 'rb') as f:
+            hyperparameters = pickle.load(f)
 
 wp = initial_conditions["wp"]
 # print(wp)
@@ -102,7 +121,7 @@ for i in range(200):
       # print(show_sampling_path)
       # Run Frenet planner
       if int(show_sampling_path):
-            print("Showing Sampling Path")
+            # print("Showing Sampling Path")
             result_x, result_y, speeds, accelerations, ix, iy, iyaw, d, s, speeds_x, \
                 speeds_y, misc, costs, success, runtime_c, sample_x, sample_y = \
                 fot_wrapper.run_fot(initial_conditions, hyperparameters)  
@@ -110,14 +129,15 @@ for i in range(200):
             result_x, result_y, speeds, accelerations, ix, iy, iyaw, d, s, speeds_x, \
                   speeds_y, misc, costs, success, runtime = \
                   fot_wrapper.run_fot(initial_conditions, hyperparameters)
-      # print(accelerations)
+      print(accelerations[1])
       states_list: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=i+j, position=np.array([result_x[j], result_y[j]]),\
                                                 velocity=speeds[j], orientation=iyaw[j], acceleration=accelerations[j])] for j in range(len(result_x[:LEN_DRAW]))]
       # Create PMState for each sample path
       sampling_states = []
       if int(show_sampling_path):
             for path_x, path_y in zip(sample_x, sample_y):
-                  path_states: List[List[PMState]] = [[PMState(time_step=i+j, position=np.array([path_x[j], path_y[j]]), velocity=0, velocity_y=0) for j in range(len(path_x[:LEN_DRAW]))]]
+                  path_states: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=i+j, position=np.array([path_x[j], path_y[j]]), velocity=0, orientation=0, acceleration=0) \
+                        for j in range(len(path_x[:LEN_DRAW]))]]
                   sampling_states.append(path_states)
             
       # Create trajectories from the sampling states
