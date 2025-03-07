@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Moritz Klischat, Edmond Irani Liu, Fabian Höltke" affiliation="Technical University of Munich, Germany" source="Scenario Factory (OpenStreetMaps, SUMO Traffic Simulator)" benchmarkID="DEU_Ibbenbueren-11_2_T-1" date="2025-02-09">
+<commonRoad timeStepSize="0.1" commonRoadVersion="2020a" author="Moritz Klischat, Edmond Irani Liu, Fabian Höltke" affiliation="Technical University of Munich, Germany" source="Scenario Factory (OpenStreetMaps, SUMO Traffic Simulator)" benchmarkID="DEU_Ibbenbueren-11_2_T-1" date="2025-03-07">
   <location>
     <geoNameId>2896817</geoNameId>
     <gpsLatitude>52.27964</gpsLatitude>
@@ -32,7 +32,7 @@
       </point>
       <point>
         <x>-53.7132</x>
-        <y>51.9800</y>
+        <y>51.98</y>
       </point>
       <point>
         <x>-58.8394</x>
@@ -56,7 +56,7 @@
         <y>62.3892</y>
       </point>
       <point>
-        <x>-65.5180</x>
+        <x>-65.518</x>
         <y>66.9864</y>
       </point>
       <point>
@@ -83,7 +83,7 @@
       </point>
       <point>
         <x>-70.7927</x>
-        <y>81.7980</y>
+        <y>81.798</y>
       </point>
       <point>
         <x>-73.8974</x>
@@ -102,8 +102,8 @@
         <y>26.0932</y>
       </point>
       <point>
-        <x>-43.0030</x>
-        <y>30.9220</y>
+        <x>-43.003</x>
+        <y>30.922</y>
       </point>
       <point>
         <x>-47.1499</x>
@@ -164,7 +164,7 @@
         <y>26.1552</y>
       </point>
       <point>
-        <x>-38.1870</x>
+        <x>-38.187</x>
         <y>27.0777</y>
       </point>
       <point>
@@ -172,8 +172,8 @@
         <y>28.5933</y>
       </point>
       <point>
-        <x>-43.1750</x>
-        <y>30.7340</y>
+        <x>-43.175</x>
+        <y>30.734</y>
       </point>
       <point>
         <x>-45.8147</x>
@@ -188,7 +188,7 @@
         <y>41.2676</y>
       </point>
       <point>
-        <x>-54.8070</x>
+        <x>-54.807</x>
         <y>46.7007</y>
       </point>
       <point>
@@ -223,7 +223,7 @@
       </point>
       <point>
         <x>-45.6289</x>
-        <y>38.8500</y>
+        <y>38.85</y>
       </point>
       <point>
         <x>-48.5407</x>
@@ -268,7 +268,7 @@
       </point>
       <point>
         <x>-58.6638</x>
-        <y>46.4270</y>
+        <y>46.427</y>
       </point>
     </rightBound>
     <predecessor ref="35837"/>
@@ -290,7 +290,7 @@
       </point>
       <point>
         <x>-58.6638</x>
-        <y>46.4270</y>
+        <y>46.427</y>
       </point>
     </leftBound>
     <rightBound>
@@ -324,7 +324,7 @@
         <y>94.4225</y>
       </point>
       <point>
-        <x>-86.7250</x>
+        <x>-86.725</x>
         <y>103.6172</y>
       </point>
       <point>
@@ -386,7 +386,7 @@
         <y>139.6012</y>
       </point>
       <point>
-        <x>-113.4200</x>
+        <x>-113.42</x>
         <y>145.2077</y>
       </point>
     </rightBound>
@@ -405,7 +405,7 @@
         <y>80.2432</y>
       </point>
       <point>
-        <x>-65.5180</x>
+        <x>-65.518</x>
         <y>66.9864</y>
       </point>
       <point>
@@ -427,7 +427,7 @@
         <y>78.3667</y>
       </point>
       <point>
-        <x>-68.5660</x>
+        <x>-68.566</x>
         <y>65.2661</y>
       </point>
       <point>
@@ -481,7 +481,7 @@
         <y>70.1136</y>
       </point>
       <point>
-        <x>-69.7880</x>
+        <x>-69.788</x>
         <y>60.6701</y>
       </point>
       <point>
@@ -520,7 +520,7 @@
         <y>110.427</y>
       </point>
       <point>
-        <x>-86.7250</x>
+        <x>-86.725</x>
         <y>103.6172</y>
       </point>
       <point>
@@ -601,7 +601,7 @@
         <y>105.841</y>
       </point>
       <point>
-        <x>13.6370</x>
+        <x>13.637</x>
         <y>121.0714</y>
       </point>
     </rightBound>
@@ -617,7 +617,7 @@
         <y>1.2511</y>
       </point>
       <point>
-        <x>-5.0040</x>
+        <x>-5.004</x>
         <y>1.3197</y>
       </point>
       <point>
@@ -628,7 +628,7 @@
     <rightBound>
       <point>
         <x>-2.9273</x>
-        <y>4.1400</y>
+        <y>4.14</y>
       </point>
       <point>
         <x>-3.0359</x>
@@ -648,7 +648,7 @@
   <lanelet id="35289">
     <leftBound>
       <point>
-        <x>8.9800</x>
+        <x>8.98</x>
         <y>-8.4843</y>
       </point>
       <point>
@@ -671,7 +671,7 @@
       </point>
       <point>
         <x>-2.9273</x>
-        <y>4.1400</y>
+        <y>4.14</y>
       </point>
     </rightBound>
     <successor ref="31657"/>
@@ -682,20 +682,20 @@
     <leftBound>
       <point>
         <x>6.8363</x>
-        <y>-11.2510</y>
+        <y>-11.251</y>
       </point>
       <point>
         <x>1.0417</x>
-        <y>-7.0800</y>
+        <y>-7.08</y>
       </point>
       <point>
         <x>-6.8713</x>
-        <y>-1.6430</y>
+        <y>-1.643</y>
       </point>
     </leftBound>
     <rightBound>
       <point>
-        <x>8.9800</x>
+        <x>8.98</x>
         <y>-8.4843</y>
       </point>
       <point>
@@ -716,7 +716,7 @@
     <leftBound>
       <point>
         <x>-6.8713</x>
-        <y>-1.6430</y>
+        <y>-1.643</y>
       </point>
       <point>
         <x>-6.9723</x>
@@ -733,7 +733,7 @@
         <y>1.2511</y>
       </point>
       <point>
-        <x>-5.0040</x>
+        <x>-5.004</x>
         <y>1.3197</y>
       </point>
       <point>
@@ -755,7 +755,7 @@
         <y>-17.6983</y>
       </point>
       <point>
-        <x>-22.8690</x>
+        <x>-22.869</x>
         <y>-26.1667</y>
       </point>
       <point>
@@ -887,7 +887,7 @@
   <lanelet id="31792">
     <leftBound>
       <point>
-        <x>-17.7710</x>
+        <x>-17.771</x>
         <y>-18.3987</y>
       </point>
       <point>
@@ -900,7 +900,7 @@
       </point>
       <point>
         <x>-16.0875</x>
-        <y>-10.8600</y>
+        <y>-10.86</y>
       </point>
       <point>
         <x>-14.1369</x>
@@ -911,7 +911,7 @@
         <y>-3.4639</y>
       </point>
       <point>
-        <x>-14.0660</x>
+        <x>-14.066</x>
         <y>-3.3169</y>
       </point>
     </leftBound>
@@ -962,7 +962,7 @@
         <y>-26.8316</y>
       </point>
       <point>
-        <x>-17.7710</x>
+        <x>-17.771</x>
         <y>-18.3987</y>
       </point>
     </leftBound>
@@ -997,7 +997,7 @@
       </point>
       <point>
         <x>-21.1524</x>
-        <y>-17.4630</y>
+        <y>-17.463</y>
       </point>
       <point>
         <x>-19.4682</x>
@@ -1005,7 +1005,7 @@
       </point>
       <point>
         <x>-17.4976</x>
-        <y>-2.5850</y>
+        <y>-2.585</y>
       </point>
       <point>
         <x>-17.4686</x>
@@ -1018,7 +1018,7 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-17.7710</x>
+        <x>-17.771</x>
         <y>-18.3987</y>
       </point>
       <point>
@@ -1031,7 +1031,7 @@
       </point>
       <point>
         <x>-16.0875</x>
-        <y>-10.8600</y>
+        <y>-10.86</y>
       </point>
       <point>
         <x>-14.1369</x>
@@ -1042,7 +1042,7 @@
         <y>-3.4639</y>
       </point>
       <point>
-        <x>-14.0660</x>
+        <x>-14.066</x>
         <y>-3.3169</y>
       </point>
     </rightBound>
@@ -1059,7 +1059,7 @@
         <y>-45.3083</y>
       </point>
       <point>
-        <x>-22.8690</x>
+        <x>-22.869</x>
         <y>-26.1667</y>
       </point>
       <point>
@@ -1077,7 +1077,7 @@
         <y>-26.8316</y>
       </point>
       <point>
-        <x>-17.7710</x>
+        <x>-17.771</x>
         <y>-18.3987</y>
       </point>
     </rightBound>
@@ -1116,7 +1116,7 @@
         <y>91.7176</y>
       </point>
       <point>
-        <x>-1.7880</x>
+        <x>-1.788</x>
         <y>69.6607</y>
       </point>
       <point>
@@ -1178,7 +1178,7 @@
         <y>91.7176</y>
       </point>
       <point>
-        <x>-1.7880</x>
+        <x>-1.788</x>
         <y>69.6607</y>
       </point>
       <point>
@@ -1239,7 +1239,7 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>3.2720</x>
+        <x>3.272</x>
         <y>122.7479</y>
       </point>
       <point>
@@ -1284,12 +1284,12 @@
         <y>65.9792</y>
       </point>
       <point>
-        <x>4.6920</x>
+        <x>4.692</x>
         <y>66.1053</y>
       </point>
       <point>
         <x>4.7144</x>
-        <y>66.2310</y>
+        <y>66.231</y>
       </point>
       <point>
         <x>5.1087</x>
@@ -1311,7 +1311,7 @@
         <y>29.0543</y>
       </point>
       <point>
-        <x>-2.1620</x>
+        <x>-2.162</x>
         <y>47.8234</y>
       </point>
       <point>
@@ -1375,7 +1375,7 @@
         <y>29.6765</y>
       </point>
       <point>
-        <x>-9.0140</x>
+        <x>-9.014</x>
         <y>29.5539</y>
       </point>
       <point>
@@ -1387,7 +1387,7 @@
         <y>21.7617</y>
       </point>
       <point>
-        <x>-12.5840</x>
+        <x>-12.584</x>
         <y>14.2982</y>
       </point>
       <point>
@@ -1411,7 +1411,7 @@
         <y>66.5934</y>
       </point>
       <point>
-        <x>-2.1620</x>
+        <x>-2.162</x>
         <y>47.8234</y>
       </point>
       <point>
@@ -1451,7 +1451,7 @@
       </point>
       <point>
         <x>-17.4976</x>
-        <y>-2.5850</y>
+        <y>-2.585</y>
       </point>
       <point>
         <x>-19.4682</x>
@@ -1459,7 +1459,7 @@
       </point>
       <point>
         <x>-21.1524</x>
-        <y>-17.4630</y>
+        <y>-17.463</y>
       </point>
       <point>
         <x>-21.1734</x>
@@ -1523,11 +1523,11 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-16.0220</x>
+        <x>-16.022</x>
         <y>15.0089</y>
       </point>
       <point>
-        <x>-18.4080</x>
+        <x>-18.408</x>
         <y>6.8107</y>
       </point>
       <point>
@@ -1554,7 +1554,7 @@
         <y>0.7497</y>
       </point>
       <point>
-        <x>-12.7060</x>
+        <x>-12.706</x>
         <y>1.2249</y>
       </point>
       <point>
@@ -1663,7 +1663,7 @@
         <y>1.0233</y>
       </point>
       <point>
-        <x>-17.1410</x>
+        <x>-17.141</x>
         <y>-0.4067</y>
       </point>
       <point>
@@ -1693,7 +1693,7 @@
         <y>3.0133</y>
       </point>
       <point>
-        <x>-21.1610</x>
+        <x>-21.161</x>
         <y>1.8913</y>
       </point>
       <point>
@@ -1724,7 +1724,7 @@
         <y>29.6765</y>
       </point>
       <point>
-        <x>-9.0140</x>
+        <x>-9.014</x>
         <y>29.5539</y>
       </point>
       <point>
@@ -1736,7 +1736,7 @@
         <y>21.7617</y>
       </point>
       <point>
-        <x>-12.5840</x>
+        <x>-12.584</x>
         <y>14.2982</y>
       </point>
       <point>
@@ -1750,8 +1750,8 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-12.4360</x>
-        <y>30.3000</y>
+        <x>-12.436</x>
+        <y>30.3</y>
       </point>
       <point>
         <x>-12.4582</x>
@@ -1770,11 +1770,11 @@
         <y>15.2267</y>
       </point>
       <point>
-        <x>-15.9870</x>
+        <x>-15.987</x>
         <y>15.1292</y>
       </point>
       <point>
-        <x>-16.0220</x>
+        <x>-16.022</x>
         <y>15.0089</y>
       </point>
     </rightBound>
@@ -1808,8 +1808,8 @@
         <y>49.0637</y>
       </point>
       <point>
-        <x>-12.4360</x>
-        <y>30.3000</y>
+        <x>-12.436</x>
+        <y>30.3</y>
       </point>
     </rightBound>
     <predecessor ref="31145"/>
@@ -1871,7 +1871,7 @@
       </point>
       <point>
         <x>-2.1261</x>
-        <y>28.3070</y>
+        <y>28.307</y>
       </point>
       <point>
         <x>-2.1037</x>
@@ -1888,7 +1888,7 @@
   <lanelet id="35130">
     <leftBound>
       <point>
-        <x>-14.0660</x>
+        <x>-14.066</x>
         <y>-3.3169</y>
       </point>
       <point>
@@ -1925,7 +1925,7 @@
         <y>13.8421</y>
       </point>
       <point>
-        <x>-20.3170</x>
+        <x>-20.317</x>
         <y>11.8782</y>
       </point>
       <point>
@@ -1946,7 +1946,7 @@
       </point>
       <point>
         <x>-12.2454</x>
-        <y>9.4770</y>
+        <y>9.477</y>
       </point>
       <point>
         <x>-11.4773</x>
@@ -1991,8 +1991,8 @@
         <y>5.9125</y>
       </point>
       <point>
-        <x>-12.4320</x>
-        <y>5.9320</y>
+        <x>-12.432</x>
+        <y>5.932</y>
       </point>
       <point>
         <x>-10.7805</x>
@@ -2080,8 +2080,8 @@
         <y>8.2854</y>
       </point>
       <point>
-        <x>-6.3290</x>
-        <y>9.6200</y>
+        <x>-6.329</x>
+        <y>9.62</y>
       </point>
       <point>
         <x>-6.1841</x>
@@ -2108,15 +2108,15 @@
       </point>
       <point>
         <x>-6.8713</x>
-        <y>-1.6430</y>
+        <y>-1.643</y>
       </point>
       <point>
         <x>1.0417</x>
-        <y>-7.0800</y>
+        <y>-7.08</y>
       </point>
       <point>
         <x>6.8363</x>
-        <y>-11.2510</y>
+        <y>-11.251</y>
       </point>
     </leftBound>
     <rightBound>
@@ -2138,7 +2138,7 @@
       </point>
       <point>
         <x>4.6877</x>
-        <y>-14.0140</y>
+        <y>-14.014</y>
       </point>
     </rightBound>
     <predecessor ref="33675"/>
@@ -2162,7 +2162,7 @@
       </point>
       <point>
         <x>-10.4754</x>
-        <y>5.4490</y>
+        <y>5.449</y>
       </point>
       <point>
         <x>-10.2633</x>
@@ -2224,7 +2224,7 @@
       </point>
       <point>
         <x>-9.5436</x>
-        <y>-4.0370</y>
+        <y>-4.037</y>
       </point>
       <point>
         <x>-9.0872</x>
@@ -2276,7 +2276,7 @@
         <y>7.0165</y>
       </point>
       <point>
-        <x>-14.1310</x>
+        <x>-14.131</x>
         <y>-0.0983</y>
       </point>
       <point>
@@ -2300,7 +2300,7 @@
         <y>31.9366</y>
       </point>
       <point>
-        <x>-16.7480</x>
+        <x>-16.748</x>
         <y>31.8169</y>
       </point>
       <point>
@@ -2321,7 +2321,7 @@
       </point>
       <point>
         <x>-26.3212</x>
-        <y>26.0190</y>
+        <y>26.019</y>
       </point>
       <point>
         <x>-28.6689</x>
@@ -2336,7 +2336,7 @@
         <y>25.6541</y>
       </point>
       <point>
-        <x>-33.9180</x>
+        <x>-33.918</x>
         <y>25.6776</y>
       </point>
       <point>
@@ -2367,14 +2367,14 @@
       </point>
       <point>
         <x>-25.1813</x>
-        <y>30.0740</y>
+        <y>30.074</y>
       </point>
       <point>
-        <x>-26.9840</x>
+        <x>-26.984</x>
         <y>29.4556</y>
       </point>
       <point>
-        <x>-28.8310</x>
+        <x>-28.831</x>
         <y>29.0809</y>
       </point>
       <point>
@@ -2453,7 +2453,7 @@
       </point>
       <point>
         <x>-10.3106</x>
-        <y>49.7240</y>
+        <y>49.724</y>
       </point>
       <point>
         <x>-11.9864</x>
@@ -2488,7 +2488,7 @@
       </point>
       <point>
         <x>-23.4384</x>
-        <y>13.8770</y>
+        <y>13.877</y>
       </point>
       <point>
         <x>-23.5269</x>
@@ -2511,16 +2511,16 @@
         <y>19.8685</y>
       </point>
       <point>
-        <x>-34.1580</x>
-        <y>21.7750</y>
+        <x>-34.158</x>
+        <y>21.775</y>
       </point>
       <point>
-        <x>-36.3980</x>
+        <x>-36.398</x>
         <y>23.8026</y>
       </point>
       <point>
         <x>-38.4633</x>
-        <y>25.8970</y>
+        <y>25.897</y>
       </point>
       <point>
         <x>-38.5711</x>
@@ -2534,18 +2534,18 @@
     <rightBound>
       <point>
         <x>-21.2974</x>
-        <y>16.6500</y>
+        <y>16.65</y>
       </point>
       <point>
         <x>-21.4496</x>
-        <y>16.7570</y>
+        <y>16.757</y>
       </point>
       <point>
         <x>-21.5407</x>
         <y>16.8197</y>
       </point>
       <point>
-        <x>-25.5030</x>
+        <x>-25.503</x>
         <y>19.6642</y>
       </point>
       <point>
@@ -2593,7 +2593,7 @@
         <y>-2.3754</y>
       </point>
       <point>
-        <x>-16.8930</x>
+        <x>-16.893</x>
         <y>-0.0169</y>
       </point>
       <point>
@@ -2613,7 +2613,7 @@
         <y>7.5257</y>
       </point>
       <point>
-        <x>-18.6610</x>
+        <x>-18.661</x>
         <y>9.2172</y>
       </point>
       <point>
@@ -2631,7 +2631,7 @@
     </leftBound>
     <rightBound>
       <point>
-        <x>-14.0660</x>
+        <x>-14.066</x>
         <y>-3.3169</y>
       </point>
       <point>
@@ -2644,7 +2644,7 @@
       </point>
       <point>
         <x>-13.3104</x>
-        <y>4.5170</y>
+        <y>4.517</y>
       </point>
       <point>
         <x>-13.8036</x>
@@ -2664,11 +2664,11 @@
       </point>
       <point>
         <x>-19.5369</x>
-        <y>15.3130</y>
+        <y>15.313</y>
       </point>
       <point>
         <x>-21.2974</x>
-        <y>16.6500</y>
+        <y>16.65</y>
       </point>
     </rightBound>
     <predecessor ref="31791"/>
@@ -2716,16 +2716,16 @@
         <y>5.2626</y>
       </point>
       <point>
-        <x>-16.2920</x>
+        <x>-16.292</x>
         <y>12.3663</y>
       </point>
       <point>
         <x>-18.7436</x>
-        <y>14.6650</y>
+        <y>14.665</y>
       </point>
       <point>
         <x>-21.2974</x>
-        <y>16.6500</y>
+        <y>16.65</y>
       </point>
     </rightBound>
     <predecessor ref="31656"/>
@@ -2740,7 +2740,7 @@
         <y>23.7093</y>
       </point>
       <point>
-        <x>-41.1340</x>
+        <x>-41.134</x>
         <y>23.6285</y>
       </point>
       <point>
@@ -2772,7 +2772,7 @@
         <y>13.979</y>
       </point>
       <point>
-        <x>-25.5470</x>
+        <x>-25.547</x>
         <y>11.0798</y>
       </point>
       <point>
@@ -2807,7 +2807,7 @@
       </point>
       <point>
         <x>-35.9632</x>
-        <y>14.2570</y>
+        <y>14.257</y>
       </point>
       <point>
         <x>-35.8382</x>
@@ -2826,7 +2826,7 @@
         <y>8.1979</y>
       </point>
       <point>
-        <x>-27.4160</x>
+        <x>-27.416</x>
         <y>8.1168</y>
       </point>
       <point>
@@ -2844,7 +2844,7 @@
     <leftBound>
       <point>
         <x>-58.6638</x>
-        <y>46.4270</y>
+        <y>46.427</y>
       </point>
       <point>
         <x>-56.4315</x>
@@ -2855,7 +2855,7 @@
         <y>39.0623</y>
       </point>
       <point>
-        <x>-49.9660</x>
+        <x>-49.966</x>
         <y>33.7831</y>
       </point>
       <point>
@@ -2910,15 +2910,15 @@
       </point>
       <point>
         <x>-38.4633</x>
-        <y>25.8970</y>
+        <y>25.897</y>
       </point>
       <point>
-        <x>-36.3980</x>
+        <x>-36.398</x>
         <y>23.8026</y>
       </point>
       <point>
-        <x>-34.1580</x>
-        <y>21.7750</y>
+        <x>-34.158</x>
+        <y>21.775</y>
       </point>
       <point>
         <x>-31.7783</x>
@@ -2942,7 +2942,7 @@
       </point>
       <point>
         <x>-23.4384</x>
-        <y>13.8770</y>
+        <y>13.877</y>
       </point>
       <point>
         <x>-23.3857</x>
@@ -2955,7 +2955,7 @@
         <y>23.7093</y>
       </point>
       <point>
-        <x>-41.1340</x>
+        <x>-41.134</x>
         <y>23.6285</y>
       </point>
       <point>
@@ -2987,7 +2987,7 @@
         <y>13.979</y>
       </point>
       <point>
-        <x>-25.5470</x>
+        <x>-25.547</x>
         <y>11.0798</y>
       </point>
       <point>
@@ -3025,8 +3025,8 @@
         <y>35.8641</y>
       </point>
       <point>
-        <x>-43.0030</x>
-        <y>30.9220</y>
+        <x>-43.003</x>
+        <y>30.922</y>
       </point>
       <point>
         <x>-38.6467</x>
@@ -3036,7 +3036,7 @@
     <rightBound>
       <point>
         <x>-58.6638</x>
-        <y>46.4270</y>
+        <y>46.427</y>
       </point>
       <point>
         <x>-56.4315</x>
@@ -3047,7 +3047,7 @@
         <y>39.0623</y>
       </point>
       <point>
-        <x>-49.9660</x>
+        <x>-49.966</x>
         <y>33.7831</y>
       </point>
       <point>
@@ -3177,7 +3177,7 @@
     <position>
       <point>
         <x>-35.9632</x>
-        <y>14.2570</y>
+        <y>14.257</y>
       </point>
     </position>
     <virtual>false</virtual>
@@ -3314,7 +3314,7 @@
         </time>
         <position>
           <point>
-            <x>-30.9460</x>
+            <x>-30.946</x>
             <y>15.3785</y>
           </point>
         </position>
@@ -3594,7 +3594,7 @@
         </time>
         <position>
           <point>
-            <x>-28.8890</x>
+            <x>-28.889</x>
             <y>13.8952</y>
           </point>
         </position>
@@ -3814,7 +3814,7 @@
         </time>
         <position>
           <point>
-            <x>-27.0130</x>
+            <x>-27.013</x>
             <y>12.5464</y>
           </point>
         </position>
@@ -3934,7 +3934,7 @@
         </time>
         <position>
           <point>
-            <x>-25.8500</x>
+            <x>-25.85</x>
             <y>11.7079</y>
           </point>
         </position>
@@ -3955,7 +3955,7 @@
         <position>
           <point>
             <x>-25.6447</x>
-            <y>11.5570</y>
+            <y>11.557</y>
           </point>
         </position>
         <velocity>
@@ -4052,7 +4052,7 @@
         <position>
           <point>
             <x>-20.2055</x>
-            <y>-21.7300</y>
+            <y>-21.73</y>
           </point>
         </position>
         <velocity>
@@ -4212,7 +4212,7 @@
         <position>
           <point>
             <x>-19.9355</x>
-            <y>-20.3600</y>
+            <y>-20.36</y>
           </point>
         </position>
         <velocity>
@@ -4352,7 +4352,7 @@
         <position>
           <point>
             <x>-19.6811</x>
-            <y>-19.0700</y>
+            <y>-19.07</y>
           </point>
         </position>
         <velocity>
@@ -4411,7 +4411,7 @@
         </time>
         <position>
           <point>
-            <x>-19.5670</x>
+            <x>-19.567</x>
             <y>-18.4911</y>
           </point>
         </position>
@@ -4432,7 +4432,7 @@
         <position>
           <point>
             <x>-19.5267</x>
-            <y>-18.2950</y>
+            <y>-18.295</y>
           </point>
         </position>
         <velocity>
@@ -4511,7 +4511,7 @@
         </time>
         <position>
           <point>
-            <x>-19.3550</x>
+            <x>-19.355</x>
             <y>-17.4946</y>
           </point>
         </position>
@@ -4551,8 +4551,8 @@
         </time>
         <position>
           <point>
-            <x>-19.2670</x>
-            <y>-17.0840</y>
+            <x>-19.267</x>
+            <y>-17.084</y>
           </point>
         </position>
         <velocity>
@@ -4612,7 +4612,7 @@
         <position>
           <point>
             <x>-19.1277</x>
-            <y>-16.4560</y>
+            <y>-16.456</y>
           </point>
         </position>
         <velocity>
@@ -4828,7 +4828,7 @@
         </time>
         <position>
           <point>
-            <x>-10.6570</x>
+            <x>-10.657</x>
             <y>2.1317</y>
           </point>
         </position>
@@ -4948,7 +4948,7 @@
         </time>
         <position>
           <point>
-            <x>-10.3120</x>
+            <x>-10.312</x>
             <y>3.3166</y>
           </point>
         </position>
@@ -4988,7 +4988,7 @@
         </time>
         <position>
           <point>
-            <x>-10.1900</x>
+            <x>-10.19</x>
             <y>3.7363</y>
           </point>
         </position>
@@ -5049,7 +5049,7 @@
         <position>
           <point>
             <x>-10.0</x>
-            <y>4.3890</y>
+            <y>4.389</y>
           </point>
         </position>
         <velocity>
@@ -5249,7 +5249,7 @@
         <position>
           <point>
             <x>-9.3082</x>
-            <y>6.7660</y>
+            <y>6.766</y>
           </point>
         </position>
         <velocity>
@@ -5465,7 +5465,7 @@
         </time>
         <position>
           <point>
-            <x>-15.9440</x>
+            <x>-15.944</x>
             <y>4.3619</y>
           </point>
         </position>
@@ -5506,7 +5506,7 @@
         <position>
           <point>
             <x>-15.8358</x>
-            <y>4.2460</y>
+            <y>4.246</y>
           </point>
         </position>
         <velocity>
@@ -5565,7 +5565,7 @@
         </time>
         <position>
           <point>
-            <x>-15.6460</x>
+            <x>-15.646</x>
             <y>4.0429</y>
           </point>
         </position>
@@ -5605,7 +5605,7 @@
         </time>
         <position>
           <point>
-            <x>-15.5010</x>
+            <x>-15.501</x>
             <y>3.8877</y>
           </point>
         </position>
@@ -5666,7 +5666,7 @@
         <position>
           <point>
             <x>-15.2553</x>
-            <y>3.6260</y>
+            <y>3.626</y>
           </point>
         </position>
         <velocity>
@@ -5845,7 +5845,7 @@
         </time>
         <position>
           <point>
-            <x>-14.3150</x>
+            <x>-14.315</x>
             <y>2.6324</y>
           </point>
         </position>
@@ -5865,7 +5865,7 @@
         </time>
         <position>
           <point>
-            <x>-14.1910</x>
+            <x>-14.191</x>
             <y>2.5033</y>
           </point>
         </position>
@@ -5906,7 +5906,7 @@
         <position>
           <point>
             <x>-13.9314</x>
-            <y>2.2340</y>
+            <y>2.234</y>
           </point>
         </position>
         <velocity>
@@ -5965,7 +5965,7 @@
         </time>
         <position>
           <point>
-            <x>-13.5140</x>
+            <x>-13.514</x>
             <y>1.8008</y>
           </point>
         </position>
@@ -6323,7 +6323,7 @@
         <position>
           <point>
             <x>-23.3998</x>
-            <y>11.0730</y>
+            <y>11.073</y>
           </point>
         </position>
         <velocity>
@@ -6403,7 +6403,7 @@
         <position>
           <point>
             <x>-22.8689</x>
-            <y>10.6500</y>
+            <y>10.65</y>
           </point>
         </position>
         <velocity>
@@ -6582,8 +6582,8 @@
         </time>
         <position>
           <point>
-            <x>-21.1860</x>
-            <y>9.8520</y>
+            <x>-21.186</x>
+            <y>9.852</y>
           </point>
         </position>
         <velocity>
@@ -6623,7 +6623,7 @@
         <position>
           <point>
             <x>-20.8405</x>
-            <y>9.5310</y>
+            <y>9.531</y>
           </point>
         </position>
         <velocity>
@@ -6642,8 +6642,8 @@
         </time>
         <position>
           <point>
-            <x>-20.6620</x>
-            <y>9.3650</y>
+            <x>-20.662</x>
+            <y>9.365</y>
           </point>
         </position>
         <velocity>
@@ -6819,7 +6819,7 @@
         </time>
         <position>
           <point>
-            <x>-15.0740</x>
+            <x>-15.074</x>
             <y>-14.4043</y>
           </point>
         </position>
@@ -6860,7 +6860,7 @@
         <position>
           <point>
             <x>-15.0119</x>
-            <y>-14.1350</y>
+            <y>-14.135</y>
           </point>
         </position>
         <velocity>
@@ -6899,7 +6899,7 @@
         </time>
         <position>
           <point>
-            <x>-14.9470</x>
+            <x>-14.947</x>
             <y>-13.8531</y>
           </point>
         </position>
@@ -7020,7 +7020,7 @@
         <position>
           <point>
             <x>-14.7332</x>
-            <y>-12.9320</y>
+            <y>-12.932</y>
           </point>
         </position>
         <velocity>
@@ -7039,7 +7039,7 @@
         </time>
         <position>
           <point>
-            <x>-14.6940</x>
+            <x>-14.694</x>
             <y>-12.7677</y>
           </point>
         </position>
@@ -7220,7 +7220,7 @@
         <position>
           <point>
             <x>-14.3027</x>
-            <y>-11.1480</y>
+            <y>-11.148</y>
           </point>
         </position>
         <velocity>
@@ -7259,8 +7259,8 @@
         </time>
         <position>
           <point>
-            <x>-14.2050</x>
-            <y>-10.7540</y>
+            <x>-14.205</x>
+            <y>-10.754</y>
           </point>
         </position>
         <velocity>
@@ -7279,7 +7279,7 @@
         </time>
         <position>
           <point>
-            <x>-14.1550</x>
+            <x>-14.155</x>
             <y>-10.5522</y>
           </point>
         </position>
@@ -7319,7 +7319,7 @@
         </time>
         <position>
           <point>
-            <x>-14.0520</x>
+            <x>-14.052</x>
             <y>-10.1395</y>
           </point>
         </position>
@@ -7339,7 +7339,7 @@
         </time>
         <position>
           <point>
-            <x>-13.9980</x>
+            <x>-13.998</x>
             <y>-9.9288</y>
           </point>
         </position>
@@ -7399,7 +7399,7 @@
         </time>
         <position>
           <point>
-            <x>-13.8310</x>
+            <x>-13.831</x>
             <y>-9.2778</y>
           </point>
         </position>
@@ -7440,7 +7440,7 @@
         <position>
           <point>
             <x>-13.7158</x>
-            <y>-8.8280</y>
+            <y>-8.828</y>
           </point>
         </position>
         <velocity>
@@ -7676,7 +7676,7 @@
         </time>
         <position>
           <point>
-            <x>-30.6340</x>
+            <x>-30.634</x>
             <y>17.8372</y>
           </point>
         </position>
@@ -7736,7 +7736,7 @@
         </time>
         <position>
           <point>
-            <x>-30.2300</x>
+            <x>-30.23</x>
             <y>17.5502</y>
           </point>
         </position>
@@ -7916,7 +7916,7 @@
         </time>
         <position>
           <point>
-            <x>-29.1730</x>
+            <x>-29.173</x>
             <y>16.7988</y>
           </point>
         </position>
@@ -7977,7 +7977,7 @@
         <position>
           <point>
             <x>-28.8507</x>
-            <y>16.5690</y>
+            <y>16.569</y>
           </point>
         </position>
         <velocity>
@@ -8167,7 +8167,7 @@
       <position>
         <point>
           <x>-45.1156</x>
-          <y>31.1510</y>
+          <y>31.151</y>
         </point>
       </position>
       <orientation>
@@ -8254,7 +8254,7 @@
         <position>
           <point>
             <x>-43.6363</x>
-            <y>29.4430</y>
+            <y>29.443</y>
           </point>
         </position>
         <velocity>
@@ -8334,7 +8334,7 @@
         <position>
           <point>
             <x>-42.3066</x>
-            <y>27.9310</y>
+            <y>27.931</y>
           </point>
         </position>
         <velocity>
@@ -8613,7 +8613,7 @@
         </time>
         <position>
           <point>
-            <x>-38.7560</x>
+            <x>-38.756</x>
             <y>24.0733</y>
           </point>
         </position>
@@ -8713,7 +8713,7 @@
         </time>
         <position>
           <point>
-            <x>-37.7810</x>
+            <x>-37.781</x>
             <y>23.1007</y>
           </point>
         </position>
@@ -8813,7 +8813,7 @@
         </time>
         <position>
           <point>
-            <x>-36.9270</x>
+            <x>-36.927</x>
             <y>22.2842</y>
           </point>
         </position>
@@ -9030,7 +9030,7 @@
         </time>
         <position>
           <point>
-            <x>-19.7970</x>
+            <x>-19.797</x>
             <y>-4.4829</y>
           </point>
         </position>
@@ -9291,7 +9291,7 @@
         <position>
           <point>
             <x>-20.5901</x>
-            <y>-7.7540</y>
+            <y>-7.754</y>
           </point>
         </position>
         <velocity>
@@ -9511,7 +9511,7 @@
         <position>
           <point>
             <x>-21.3428</x>
-            <y>-12.2750</y>
+            <y>-12.275</y>
           </point>
         </position>
         <velocity>
@@ -9561,7 +9561,7 @@
       <position>
         <point>
           <x>4.3678</x>
-          <y>-7.3240</y>
+          <y>-7.324</y>
         </point>
       </position>
       <orientation>
@@ -9607,7 +9607,7 @@
         </time>
         <position>
           <point>
-            <x>4.1640</x>
+            <x>4.164</x>
             <y>-7.1782</y>
           </point>
         </position>
@@ -9628,7 +9628,7 @@
         <position>
           <point>
             <x>4.0457</x>
-            <y>-7.0940</y>
+            <y>-7.094</y>
           </point>
         </position>
         <velocity>
@@ -9687,7 +9687,7 @@
         </time>
         <position>
           <point>
-            <x>3.6110</x>
+            <x>3.611</x>
             <y>-6.7848</y>
           </point>
         </position>
@@ -9787,7 +9787,7 @@
         </time>
         <position>
           <point>
-            <x>2.6060</x>
+            <x>2.606</x>
             <y>-6.0735</y>
           </point>
         </position>
@@ -9987,7 +9987,7 @@
         </time>
         <position>
           <point>
-            <x>-0.5760</x>
+            <x>-0.576</x>
             <y>-3.8539</y>
           </point>
         </position>
@@ -10048,7 +10048,7 @@
         <position>
           <point>
             <x>-1.8317</x>
-            <y>-2.9870</y>
+            <y>-2.987</y>
           </point>
         </position>
         <velocity>
@@ -10281,8 +10281,8 @@
           <width>1.0</width>
           <orientation>0.0</orientation>
           <center>
-            <x>-6.3348</x>
-            <y>4.9216</y>
+            <x>-7.5</x>
+            <y>9.4</y>
           </center>
         </rectangle>
       </position>
