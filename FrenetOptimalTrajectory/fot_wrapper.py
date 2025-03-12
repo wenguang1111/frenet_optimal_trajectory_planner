@@ -126,8 +126,8 @@ def run_fot(initial_conditions, hyperparameters):
     speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
 
-    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
-    if show_sampling_path:
+    show_sampling_path = pcs.get_show_sampling_path()
+    if show_sampling_path==True:
         sample_x_data = []
         sample_y_data = []
         sample_length_data = np.array([fot_rv.sample_length[i] for i in range(fot_rv.sample_size)]).astype(np.int32)
@@ -163,12 +163,12 @@ def run_fot(initial_conditions, hyperparameters):
 
     runtime = fot_rv.runtime
 
-    if show_sampling_path==False:
-        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
-            speeds_x, speeds_y, params, costs, success, runtime
-    else:
+    if show_sampling_path==True:
         return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
             speeds_x, speeds_y, params, costs, success, runtime, sample_x_data, sample_y_data
+    else:
+        return x_path, y_path, speeds, ix, iy, iyaw, d, s, \
+            speeds_x, speeds_y, params, costs, success, runtime    
 
 def to_frenet_initial_conditions(initial_conditions):
     """ Convert the cartesian initial conditions into frenet initial conditions.

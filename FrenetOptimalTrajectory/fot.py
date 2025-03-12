@@ -1,56 +1,33 @@
+import argparse
+import fot_wrapper
 import time
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patch
-import argparse
 import os
-# import py_cpp_struct
 from pathlib import Path
-
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "-d",
-    "--display",
-    action="store_true",
-    help="show animation, ensure you have X11 forwarding server open")
-parser.add_argument("-v",
-                    "--verbose",
-                    action="store_true",
-                    help="verbose mode, show all state info")
-parser.add_argument("-s",
-                    "--save",
-                    action="store_true",
-                    help="save each frame of simulation")
-parser.add_argument("-t",
-                    "--thread",
-                    type=int,
-                    default=0,
-                    help="set number of threads to run with")
-parser.add_argument(
-    "-dsp",
-    "--display_sampling_paths",
-    action="store_true",
-    help="show sampling paths in animation")
-args = parser.parse_args()
-
-os.environ["SHOW_SAMPLING_PATH"] = "1" if args.display_sampling_paths else "0"
 from py_cpp_struct import FrenetReturnValues
 import py_cpp_struct
-import fot_wrapper
+
 
 # Run fot planner
-def fot(show_animation=True,
+def fot(show_animation=False,
         show_info=False,
         num_threads=0,
-        save_frame=False):
+        save_frame=False,
+        show_sampling_path=False):
     conds = {
         's0':
         0,
         'target_speed':
         20,
-        'wp': [[0, 0], [50, 0], [150, 0]],
-        'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
-                [128, 2, 132, 6]],
+        'wp': [[0, 0], [50, 0], [120, 0]],  #way point
+        # 'obs': [[48, -2, 52, 2], [98, -4, 102, 2], [98, 6, 102, 10],
+        #         [128, 2, 132, 6]],
+        'obs': [[25,-2,28,2],[29,2,30,3],[29,-1,30,1],[30.5,1,31,4],[31,-1,33,1],
+                [32,3,33,4],[35,4,40,6],[48, -5, 52, -6], [53,-4,55,-5],[53,3,55,5],
+                [56,-4,58,-5],[56,2,58,5],[59,-4,61,-5],[59,2,61,5],[62,-4,63,-5],
+                [62,2,63,5],[65,-4,68,-5],[65,2,68,5],[85, -4, 90, 1], [85, 6, 90, 10]],
         'pos': [0, 0],
         'vel': [0, 0],
     }  # paste output from debug log
@@ -70,12 +47,12 @@ def fot(show_animation=True,
         "max_curvature": 15.0,
         "max_road_width_l": 5.0,
         "max_road_width_r": 5.0,
-        "d_road_w": 1,
-        "dt": 0.2,
+        "d_road_w": 0.4,
+        "dt": 0.1,
         "maxt": 4.0,
         "mint": 2.0,
-        "d_t_s": 0.5,
-        "n_s_sample": 2.0,
+        "d_t_s": 0.1,
+        "n_s_sample": 5.0,
         "obstacle_clearance": 0.1,
         "kd": 1.0,
         "kv": 0.1,
@@ -103,8 +80,6 @@ def fot(show_animation=True,
     total_time_c = 0
     time_list = []
 
-    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
-
     for i in range(sim_loop):
         # run FOT and keep time
         print("Iteration: {}".format(i))
@@ -119,11 +94,12 @@ def fot(show_animation=True,
                 fot_wrapper.run_fot(initial_conditions, hyperparameters)
                  
         end_time = time.time() - start_time
-        # print("Time taken: {} s".format(end_time))
-        print("Time take by c module:{} ms".format(runtime_c))
+        print("Time taken: {} s".format(end_time))
+        # print("Time take by c module:{} ms".format(runtime_c))
         total_time += end_time
         total_time_c += runtime_c
-        time_list.append(runtime_c)
+        # time_list.append(runtime_c)
+        time_list.append(end_time)
 
         # reconstruct initial_conditions
         if success:
@@ -174,13 +150,41 @@ def fot(show_animation=True,
     print("Finish")
 
     print("======================= SUMMARY ========================")
-    print("Total time for {} iterations taken: {} ms".format(i, total_time_c))
-    print("Average time per iteration: {} ms".format(total_time_c / i))
-    print("Max time per iteration: {} ms".format(max(time_list)))
+    # print("Total time for {} iterations taken: {} ms".format(i, total_time_c))
+    # print("Average time per iteration: {} ms".format(total_time_c / i))
+    # print("Max time per iteration: {} ms".format(max(time_list)))
+    print("Total time for {} iterations taken: {} s".format(i, total_time))
+    print("Average time per iteration: {} s".format(total_time / i))
+    print("Max time per iteration: {} s".format(max(time_list)))
 
     return time_list
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-d",
+        "--display",
+        action="store_true",
+        help="show animation, ensure you have X11 forwarding server open")
+    parser.add_argument("-v",
+                        "--verbose",
+                        action="store_true",
+                        help="verbose mode, show all state info")
+    parser.add_argument("-s",
+                        "--save",
+                        action="store_true",
+                        help="save each frame of simulation")
+    parser.add_argument("-t",
+                        "--thread",
+                        type=int,
+                        default=0,
+                        help="set number of threads to run with")
+    parser.add_argument(
+        "-dsp",
+        "--display_sampling_paths",
+        action="store_true",
+        help="show sampling paths in animation")
     args = parser.parse_args()
-    fot(args.display, args.verbose, args.thread, args.save)
+    fot(args.display, args.verbose, args.thread, args.save, args.display_sampling_paths)
+    

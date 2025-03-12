@@ -1,12 +1,47 @@
 import os
+import argparse
 from ctypes import c_float, c_int, c_size_t, POINTER, Structure, CDLL
 
 _c_float_p = POINTER(c_float)
 
 MAX_PATH_LENGTH = 100
 MAX_SAMPLE_SIZE = 100
+SHOW_SAMPLING_PATH = False
 
-sample_path = os.environ.get("SHOW_SAMPLING_PATH", False)
+def set_show_sampling_path(value):
+    global SHOW_SAMPLING_PATH
+    SHOW_SAMPLING_PATH = value
+
+def get_show_sampling_path():
+    return SHOW_SAMPLING_PATH
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-d",
+    "--display",
+    action="store_true",
+    help="show animation, ensure you have X11 forwarding server open")
+parser.add_argument("-v",
+                    "--verbose",
+                    action="store_true",
+                    help="verbose mode, show all state info")
+parser.add_argument("-s",
+                    "--save",
+                    action="store_true",
+                    help="save each frame of simulation")
+parser.add_argument("-t",
+                    "--thread",
+                    type=int,
+                    default=0,
+                    help="set number of threads to run with")
+parser.add_argument(
+    "-dsp",
+    "--display_sampling_paths",
+    action="store_true",
+    help="show sampling paths in animation")
+args = parser.parse_args()
+set_show_sampling_path(args.display_sampling_paths)
+
 class FrenetInitialConditions(Structure):
     _fields_ = [
         ("s0", c_float),
@@ -23,8 +58,7 @@ class FrenetInitialConditions(Structure):
         ("o_urx", _c_float_p),
         ("o_ury", _c_float_p),
         ("no", c_int)
-    ]
-    
+    ]  
 class FrenetReturnValues(Structure):
     _fields_ = [
         ("success", c_int),
@@ -43,6 +77,7 @@ class FrenetReturnValues(Structure):
         ("costs", c_float * MAX_PATH_LENGTH),
         ("runtime", c_float)
     ]
+    sample_path = get_show_sampling_path()
     if sample_path:
         _fields_.extend([
             ("sample_x", c_float * MAX_PATH_LENGTH * MAX_SAMPLE_SIZE),

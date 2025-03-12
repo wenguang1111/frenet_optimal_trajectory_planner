@@ -280,7 +280,15 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                         *best_path_in_one_direction = *tfp;
                     }
                 #endif
-                frenet_paths.push_back(tfp);
+                if (multithreaded) {
+                    // added mutex lock to prevent threads competing to write to
+                    // frenet_path
+                    mu->lock();
+                    frenet_paths.push_back(tfp);
+                    mu->unlock();
+                } else {
+                    frenet_paths.push_back(tfp);
+                }
                 tv += fot_hp->d_t_s;
             }
             ti += fot_hp->dt;
@@ -297,6 +305,11 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         #endif
         di += fot_hp->d_road_w;
     }
+    // valid_path_time *= 1e-6;
+    // cout << "NUM THREADS = " << fot_hp->num_threads << "\n"; // check if
+    // Thread argument is passed down cout << "Found " << frenet_paths.size() <<
+    // " valid paths out of " << num_paths << " paths; Valid path time " <<
+    // valid_path_time << "\n";
 }
 
 #ifdef SAMPLING_PATH_ANALYSIS
