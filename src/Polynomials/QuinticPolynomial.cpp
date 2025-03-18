@@ -105,6 +105,18 @@ QuinticPolynomial::QuinticPolynomial(fixp_c_d xs, fixp_c_d vxs, fixp_c_d axs,
     // #endif 
 }
 
+fixp_d QuinticPolynomial::calc_point(fixp_maxt t) {
+    // return a0 + a1 * t + a2 * pow_2<fixp_time_2>(t) + a3 * pow_3<fixp_time_3>(t) +
+    // a4 * pow_4<fixp_time_4>(t) + a5 * pow_5<fixp_time_5>(t);
+    // return a0+t*(a1+t*(a2+t*(a3+t*(a4+t*a5))));
+    fixp_maxt ans = a4+t*a5;
+    ans = a3+t*ans;
+    ans = a2+t*ans;
+    ans = a1+t*ans;
+    ans = a0+t*ans;
+    return ans;
+}
+
 fixp_d_d QuinticPolynomial::calc_first_derivative(fixp_maxt t) {
     // return a1 + 2 * a2 * t + 3 * a3 * pow_2<fixp_time_2>(t) + 4 * a4 * pow_3<fixp_time_3>(t) +
     // 5 * a5 * pow_4<fixp_time_4>(t);
