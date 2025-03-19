@@ -1,7 +1,7 @@
 import numpy as np
 # import py_cpp_struct as pcs
 import os
-
+from Sobol import recordData
 from ctypes import c_float, c_int, POINTER, Structure, CDLL, byref
 
 try:
@@ -13,7 +13,7 @@ except:
          FrenetReturnValues
 # print(os.getcwd())
 try:
-    cdll = CDLL("/home/kareem/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
+    cdll = CDLL("/home/wenguang/workplace/test/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
 except:
     cdll = CDLL("{}/dependencies/frenet_optimal_trajectory_planner/"
                 "build/libFrenetOptimalTrajectory.so".format(
@@ -38,6 +38,8 @@ _to_frenet_initial_conditions.argtypes = (c_float, c_float, c_float, c_float,
                                           _c_float_p, _c_float_p, c_int,
                                           _c_float_p)
 
+RECORD_DATA = False
+step_num = 0
 
 def _parse_hyperparameters(hp):
     return FrenetHyperparameters(
@@ -105,15 +107,19 @@ def run_fot(initial_conditions, hyperparameters):
     # parse initial conditions and convert to frenet coordinates
     fot_initial_conditions, misc = to_frenet_initial_conditions(
         initial_conditions)
-
     # parse hyper parameters
     fot_hp = _parse_hyperparameters(hyperparameters)
 
     # initialize return values
     fot_rv = FrenetReturnValues(0)
 
+    if RECORD_DATA:
+        recordData.writeInitalConditions(fot_initial_conditions)
+        recordData.writeHyperparameters(fot_hp)
     # run the planner
     _run_fot(fot_initial_conditions, fot_hp, fot_rv)
+    if RECORD_DATA:
+        recordData.writeCalculatedData(fot_rv, step_num)
 
     x_path = np.array([fot_rv.x_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     y_path = np.array([fot_rv.y_path[i] for i in range(fot_rv.path_length)]).astype(np.float32)
@@ -136,8 +142,6 @@ def run_fot(initial_conditions, hyperparameters):
             sample_x_data.append([fot_rv.sample_x[i][j] for j in range(sample_length_data[i])])
             sample_y_data.append([fot_rv.sample_y[i][j] for j in range(sample_length_data[i])])
     
-
-
     params = {
         "s": fot_rv.params[0],
         "s_d": fot_rv.params[1],

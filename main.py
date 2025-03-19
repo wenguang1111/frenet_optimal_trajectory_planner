@@ -6,6 +6,7 @@ from math import inf
 from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
+from Sobol import recordData
 from commonroad_utils.parser.scenario import get_scenario
 from commonroad_utils.parser.parser import Parser
 from commonroad.common.util import Interval
@@ -43,6 +44,8 @@ SAVE_CSV = False
 LOAD = True
 SAVE_PROFILES = False
 CREATE_VIDEO = False
+RECORD_DATA = True
+
 
 # print(planning_problem.initial_state.acceleration)
 conds = {
@@ -139,7 +142,9 @@ from FrenetOptimalTrajectory.py_cpp_struct import FrenetReturnValues
 from FrenetOptimalTrajectory import py_cpp_struct
 from FrenetOptimalTrajectory import fot_wrapper
 
+fot_wrapper.RECORD_DATA = RECORD_DATA
 for i in range(200):
+      fot_wrapper.step_num = i
       # print(show_sampling_path)
       # Run Frenet planner
       if int(show_sampling_path):
@@ -213,13 +218,15 @@ for i in range(200):
             initial_conditions['acc'] = np.array(accelerations[1])
             # initial_conditions['obs'] = np.array([])      # Uncomment to test with no obstacles
             initial_conditions['obs'] = np.array(parser.parse_obstacles(time_step=i+1))         # Comment to test with no obstacles
-            
             velocities_.append(speeds[1])
             accelerations_.append(accelerations[1])
       else:
             # continue
             print("Failed unexpectedly")
             break
+recordData.saveInitialConditions()
+recordData.saveCalculatedData()
+recordData.saveHyperparameter()
       
 # print(acc_states)
 excuted_trajectory = create_trajectory_from_list_states([acc_states])
