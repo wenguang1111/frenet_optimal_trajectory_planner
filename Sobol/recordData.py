@@ -92,14 +92,14 @@ def saveInitialConditions():
         's0', 'c_speed', 'c_acceleration', 'c_d', 'c_d_d', 'c_d_dd', 'target_speed', 
         'wx', 'wy', 'nw', 'o_llx', 'o_lly', 'o_urx', 'o_ury', 'no'
     ])
-    df.to_csv('FloatingPoint_InitData.csv', index=False)
+    df.to_csv('FloatingPoint_InitData.csv', index=False, mode='w')
 
 def saveCalculatedData():
     df_calculated = pd.DataFrame(calculated_data_floating_point, columns=[
         'step', 'success', 'x_path', 'y_path', 'speeds', 'accelerations', 'ix', 'iy', 'iyaw', 
         'd', 's', 'speeds_x', 'speeds_y', 'params', 'costs', 'runtime'
     ])
-    df_calculated.to_csv('FloatingPoint_Calculated.csv', index=False)
+    df_calculated.to_csv('FloatingPoint_Calculated.csv', index=False, mode='w')
 
 def saveHyperparameter():
     hp_df = pd.DataFrame(record_hyperparameters, columns=[
@@ -107,4 +107,4 @@ def saveHyperparameter():
         'd_road_w', 'dt', 'maxt', 'mint', 'd_t_s', 'n_s_sample', 'obstacle_clearance', 
         'kd', 'kv', 'ka', 'kj', 'kt', 'ko', 'klat', 'klon', 'num_threads'
     ])
-    hp_df.to_csv('FloatingPoint_Hyperparameters.csv', index=False)
+    hp_df.to_csv('FloatingPoint_Hyperparameters.csv', index=False, mode='w')
