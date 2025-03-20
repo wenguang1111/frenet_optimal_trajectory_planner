@@ -13,7 +13,7 @@ except:
          FrenetReturnValues
 
 try:
-    cdll = CDLL("/home/wenguang/workplace/test/deleteMe/frenet_optimal_trajectory_planner/build/libFrenetOptimalTrajectory.so")
+    cdll = CDLL("build/libFrenetOptimalTrajectory.so")
 except:
     cdll = CDLL("{}/dependencies/frenet_optimal_trajectory_planner/"
                 "build/libFrenetOptimalTrajectory.so".format(
