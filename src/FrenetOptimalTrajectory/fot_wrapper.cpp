@@ -55,7 +55,7 @@ extern "C" {
             for (size_t i = 0; i < fot_rv->path_length; i++) {
                 fot_rv->x_path[i] = static_cast<float>(best_frenet_path->x[i]);
                 fot_rv->y_path[i] = static_cast<float>(best_frenet_path->y[i]);
-                fot_rv->speeds[i] = static_cast<float>(hypot(best_frenet_path->s_d[i], best_frenet_path->d_d[i]));
+                fot_rv->speeds[i] = static_cast<float>(best_frenet_path->s_d[i]);
                 fot_rv->ix[i] = static_cast<float>(best_frenet_path->ix[i]);
                 fot_rv->iy[i] = static_cast<float>(best_frenet_path->iy[i]);
                 fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
