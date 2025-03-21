@@ -105,7 +105,7 @@ extern "C" {
             for (size_t i = 0; i < fot_rv_f->path_length; i++) {
                 fot_rv_f->x_path[i] = static_cast<float>(best_frenet_path->x[i]);
                 fot_rv_f->y_path[i] = static_cast<float>(best_frenet_path->y[i]);
-                fot_rv_f->speeds[i] = static_cast<float>(best_frenet_path->s_d[i]);
+                fot_rv_f->speeds[i] = static_cast<float>(norm<fixp_speeds>(best_frenet_path->s_d[i], best_frenet_path->d_d[i]));
                 fot_rv_f->ix[i] = static_cast<float>(best_frenet_path->ix[i]);
                 fot_rv_f->iy[i] = static_cast<float>(best_frenet_path->iy[i]);
                 fot_rv_f->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
@@ -116,26 +116,26 @@ extern "C" {
                 fot_rv_f->speeds_y[i] = sin(best_frenet_path->yaw[i]) *
                     fot_rv_f->speeds[i];
                 // #ifdef USE_RECORDER
-                //     Recorder::getInstance()->saveData<float>("index", float(i));
-                //     Recorder::getInstance()->saveData<float>("time", static_cast<float>(best_frenet_path->t[i]));
-                //     Recorder::getInstance()->saveData<float>("x", static_cast<float>(best_frenet_path->x[i]));
-                //     Recorder::getInstance()->saveData<float>("y", static_cast<float>(best_frenet_path->y[i]));
-                //     Recorder::getInstance()->saveData<float>("d", static_cast<float>(best_frenet_path->d[i]));
-                //     Recorder::getInstance()->saveData<float>("d_d", static_cast<float>(best_frenet_path->d_d[i]));
-                //     Recorder::getInstance()->saveData<float>("d_dd", static_cast<float>(best_frenet_path->d_dd[i]));
-                //     Recorder::getInstance()->saveData<float>("d_ddd", static_cast<float>(best_frenet_path->d_ddd[i]));
-                //     Recorder::getInstance()->saveData<float>("s", static_cast<float>(best_frenet_path->s[i]));
-                //     Recorder::getInstance()->saveData<float>("s_d", static_cast<float>(best_frenet_path->s_d[i]));
-                //     Recorder::getInstance()->saveData<float>("s_dd", static_cast<float>(best_frenet_path->s_dd[i]));
-                //     Recorder::getInstance()->saveData<float>("s_ddd", static_cast<float>(best_frenet_path->s_ddd[i]));
-                //     Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(best_frenet_path->yaw[i]));
-                //     Recorder::getInstance()->saveData<float>("ix", static_cast<float>(best_frenet_path->ix[i]));
-                //     Recorder::getInstance()->saveData<float>("iy", static_cast<float>(best_frenet_path->iy[i]));
-                //     Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(best_frenet_path->iyaw[i]));
-                //     Recorder::getInstance()->saveData<float>("ds", static_cast<float>(best_frenet_path->ds[i]));
-                //     Recorder::getInstance()->saveData<float>("c", static_cast<float>(best_frenet_path->c[i]));
-                //     Recorder::getInstance()->saveData<float>("speed_x", fot_rv_f->speeds_x[i]);
-                //     Recorder::getInstance()->saveData<float>("speed_y", fot_rv_f->speeds_y[i]);
+                    // Recorder::getInstance()->saveData<float>("index", float(i));
+                    // Recorder::getInstance()->saveData<float>("time", static_cast<float>(best_frenet_path->t[i]));
+                    // Recorder::getInstance()->saveData<float>("x", static_cast<float>(best_frenet_path->x[i]));
+                    // Recorder::getInstance()->saveData<float>("y", static_cast<float>(best_frenet_path->y[i]));
+                    // Recorder::getInstance()->saveData<float>("d", static_cast<float>(best_frenet_path->d[i]));
+                    // Recorder::getInstance()->saveData<float>("d_d", static_cast<float>(best_frenet_path->d_d[i]));
+                    // Recorder::getInstance()->saveData<float>("d_dd", static_cast<float>(best_frenet_path->d_dd[i]));
+                    // Recorder::getInstance()->saveData<float>("d_ddd", static_cast<float>(best_frenet_path->d_ddd[i]));
+                    // Recorder::getInstance()->saveData<float>("s", static_cast<float>(best_frenet_path->s[i]));
+                    // Recorder::getInstance()->saveData<float>("s_d", static_cast<float>(best_frenet_path->s_d[i]));
+                    // Recorder::getInstance()->saveData<float>("s_dd", static_cast<float>(best_frenet_path->s_dd[i]));
+                    // Recorder::getInstance()->saveData<float>("s_ddd", static_cast<float>(best_frenet_path->s_ddd[i]));
+                    // Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(best_frenet_path->yaw[i]));
+                    // Recorder::getInstance()->saveData<float>("ix", static_cast<float>(best_frenet_path->ix[i]));
+                    // Recorder::getInstance()->saveData<float>("iy", static_cast<float>(best_frenet_path->iy[i]));
+                    // Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(best_frenet_path->iyaw[i]));
+                    // Recorder::getInstance()->saveData<float>("ds", static_cast<float>(best_frenet_path->ds[i]));
+                    // Recorder::getInstance()->saveData<float>("c", static_cast<float>(best_frenet_path->c[i]));
+                    // Recorder::getInstance()->saveData<float>("speed_x", fot_rv_f->speeds_x[i]);
+                    // Recorder::getInstance()->saveData<float>("speed_y", fot_rv_f->speeds_y[i]);
                 // #endif
             }
 
@@ -213,7 +213,7 @@ extern "C" {
         // TODO: add lateral acceleration when CARLA 9.7 is patched (IMU)
 
         delete csp;
-        delete xp_fp;
-        delete yp_fp;
+        delete[] xp_fp;
+        delete[] yp_fp;
     }
 }

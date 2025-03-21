@@ -3,6 +3,14 @@
 
 #include "cnl/scaled_integer.h"
 
+// fot_wrapper.cpp
+#define fixp_wx int_8_7
+#define fixp_wy int_8_7
+#define fixp_o_llx int_8_7
+#define fixp_o_lly int_8_7
+#define fixp_o_urx int_8_7
+#define fixp_o_ury int_8_7
+
 #define fixp_position_error fixp_x(0.5)
 #define fixp_t uint_6_10
 #define fixp_d int_5_10
@@ -67,7 +75,7 @@
 #define fixp_TM_d int_2_13
 #define fixp_obstacle_clearance uint_2_14
 #define fixp_vx int_5_10
-#define fixp_forward_speed int_5_10
+#define fixp_speeds int_6_9
 #define fixp_30_33 int_30_33
  
 typedef cnl::scaled_integer<int16_t, cnl::power<-14>> int_1_14;
