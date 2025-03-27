@@ -244,6 +244,12 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     continue;
                 }
 
+                float d_cost = 0.0;
+                for (size_t i = 0; i < tfp->d.size(); ++i) {
+                    d_cost += std::pow((0.25 * (0 - tfp->d[i])), 2);
+                }
+                d_cost += std::pow((20 * (0 - tfp->d.back())), 2);
+
                 // lateral costs
                 tfp->c_lateral_deviation = lateral_deviation;
                 tfp->c_lateral_velocity = lateral_velocity;
@@ -269,10 +275,13 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 // obstacle costs
                 tfp->c_inv_dist_to_obstacles = tfp->inverse_distance_to_obstacles(obstacles);
 
-                // final cost
-                tfp->cf = fot_hp->klat * tfp->c_lateral +
-                          fot_hp->klon * tfp->c_longitudinal +
-                          fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                // //final cost
+                // tfp->cf = fot_hp->klat * tfp->c_lateral +
+                //           fot_hp->klon * tfp->c_longitudinal +
+                //           fot_hp->ko * tfp->c_inv_dist_to_obstacles;
+                tfp->cf = fot_hp->kd * d_cost + fot_hp->ko * tfp->c_inv_dist_to_obstacles +
+                        fot_hp->kj * tfp->c_longitudinal_jerk + 
+                        fot_hp->kj * tfp->c_lateral_jerk;
                 
                 #ifdef SAMPLING_PATH_ANALYSIS
                     if (tfp->cf < min_cost){
