@@ -155,9 +155,14 @@ def visualize_solution(
         if obstacles is not None: 
             for o in obstacles:
                 circle_1 = Circle(radius=0.5, center=np.array([*o[:2]]))
-                circle_2 = Circle(radius=0.5, center=np.array([*o[2:]]))
+                circle_2 = Circle(radius=0.5, center=np.array([*o[2:4]]))
+                circle_3 = Circle(radius=0.5, center=np.array([*o[4:6]]))
+                circle_4 = Circle(radius=0.5, center=np.array([*o[6:8]]))
+                
                 circle_1.draw(renderer)
                 circle_2.draw(renderer)
+                circle_3.draw(renderer)
+                circle_4.draw(renderer)
 
         # Drawing and rendering
         if drawn_trajectories:
