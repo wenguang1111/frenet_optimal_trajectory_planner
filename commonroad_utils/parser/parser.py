@@ -63,7 +63,9 @@ class Parser():
                   if occupancy is not None:
                         vertices_np = occupancy._shape.vertices
                         vertices_list = vertices_np.tolist()
-                        coordinates = vertices_list[1] + vertices_list[3]  # rear left & front right coordinates
+                        coordinates = vertices_list[1] + vertices_list[2] + \
+                              vertices_list[3] + vertices_list[4]  # rear left + front left +
+                                                                        # front right + rear right
                         s_obstacles_list.append(coordinates)
                   
             return s_obstacles_list
@@ -86,7 +88,10 @@ class Parser():
                   if occupancy is not None:
                         vertices_np = occupancy._shape.vertices
                         vertices_list = vertices_np.tolist()
-                        coordinates = vertices_list[1] + vertices_list[3]  # rear left & front right coordinates
+                        coordinates = vertices_list[1] + vertices_list[2] + \
+                              vertices_list[3] + vertices_list[4]  # rear left + front left +
+                        
+                        # print("coord: ", coordinates)                                                # front right + rear right
                         d_obstacles_list.append(coordinates)
                   
             return d_obstacles_list
@@ -104,6 +109,8 @@ class Parser():
             """
             if time_step == 0:
                   self.static_obstacles = self.parse_static_obstacles()
+                  # print(self.static_obstacles)
+                  # print("t0: ", self.static_obstacles + self.parse_dynamic_obstacles(time_step=time_step))
                   return self.static_obstacles + self.parse_dynamic_obstacles(time_step=time_step)
             else:
                   return self.static_obstacles + self.parse_dynamic_obstacles(time_step=time_step)
