@@ -51,19 +51,19 @@ extern "C" {
         fot_ic_fp->nw = fot_ic_f->nw;
         fot_ic_fp->no = fot_ic_f->no;
 
-        fot_ic_fp->wx = new fixp_x[fot_ic_f->nw];
-        fot_ic_fp->wy = new fixp_y[fot_ic_f->nw];
-        fot_ic_fp->o_llx = new fixp_x[fot_ic_f->no];
-        fot_ic_fp->o_lly = new fixp_y[fot_ic_f->no];
-        fot_ic_fp->o_urx = new fixp_x[fot_ic_f->no];
-        fot_ic_fp->o_ury = new fixp_y[fot_ic_f->no];
+        fot_ic_fp->wx = new fixp_wx[fot_ic_f->nw];
+        fot_ic_fp->wy = new fixp_wy[fot_ic_f->nw];
+        fot_ic_fp->o_llx = new fixp_o_llx[fot_ic_f->no];
+        fot_ic_fp->o_lly = new fixp_o_lly[fot_ic_f->no];
+        fot_ic_fp->o_urx = new fixp_o_urx[fot_ic_f->no];
+        fot_ic_fp->o_ury = new fixp_o_ury[fot_ic_f->no];
 
-        assignValueToFixedPoint<fixp_x>(fot_ic_fp->wx, fot_ic_f->wx, fot_ic_fp->nw);
-        assignValueToFixedPoint<fixp_y>(fot_ic_fp->wy, fot_ic_f->wy, fot_ic_fp->nw);
-        assignValueToFixedPoint<fixp_x>(fot_ic_fp->o_llx, fot_ic_f->o_llx, fot_ic_fp->no);
-        assignValueToFixedPoint<fixp_y>(fot_ic_fp->o_lly, fot_ic_f->o_lly, fot_ic_fp->no);
-        assignValueToFixedPoint<fixp_x>(fot_ic_fp->o_urx, fot_ic_f->o_urx, fot_ic_fp->no);
-        assignValueToFixedPoint<fixp_y>(fot_ic_fp->o_ury, fot_ic_f->o_ury, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_wx>(fot_ic_fp->wx, fot_ic_f->wx, fot_ic_fp->nw);
+        assignValueToFixedPoint<fixp_wy>(fot_ic_fp->wy, fot_ic_f->wy, fot_ic_fp->nw);
+        assignValueToFixedPoint<fixp_o_llx>(fot_ic_fp->o_llx, fot_ic_f->o_llx, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_o_lly>(fot_ic_fp->o_lly, fot_ic_f->o_lly, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_o_urx>(fot_ic_fp->o_urx, fot_ic_f->o_urx, fot_ic_fp->no);
+        assignValueToFixedPoint<fixp_o_ury>(fot_ic_fp->o_ury, fot_ic_f->o_ury, fot_ic_fp->no);
           
         //-----------------FrenetHyperparameters--------------------------------
         fot_hp_fp->max_speed = fot_hp_f->max_speed;
@@ -175,12 +175,12 @@ extern "C" {
             float vy, float forward_speed, float* xp, float* yp, int np,
             float* initial_conditions
             ) {
-        fixp_x* xp_fp = new fixp_x[np];
-        fixp_y* yp_fp = new fixp_y[np];
-        assignValueToFixedPoint<fixp_x>(xp_fp, xp, np);
-        assignValueToFixedPoint<fixp_y>(yp_fp, yp, np);
-        vector<fixp_x> wx (xp_fp, xp_fp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
-        vector<fixp_y> wy (yp_fp, yp_fp + np);
+        fixp_wx* xp_fp = new fixp_x[np];
+        fixp_wy* yp_fp = new fixp_y[np];
+        assignValueToFixedPoint<fixp_wx>(xp_fp, xp, np);
+        assignValueToFixedPoint<fixp_wy>(yp_fp, yp, np);
+        vector<fixp_wx> wx (xp_fp, xp_fp + np); //np=len(wx), see declartion of _to_frenet_initial_conditions() in fot_wrapper.py 
+        vector<fixp_wy> wy (yp_fp, yp_fp + np);
         CubicSpline2D* csp = new CubicSpline2D(wx, wy);
         // get distance from car to spline and projection
         fixp_x x_fp = x;

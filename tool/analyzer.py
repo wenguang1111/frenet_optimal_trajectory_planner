@@ -9,6 +9,8 @@ column_stats = {}
 TOTAL_BITS = 16
 
 def calculate_fixed_point_data_type(value):
+    if math.isnan(value):  # Check if the value is NaN
+        return 'NaN'
     if value==0:
         int_bits=1
     else:

@@ -17,7 +17,7 @@ using namespace Eigen;
 class FrenetPath {
 public:
     // Frenet attributes
-    vector<fixp_maxt> t;          // time
+    vector<fixp_t> t;          // time
     vector<fixp_d> d;          // lateral offset
     vector<fixp_d_d> d_d;        // lateral speed
     vector<fixp_d_dd> d_dd;       // lateral acceleration
@@ -37,7 +37,7 @@ public:
     // Debug
     vector<fixp_x> ix;
     vector<fixp_y> iy;
-    vector<fixp_s> iyaw;
+    vector<fixp_yaw> iyaw;
 
     // Cost attributes
     // lateral costs
@@ -50,7 +50,7 @@ public:
     // longitudinal costs
     fixp_cf c_longitudinal_acceleration = 0.0;
     fixp_cf c_longitudinal_jerk = 0.0;
-    fixp_maxt c_time_taken = 0.0;
+    fixp_t c_time_taken = 0.0;
     fixp_cf c_end_speed_deviation = 0.0;
     fixp_cf c_longitudinal = 0.0;
 

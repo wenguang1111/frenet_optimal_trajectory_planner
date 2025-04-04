@@ -49,9 +49,9 @@ CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
         {
             std::cout << "CubicSpline1D Line 39 deltas is zero"<< std::endl;
         }
-        fixp_30_33 dummy = 3*deltas[i];
+        fixp_30_33 dummy = 3.0*deltas[i];
         d.push_back(cnl::quotient((c[i + 1] - c[i]), dummy));
-        dummy = c[i + 1] + 2* c[i];
+        dummy = c[i + 1] + 2.0* c[i];
         dummy = cnl::quotient(dummy,fixp_30_33(3.0));
         dummy = dummy*deltas[i];
         fixp_30_33 test = a[i + 1] - a[i];
@@ -68,7 +68,7 @@ fixp_x CubicSpline1D::calc_der0(fixp_s t) {
     }
 
     int i = search_index(t) - 1;
-    fixp_30_33 dx = t - x[i];
+    fixp_s dx = t - x[i];
     fixp_30_33 ans = c[i] + d[i]*dx;
     ans*=dx;
     ans+=b[i];
@@ -94,8 +94,8 @@ fixp_dx CubicSpline1D::calc_der1(fixp_s t) {
     }
 
     int i = search_index(t) - 1;
-    fixp_30_33 dx = t - x[i];
-    fixp_30_33 ans = 2*c[i]+3*d[i]*dx;
+    fixp_s dx = t - x[i];
+    fixp_30_33 ans = 2.0*c[i]+3.0*d[i]*dx;
     ans*=dx;
     ans+=b[i];
     // return b[i] + 2.0 * c[i] * dx + 3.0 * d[i] * pow_2<fp_type>(dx);

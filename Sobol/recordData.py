@@ -5,30 +5,11 @@ initial_conditions_floating_point = []
 calculated_data_floating_point = []
 record_hyperparameters =[]
 MAX_PATH_LENGTH = py_cpp_struct.MAX_PATH_LENGTH
-# class FrenetInitialConditions(Structure):
-#     _fields_ = [
-#         ("s0", c_float),
-#         ("c_speed", c_float),
-#         ("c_acceleration", c_float),
-#         ("c_d", c_float),
-#         ("c_d_d", c_float),
-#         ("c_d_dd", c_float),
-#         ("target_speed", c_float),
-#         ("wx", _c_float_p),
-#         ("wy", _c_float_p),
-#         ("nw", c_int),
-#         ("o_llx", _c_float_p),
-#         ("o_lly", _c_float_p),
-#         ("o_urx", _c_float_p),
-#         ("o_ury", _c_float_p),
-#         ("no", c_int)
-#     ]
     
 def writeInitalConditions(initial_conditions):
     initial_conditions_floating_point.append([
     initial_conditions.s0,
     initial_conditions.c_speed,
-    initial_conditions.c_acceleration,
     initial_conditions.c_d,
     initial_conditions.c_d_d,
     initial_conditions.c_d_dd,
@@ -51,7 +32,6 @@ def writeCalculatedData(returnValues, step_number):
             returnValues.x_path[i],
             returnValues.y_path[i],
             returnValues.speeds[i],
-            returnValues.accelerations[i],
             returnValues.ix[i],
             returnValues.iy[i],
             returnValues.iyaw[i],
@@ -91,14 +71,14 @@ def writeHyperparameters(hyperparameters):
 
 def saveInitialConditions():
     df = pd.DataFrame(initial_conditions_floating_point, columns=[
-        's0', 'c_speed', 'c_acceleration', 'c_d', 'c_d_d', 'c_d_dd', 'target_speed', 
+        's0', 'c_speed', 'c_d', 'c_d_d', 'c_d_dd', 'target_speed', 
         'wx', 'wy', 'nw', 'o_llx', 'o_lly', 'o_urx', 'o_ury', 'no'
     ])
     df.to_csv('FloatingPoint_InitData.csv', index=False, mode='w')
 
 def saveCalculatedData():
     df_calculated = pd.DataFrame(calculated_data_floating_point, columns=[
-        'step', 'success', 'x_path', 'y_path', 'speeds', 'accelerations', 'ix', 'iy', 'iyaw', 
+        'step', 'success', 'x_path', 'y_path', 'speeds', 'ix', 'iy', 'iyaw', 
         'd', 's', 'speeds_x', 'speeds_y', 'params', 'costs', 'runtime'
     ])
     df_calculated.to_csv('FloatingPoint_Calculated.csv', index=False, mode='w')
@@ -144,7 +124,6 @@ def readCalculatedData(filename='FloatingPoint_Calculated.csv'):
             x_path=(c_float * MAX_PATH_LENGTH)(*row['x_path']),
             y_path=(c_float * MAX_PATH_LENGTH)(*row['y_path']),
             speeds=(c_float * MAX_PATH_LENGTH)(*row['speeds']),
-            accelerations=(c_float * MAX_PATH_LENGTH)(*row['accelerations']),
             ix=(c_float * MAX_PATH_LENGTH)(*row['ix']),
             iy=(c_float * MAX_PATH_LENGTH)(*row['iy']),
             iyaw=(c_float * MAX_PATH_LENGTH)(*row['iyaw']),

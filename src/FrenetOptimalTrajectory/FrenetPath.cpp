@@ -36,37 +36,33 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         fy = iy_ + di * cordic_sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
-            Recorder::getInstance()->saveData<float>("ix", static_cast<float>(ix.back()));
-            Recorder::getInstance()->saveData<float>("iy", static_cast<float>(iy.back()));
-            Recorder::getInstance()->saveData<float>("x", static_cast<float>(x.back()));
-            Recorder::getInstance()->saveData<float>("y", static_cast<float>(y.back()));
-            Recorder::getInstance()->saveData<float>("iyaw", static_cast<float>(iyaw.back()));
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::i", static_cast<float>(i));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ix", static_cast<float>(ix.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iy", static_cast<float>(iy.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::x", static_cast<float>(x.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::y", static_cast<float>(y.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iyaw", static_cast<float>(iyaw.back()));
+        // #endif
     }
     // not enough points to construct a valid path
     if (x.size() <= 1) {
         return false;
     }
-
+    
     // calc yaw and ds
     for (size_t i = 0; i < x.size() - 1; i++) {
         dx = x[i+1] - x[i];
         dy = y[i+1] - y[i];
         yaw.push_back(cordic_atan<fixp_x>(dy, dx));
         ds.push_back(norm<fixp_ds>(dx,dy));
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<float>("yaw",  static_cast<float>(yaw.back()));
-            Recorder::getInstance()->saveData<float>("ds",  static_cast<float>(ds.back()));
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::yaw",  static_cast<float>(yaw.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ds",  static_cast<float>(ds.back()));
+        // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("yaw", static_cast<float>(yaw.back()));
-    //     Recorder::getInstance()->saveData<float>("ds", static_cast<float>(ds.back()));
-    // #endif
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -109,9 +105,9 @@ bool FrenetPath::is_valid_path(const vector<Obstacle *> obstacles) {
         return false;
     }
     // collision check
-    else if (is_collision(obstacles)) {
-        return false;
-    }
+    // else if (is_collision(obstacles)) {
+    //     return false;
+    // }
     else {
         return true;
     }
@@ -150,10 +146,30 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
                 pose=Pose{xp, yp, yawp};
                 car.setPose(pose);
                 car_outline = car.getOutline();
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<double>("points[0].x",static_cast<double>(car_outline.points[0].x));
+                    Recorder::getInstance()->saveData<double>("points[0].y",static_cast<double>(car_outline.points[0].y));
+                    Recorder::getInstance()->saveData<double>("points[1].x",static_cast<double>(car_outline.points[1].x));
+                    Recorder::getInstance()->saveData<double>("points[1].y",static_cast<double>(car_outline.points[1].y));
+                    Recorder::getInstance()->saveData<double>("points[2].x",static_cast<double>(car_outline.points[2].x));
+                    Recorder::getInstance()->saveData<double>("points[2].y",static_cast<double>(car_outline.points[2].y));
+                    Recorder::getInstance()->saveData<double>("points[3].x",static_cast<double>(car_outline.points[3].x));
+                    Recorder::getInstance()->saveData<double>("points[3].y",static_cast<double>(car_outline.points[3].y));
+                    Recorder::getInstance()->saveData<double>("llx",static_cast<double>(llx));
+                    Recorder::getInstance()->saveData<double>("lly",static_cast<double>(lly));
+                    Recorder::getInstance()->saveData<double>("urx",static_cast<double>(urx));
+                    Recorder::getInstance()->saveData<double>("ury",static_cast<double>(ury));
+                #endif
                 if(obstacle->isOverlap(car_outline))
                 {
+                    #ifdef USE_RECORDER
+                        Recorder::getInstance()->saveData<double>("Collision",static_cast<double>(1));
+                    #endif
                     return true;
                 }
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<double>("Collision",static_cast<double>(0));
+                #endif
             }
         }
     }

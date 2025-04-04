@@ -82,26 +82,26 @@ struct FrenetInitialConditions_FP {
 };
 
 struct FrenetHyperparameters_FP {
-    fixp_s_d max_speed;
-    fixp_s_d max_accel;
-    fixp_s_d max_curvature;
-    fixp_s_d max_road_width_l;
-    fixp_s_d max_road_width_r;
-    fixp_s_d d_road_w; //delta_road_width
-    fixp_dt dt;
-    fixp_maxt maxt;
-    fixp_maxt mint;
-    fixp_s_d d_t_s;
-    fixp_s_d n_s_sample;
+    fixp_x max_speed;
+    fixp_x max_accel;
+    fixp_x max_curvature;
+    fixp_x max_road_width_l;
+    fixp_x max_road_width_r;
+    fixp_x d_road_w; //delta_road_width
+    fixp_t dt;
+    fixp_t maxt;
+    fixp_t mint;
+    fixp_x d_t_s;
+    fixp_x n_s_sample;
     fixp_obstacle_clearance obstacle_clearance;
-    fixp_s_d kd;
-    fixp_s_d kv;
-    fixp_s_d ka;
-    fixp_s_d kj;
-    fixp_s_d kt;
-    fixp_s_d ko;
-    fixp_s_d klat;
-    fixp_s_d klon;
+    fixp_x kd;
+    fixp_x kv;
+    fixp_x ka;
+    fixp_x kj;
+    fixp_x kt;
+    fixp_x ko;
+    fixp_x klat;
+    fixp_x klon;
     int num_threads;
 };
 #endif //FRENETOPTIMALTRAJECTORY_PY_CPP_STRUCT_H
