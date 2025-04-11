@@ -41,7 +41,7 @@ CubicSpline1D::CubicSpline1D(const vector<double>& v1,
 
 // Calculate the 0th derivative evaluated at t
 double CubicSpline1D::calc_der0(double t) {
-    if (t < x.front() || t >= x.back()) {
+    if (t < x.front() || t > x.back()) {
         return NAN;
     }
 

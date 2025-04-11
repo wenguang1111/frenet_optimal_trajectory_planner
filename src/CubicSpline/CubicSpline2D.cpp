@@ -1,5 +1,6 @@
 #include "CubicSpline2D.h"
 #include "utils.h"
+#include "tool/recorder.h"
 
 #include <algorithm>
 #include <numeric>
@@ -93,20 +94,26 @@ CubicSpline2D::remove_collinear_points(vector<double> x, vector<double> y) {
     vector<vector<double>> filtered_points;
     vector<double> x_, y_;
     x_.push_back(x[0]);
-    x_.push_back(x[1]);
     y_.push_back(y[0]);
-    y_.push_back(y[1]);
+    int delete_point_num = 0;
     for (size_t i = 2; i < x.size()-1; i++) {
         bool collinear = are_collinear(
-            x[i - 2], y[i - 2],
+            x[i - 2-delete_point_num], y[i - 2-delete_point_num],
             x[i - 1], y[i - 1],
             x[i], y[i]
             );
         if (collinear) {
+            delete_point_num++;
             continue;
+        }
+        if(delete_point_num!=0)
+        {
+            x_.push_back(x[i-1]);
+            y_.push_back(y[i-1]);
         }
         x_.push_back(x[i]);
         y_.push_back(y[i]);
+        delete_point_num=0;
     }
     // make sure to add the last point in case all points are collinear
     x_.push_back(x.back());
@@ -119,8 +126,8 @@ CubicSpline2D::remove_collinear_points(vector<double> x, vector<double> y) {
 // Determine if 3 points are collinear using the triangle area rule
 bool CubicSpline2D::are_collinear(double x1, double y1, double x2, double y2,
     double x3, double y3) {
-    double a = x1 * (y2 - y3) +
-               x2 * (y3 - y1) +
-               x3 * (y1 - y2);
+    double a = abs(x1 * (y2 - y3) +
+            x2 * (y3 - y1) +
+            x3 * (y1 - y2));
     return a <= 0.01;
 }
