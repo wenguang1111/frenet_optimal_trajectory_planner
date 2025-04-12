@@ -22,8 +22,12 @@ class FrenetInitialConditions(Structure):
         ("nw", c_int),
         ("o_llx", _c_float_p),
         ("o_lly", _c_float_p),
+        ("o_ulx", _c_float_p),
+        ("o_uly", _c_float_p),
         ("o_urx", _c_float_p),
         ("o_ury", _c_float_p),
+        ("o_lrx", _c_float_p),
+        ("o_lry", _c_float_p),
         ("no", c_int)
     ]
     

@@ -209,8 +209,12 @@ def to_frenet_initial_conditions(initial_conditions):
     wy = wp[:, 1].astype(np.float32)
     o_llx = np.copy(obs[:, 0]).astype(np.float32)
     o_lly = np.copy(obs[:, 1]).astype(np.float32)
-    o_urx = np.copy(obs[:, 2]).astype(np.float32)
-    o_ury = np.copy(obs[:, 3]).astype(np.float32)
+    o_ulx = np.copy(obs[:, 2]).astype(np.float32)
+    o_uly = np.copy(obs[:, 3]).astype(np.float32)
+    o_urx = np.copy(obs[:, 4]).astype(np.float32)
+    o_ury = np.copy(obs[:, 5]).astype(np.float32)
+    o_lrx = np.copy(obs[:, 6]).astype(np.float32)
+    o_lry = np.copy(obs[:, 7]).astype(np.float32)
     forward_speed = np.hypot(vx, vy).item()
     
     wx = np.ascontiguousarray(wx, dtype=np.float32)
@@ -241,8 +245,12 @@ def to_frenet_initial_conditions(initial_conditions):
         len(wx),
         o_llx.ctypes.data_as(_c_float_p),  # obstacles lower left x
         o_lly.ctypes.data_as(_c_float_p),  # obstacles lower left y
+        o_ulx.ctypes.data_as(_c_float_p),  # obstacles upper left x
+        o_uly.ctypes.data_as(_c_float_p),  # obstacles upper left y
         o_urx.ctypes.data_as(_c_float_p),  # obstacles upper right x
         o_ury.ctypes.data_as(_c_float_p),  # obstacles upper right y
+        o_lrx.ctypes.data_as(_c_float_p),  # obstacles lower right x
+        o_lry.ctypes.data_as(_c_float_p),  # obstacles lower right y
         len(o_llx),
     ), misc
 
