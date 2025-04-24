@@ -2,13 +2,15 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plt
 
-file_path = 'variable_float.csv'
+file_path = 'variable_double.csv'
 data = pd.read_csv(file_path)
 
 column_stats = {}
 TOTAL_BITS = 16
 
 def calculate_fixed_point_data_type(value):
+    if math.isnan(value):  # Check if the value is NaN
+        return 'NaN'
     if value==0:
         int_bits=1
     else:

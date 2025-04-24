@@ -26,7 +26,7 @@ def writeInitalConditions(initial_conditions):
     initial_conditions_floating_point.append([
     initial_conditions.s0,
     initial_conditions.c_speed,
-    initial_conditions.c_acceleration,
+    # initial_conditions.c_acceleration,
     initial_conditions.c_d,
     initial_conditions.c_d_d,
     initial_conditions.c_d_dd,
@@ -57,8 +57,7 @@ def writeCalculatedData(returnValues, step_number):
             returnValues.s[i],
             returnValues.speeds_x[i],
             returnValues.speeds_y[i],
-            returnValues.params[i],
-            returnValues.costs[i],
+            returnValues.costs[11],
             returnValues.runtime
         ])
 
@@ -89,7 +88,7 @@ def writeHyperparameters(hyperparameters):
 
 def saveInitialConditions():
     df = pd.DataFrame(initial_conditions_floating_point, columns=[
-        's0', 'c_speed', 'c_acceleration', 'c_d', 'c_d_d', 'c_d_dd', 'target_speed', 
+        's0', 'c_speed', 'c_d', 'c_d_d', 'c_d_dd', 'target_speed', 
         'wx', 'wy', 'nw', 'o_llx', 'o_lly', 'o_urx', 'o_ury', 'no'
     ])
     df.to_csv('FloatingPoint_InitData.csv', index=False, mode='w')
@@ -97,7 +96,7 @@ def saveInitialConditions():
 def saveCalculatedData():
     df_calculated = pd.DataFrame(calculated_data_floating_point, columns=[
         'step', 'success', 'x_path', 'y_path', 'speeds', 'accelerations', 'ix', 'iy', 'iyaw', 
-        'd', 's', 'speeds_x', 'speeds_y', 'params', 'costs', 'runtime'
+        'd', 's', 'speeds_x', 'speeds_y', 'costs', 'runtime'
     ])
     df_calculated.to_csv('FloatingPoint_Calculated.csv', index=False, mode='w')
 

@@ -8,7 +8,7 @@ using namespace Eigen;
 
 class Obstacle {
 public:
-    std::pair<Point_FP, Point_FP> bbox;
+    Rectangle bbox;
     Obstacle(Point_FP first_point, Point_FP second_point,
              float obstacle_clearance);
     bool isOverlap(Rectangle& car_outline);

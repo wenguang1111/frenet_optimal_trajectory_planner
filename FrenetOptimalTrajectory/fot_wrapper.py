@@ -116,8 +116,22 @@ def run_fot(initial_conditions, hyperparameters):
     if RECORD_DATA:
         recordData.writeInitalConditions(fot_initial_conditions)
         recordData.writeHyperparameters(fot_hp)
+
+    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
     # run the planner
     _run_fot(fot_initial_conditions, fot_hp, fot_rv)
+
+    # if fot_rv.success==False:
+    #     empty_array = np.array([], dtype=np.float32)
+    #     if int(show_sampling_path):
+    #         return empty_array, empty_array, empty_array, empty_array, empty_array, \
+    #             empty_array, empty_array, empty_array, empty_array, empty_array, \
+    #             empty_array, {}, {}, False, {}, empty_array, empty_array
+    #     else:
+    #         return empty_array, empty_array, empty_array, empty_array, empty_array, \
+    #             empty_array, empty_array, empty_array, empty_array, empty_array, \
+    #             empty_array, {}, {}, False, {}
+
     if RECORD_DATA:
         recordData.writeCalculatedData(fot_rv, step_num)
 
@@ -133,7 +147,6 @@ def run_fot(initial_conditions, hyperparameters):
     speeds_x = np.array([fot_rv.speeds_x[i] for i in range(fot_rv.path_length)]).astype(np.float32)
     speeds_y = np.array([fot_rv.speeds_y[i] for i in range(fot_rv.path_length)]).astype(np.float32)
 
-    show_sampling_path = os.environ.get("SHOW_SAMPLING_PATH", False)
     if int(show_sampling_path):
         sample_x_data = []
         sample_y_data = []

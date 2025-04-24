@@ -31,6 +31,7 @@ public:
     vector<float> yaw;        // yaw in radc
     vector<float> ds;         // speed
     vector<float> c;          // curvature
+    // vector<float> distanceToReferenceLine; // distance to center line
 
     // Debug
     vector<float> ix;

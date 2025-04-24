@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import pickle
 import pandas as pd
@@ -18,8 +19,14 @@ from commonroad_utils.parser.utils import *
 os.environ["SHOW_SAMPLING_PATH"] = '1'
 
 scenario_path = os.getcwd() + '/commonroad_utils/Critical_Transformed/'
-scenario_name = 'PRI_Barceloneta-4_5_T-1.xml'
-# scenario_name = 'USA_US101-28_1_T-1.xml'
+scenario_name = 'ITA_Empoli-7_3_T-1.xml'
+
+# Check if a filename is provided as a command-line argument
+# if len(sys.argv) < 2:
+#     print("Usage: python main.py <scenario_filename>")
+#     sys.exit(1)
+# scenario_name = sys.argv[1]
+
 
 scenario, planning_problem, pp_set = get_scenario(scenario_path, scenario_name)
 
@@ -41,7 +48,7 @@ LEN_DRAW = 10     # The length of the drawn trajectory (Number of states)
 
 SAVE = False
 SAVE_CSV = False
-LOAD = True
+LOAD = False
 SAVE_PROFILES = False
 CREATE_VIDEO = False
 RECORD_DATA = True
@@ -50,7 +57,7 @@ RECORD_DATA = True
 # print(planning_problem.initial_state.acceleration)
 conds = {
       's0': parser.parse_initial_position(x_only=True),
-      'target_speed': 15.0,
+      'target_speed': 30.0,
       # 'target_speed': planner.x_0.velocity,  # Uncomment to parsing the target speed from the scenario
       'acc': planning_problem.initial_state.acceleration,
       'wp': parser.parse_waypoints(initial_state=start_pos, goal_state=goal_pos),
@@ -73,6 +80,7 @@ initial_conditions = {
       'obs': np.array(conds['obs'])     # Comment to test with no obstacles
 }
 
+print(np.array(conds['obs']) )
 if SAVE:
       with open(f'commonroad_utils/frenet_ic/{scenario_name[:-4]}.pkl', 'wb') as f:
             pickle.dump(initial_conditions, f)
@@ -87,25 +95,25 @@ ic_df = pd.DataFrame({
 })
 
 hyperparameters = {
-      "max_speed": 40.0,
+      "max_speed": 100.0,
       "max_accel": 15.0,
       "max_curvature": 10.0,
       "max_road_width_l": 1.75,
       "max_road_width_r": 1.75,
-      "d_road_w": 0.2,
-      "dt": 0.1,
-      "maxt": 2.0,
+      "d_road_w": 0.125,
+      "dt": 0.125,
+      "maxt": 4.0,
       "mint": 1.0,
-      "d_t_s": 0.1,
-      "n_s_sample": 100.0,
-      "obstacle_clearance": -0.5,
-      "kd": 0.02,
-      "kv": 0.1,
-      "ka": 0.1,
-      "kj": 0.0,
-      "kt": 0.1,
-      "ko": 190.0,
-      "klat": 1.0,
+      "d_t_s": 0.125,
+      "n_s_sample": 10.0,
+      "obstacle_clearance": 0.0,
+      "kd": 10,
+      "kv": 0.125,
+      "ka": 0.125,
+      "kj": 0.125,
+      "kt": 0.125,
+      "ko": 0.125,
+      "klat": 10.0,
       "klon": 1.0,
       "num_threads": 0
 }
@@ -124,12 +132,13 @@ ic_df = pd.concat([ic_df, hp_df], ignore_index=True)
 # if SAVE_CSV:
 #       ic_df.to_csv(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.csv', index=False)
 
-print(hyperparameters)
+# print(hyperparameters)
+# print(initial_conditions)
 
 wp = initial_conditions["wp"]
 # print(wp[-1])
 
-print(os.getpid())
+# print(os.getpid())
 acc_states = []
 velocities_ = []
 accelerations_ = []
@@ -143,8 +152,10 @@ from FrenetOptimalTrajectory import py_cpp_struct
 from FrenetOptimalTrajectory import fot_wrapper
 
 fot_wrapper.RECORD_DATA = RECORD_DATA
+_timestep = 0
+# Stopping = False
 for i in range(200):
-      fot_wrapper.step_num = i
+      fot_wrapper.step_num = _timestep
       # print(show_sampling_path)
       # Run Frenet planner
       if int(show_sampling_path):
@@ -156,14 +167,19 @@ for i in range(200):
             result_x, result_y, speeds, accelerations, ix, iy, iyaw, d, s, speeds_x, \
                   speeds_y, misc, costs, success, runtime = \
                   fot_wrapper.run_fot(initial_conditions, hyperparameters)
+      # if(success is False):
+      #       initial_conditions['target_speed'] = 0
+      #       Stopping = True
+      #       continue
+
       # print(speeds[1])
-      states_list: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=i+j, position=np.array([result_x[j], result_y[j]]),\
+      states_list: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=_timestep+j, position=np.array([result_x[j], result_y[j]]),\
                                                 velocity=speeds[j], orientation=iyaw[j], acceleration=accelerations[j])] for j in range(len(result_x[:LEN_DRAW]))]
       # Create PMState for each sample path
       sampling_states = []
       if int(show_sampling_path):
             for path_x, path_y in zip(sample_x, sample_y):
-                  path_states: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=i+j, position=np.array([path_x[j], path_y[j]]), velocity=0, orientation=0, acceleration=0) \
+                  path_states: List[List[ExtendedPMState]] = [[ExtendedPMState(time_step=_timestep+j, position=np.array([path_x[j], path_y[j]]), velocity=0, orientation=0, acceleration=0) \
                         for j in range(len(path_x[:LEN_DRAW]))]]
                   sampling_states.append(path_states)
             
@@ -177,6 +193,7 @@ for i in range(200):
             excuted_trajectory = create_trajectory_from_list_states([states_list[1]])
       except Exception as e:
             print(e)
+            print("Failed in create_trajectory_from_list_states()")
             break
       
       # Uncomment to print the planned states of the 2 time steps trajectory
@@ -195,13 +212,14 @@ for i in range(200):
                         excuted_trajectory = excuted_trajectory,
                         full_trajectory = full_trajectory,
                         waypoints = wp, 
-                        t_s = i,
+                        t_s = _timestep,
                         ax=ax)
       
       # print("Euclidean Distance: ", np.linalg.norm(np.array([result_x[1], result_y[1]]) - goal_pos))
       acc_states.append(states_list[1][0])
       full_trajectories_.append(full_trajectory)
-      
+      _timestep += 1
+
       if success:
             # If planning suceeded, check if goal was reached. If true, break the planning loop
             if np.linalg.norm(np.array([result_x[1], result_y[1]]) - goal_pos) < EPS:
@@ -217,7 +235,7 @@ for i in range(200):
             initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]])
             initial_conditions['acc'] = np.array(accelerations[1])
             # initial_conditions['obs'] = np.array([])      # Uncomment to test with no obstacles
-            initial_conditions['obs'] = np.array(parser.parse_obstacles(time_step=i+1))         # Comment to test with no obstacles
+            initial_conditions['obs'] = np.array(parser.parse_obstacles(time_step=_timestep+1))         # Comment to test with no obstacles
             velocities_.append(speeds[1])
             accelerations_.append(accelerations[1])
       else:

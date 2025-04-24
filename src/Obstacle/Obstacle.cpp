@@ -7,37 +7,26 @@ using namespace Eigen;
 using namespace std;
 
 Obstacle::Obstacle(Point_FP first_point, Point_FP second_point, float obstacle_clearance)
-{
-    // Get topLeft and bottomRight points from the given points.
-    Point_FP tmp;
-    if (first_point.x > second_point.x && first_point.y > second_point.y) {
-        tmp = first_point;
-        first_point = second_point;
-        second_point = tmp;
-    } else if (first_point.x < second_point.x && first_point.y > second_point.y) {
-        float height = first_point.y - second_point.y;
-        first_point.y -= height;
-        second_point.y += height;
-    } else if (first_point.x > second_point.x && first_point.y < second_point.y) {
-        float length = first_point.x - second_point.x;
-        first_point.x -= length;
-        second_point.x += length;
-    }
-    first_point.x -= obstacle_clearance;
-    first_point.y -= obstacle_clearance;
-    second_point.x += obstacle_clearance;
-    second_point.y += obstacle_clearance;
-
-    bbox.first.x = first_point.x;
-    bbox.first.y = first_point.y;
-    bbox.second.x = second_point.x;
-    bbox.second.y = second_point.y;
+{   
+    // [x0,y0] and [x2,y2] are the two opposite corners of the rectangle
+    // x1 = (x0 + x2 + y2 - y0) / 2.0;
+    // y1 = (x0 + y0 + y2 - x2) / 2.0;
+    // x3 = (x0 + x2 - y2 + y0) / 2.0;
+    // y3 = (y0 + y2 - x0 + x2) / 2.0;
+    bbox.points[0].x = first_point.x;
+    bbox.points[0].y = first_point.y;
+    bbox.points[2].x = second_point.x;
+    bbox.points[2].y = first_point.y;
+    bbox.points[1].x = (bbox.points[0].x+bbox.points[2].x+bbox.points[2].y-bbox.points[0].y)/2.0;
+    bbox.points[1].y = (bbox.points[0].x+bbox.points[0].y+bbox.points[2].y-bbox.points[2].x)/2.0;
+    bbox.points[3].x = (bbox.points[0].x+bbox.points[2].x-bbox.points[2].y+bbox.points[0].y)/2.0;
+    bbox.points[3].y = (bbox.points[0].y+bbox.points[2].y-bbox.points[0].x+bbox.points[2].x)/2.0;
 }
 
 //Separating Axis Theorem Algorithmus
 bool Obstacle::isOverlap(Rectangle& car_outline)
 {
-    Rectangle obstacle = {{{bbox.first.x,bbox.first.y},{bbox.second.x, bbox.first.y}, {bbox.second.x, bbox.second.y}, {bbox.first.x, bbox.second.y}}};
+    Rectangle obstacle = {{{bbox.points[0].x,bbox.points[0].y},{bbox.points[1].x, bbox.points[1].y}, {bbox.points[2].x, bbox.points[2].y}, {bbox.points[3].x, bbox.points[3].y}}};
 
     Vector2D axes[4] ={
         perpendicular(subtract(car_outline.points[1], car_outline.points[0])),

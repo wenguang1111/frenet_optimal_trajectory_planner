@@ -22,24 +22,28 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         iy_ = csp->calc_y(s_i);
         if (isnan(ix_) || isnan(iy_)) break;
 
-        iyaw_ = csp->calc_yaw(s_i);
         ix.push_back(ix_);
         iy.push_back(iy_);
+        iyaw_ = csp->calc_yaw(s_i);
         iyaw.push_back(iyaw_);
         di = d[i];
         fx = ix_ + di * cos(iyaw_ + M_PI_2);
         fy = iy_ + di * sin(iyaw_ + M_PI_2);
-        // fx = ix_ + di * cos(iyaw_ + M_PI_2);
-        // fy = iy_ + di * sin(iyaw_ + M_PI_2);
         x.push_back(fx);
         y.push_back(fy);
+        // distanceToReferenceLine.push_back(
+        //     hypot(fx - ix_, fy - iy_));
+        
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("i", static_cast<float>(i));
-        //     Recorder::getInstance()->saveData<float>("ix", ix.back());
-        //     Recorder::getInstance()->saveData<float>("iy", iy.back());
-        //     Recorder::getInstance()->saveData<float>("x", x.back());
-        //     Recorder::getInstance()->saveData<float>("y", y.back());
-        //     Recorder::getInstance()->saveData<float>("iyaw", iyaw.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::i", static_cast<float>(i));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::d[i]", static_cast<float>(d[i]));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::s[i]", static_cast<float>(s[i]));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ix", static_cast<float>(ix.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iy", static_cast<float>(iy.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::x", static_cast<float>(x.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::y", static_cast<float>(y.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::iyaw", static_cast<float>(iyaw.back()));
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::distanceToReferenceLine", static_cast<float>(distanceToReferenceLine.back()));
         // #endif
     }
 
@@ -55,16 +59,14 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         yaw.push_back(atan2(dy, dx));
         ds.push_back(hypot(dx, dy));
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
-        //     Recorder::getInstance()->saveData<float>("ds", ds.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::yaw", yaw.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::ds", ds.back());
+        //     // Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path()::FrenetPath::dx", dx);
+        //     // Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path()::FrenetPath::dy", dy);
         // #endif
     }
     yaw.push_back(yaw.back());
     ds.push_back(ds.back());
-    // #ifdef USE_RECORDER
-    //     Recorder::getInstance()->saveData<float>("yaw", yaw.back());
-    //     Recorder::getInstance()->saveData<float>("ds", ds.back());
-    // #endif
 
     // calc curvature
     for (size_t i = 0; i < yaw.size() - 1; i++) {
@@ -76,7 +78,8 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
         }
         c.push_back(dyaw / ds[i]);
         // #ifdef USE_RECORDER
-        //     Recorder::getInstance()->saveData<float>("c", c.back());
+        //     Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path::FrenetPath::c", c.back());
+        //     // Recorder::getInstance()->saveData<float>("FrenetPath::to_global_path()::FrenetPath::dyaw", dyaw);
         // #endif
     }
 
@@ -86,6 +89,8 @@ bool FrenetPath::to_global_path(CubicSpline2D* csp) {
 // Validate the calculated frenet paths against threshold speed, acceleration,
 // curvature and collision checks
 bool FrenetPath::is_valid_path(const vector<Obstacle *> obstacles) {
+    // take the small one max_road_width_l - VEHICLE_WIDTH/2.0 or max_road_width_r - VEHICLE_WIDTH/2.0
+    //float min_road_width = std::min(fot_hp->max_road_width_l , fot_hp->max_road_width_r )-VEHICLE_WIDTH/2.0;
     if (any_of(s_d.begin(), s_d.end(),
             [this](auto i){return abs(i) > fot_hp->max_speed;})) {
         return false;
@@ -100,10 +105,16 @@ bool FrenetPath::is_valid_path(const vector<Obstacle *> obstacles) {
             [this](auto i){return abs(i) > fot_hp->max_curvature;})) {
         return false;
     }
+    //out of boundary check
+    // else if (any_of(distanceToReferenceLine.begin(),
+    //         distanceToReferenceLine.end(),
+    //         [&](auto i){return abs(i) > min_road_width;})) {
+    //     return false;
+    // }
     // collision check
-    else if (is_collision(obstacles)) {
-        return false;
-    }
+    // else if (is_collision(obstacles)) {
+    //     return false;
+    // }
     else {
         return true;
     }
@@ -122,16 +133,21 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
     Rectangle car_outline;
     // iterate over all obstacles
     for (auto obstacle : obstacles) {
-        float llx = obstacle->bbox.first.x;
-        float lly = obstacle->bbox.first.y;
-        float urx = obstacle->bbox.second.x;
-        float ury = obstacle->bbox.second.y;
-
         for (size_t i = 0; i < x.size(); i++) {
-            float d1 = norm(llx - x[i], lly - y[i]);
-            float d2 = norm(llx - x[i], ury - y[i]);
-            float d3 = norm(urx - x[i], ury - y[i]);
-            float d4 = norm(urx - x[i], lly - y[i]);
+            float d1 = norm(obstacle->bbox.points[0].x - x[i], obstacle->bbox.points[0].y - y[i]);
+            float d2 = norm(obstacle->bbox.points[1].x - x[i], obstacle->bbox.points[1].y - y[i]);
+            float d3 = norm(obstacle->bbox.points[2].x - x[i], obstacle->bbox.points[2].y - y[i]);
+            float d4 = norm(obstacle->bbox.points[3].x - x[i], obstacle->bbox.points[3].y - y[i]);
+            #ifdef USE_RECORDER
+                Recorder::getInstance()->saveData<double>("points[0].x",static_cast<double>(car_outline.points[0].x));
+                Recorder::getInstance()->saveData<double>("points[0].y",static_cast<double>(car_outline.points[0].y));
+                Recorder::getInstance()->saveData<double>("points[1].x",static_cast<double>(car_outline.points[1].x));
+                Recorder::getInstance()->saveData<double>("points[1].y",static_cast<double>(car_outline.points[1].y));
+                Recorder::getInstance()->saveData<double>("points[2].x",static_cast<double>(car_outline.points[2].x));
+                Recorder::getInstance()->saveData<double>("points[2].y",static_cast<double>(car_outline.points[2].y));
+                Recorder::getInstance()->saveData<double>("points[3].x",static_cast<double>(car_outline.points[3].x));
+                Recorder::getInstance()->saveData<double>("points[3].y",static_cast<double>(car_outline.points[3].y));
+            #endif
 
             float closest = min({d1, d2, d3, d4});
             // only check for collision if one corner of bounding box is
@@ -145,8 +161,14 @@ bool FrenetPath::is_collision(const vector<Obstacle *> obstacles) {
                 car_outline = car.getOutline();
                 if(obstacle->isOverlap(car_outline))
                 {
+                    #ifdef USE_RECORDER
+                        Recorder::getInstance()->saveData<double>("Collision",static_cast<double>(1));
+                    #endif
                     return true;
                 }
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<double>("Collision",static_cast<double>(0));
+                #endif
             }
         }
     }
@@ -162,16 +184,11 @@ FrenetPath::inverse_distance_to_obstacles(
     float total_inverse_distance = 0.0;
 
     for (auto obstacle : obstacles) {
-        float llx = obstacle->bbox.first.x;
-        float lly = obstacle->bbox.first.y;
-        float urx = obstacle->bbox.second.x;
-        float ury = obstacle->bbox.second.y;
-
         for (size_t i = 0; i < x.size(); i++) {
-            float d1 = norm(llx - x[i], lly - y[i]);
-            float d2 = norm(llx - x[i], ury - y[i]);
-            float d3 = norm(urx - x[i], ury - y[i]);
-            float d4 = norm(urx - x[i], lly - y[i]);
+            float d1 = norm(obstacle->bbox.points[0].x - x[i], obstacle->bbox.points[0].y - y[i]);
+            float d2 = norm(obstacle->bbox.points[1].x - x[i], obstacle->bbox.points[1].y - y[i]);
+            float d3 = norm(obstacle->bbox.points[2].x - x[i], obstacle->bbox.points[2].y - y[i]);
+            float d4 = norm(obstacle->bbox.points[3].x - x[i], obstacle->bbox.points[3].y - y[i]);
 
             float closest = min({d1, d2, d3, d4});
             total_inverse_distance += static_cast<float>(1.0 / closest);
