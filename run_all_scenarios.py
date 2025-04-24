@@ -2,7 +2,7 @@ import os
 import subprocess
 
 # Define the path to the folder containing scenario files
-scenario_path = os.getcwd() + '/commonroad_utils/Critical_Transformed/'
+scenario_path = os.getcwd() + '/commonroad_utils/scenarios_v2/'
 
 # Get all XML files in the folder
 scenario_files = [f for f in os.listdir(scenario_path) if f.endswith('.xml')]
