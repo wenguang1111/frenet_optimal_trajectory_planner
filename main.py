@@ -8,6 +8,7 @@ from typing import List
 import numpy as np
 import matplotlib.pyplot as plt
 from Sobol import recordData
+import commonroad
 from commonroad_utils.parser.scenario import get_scenario
 from commonroad_utils.parser.parser import Parser
 from commonroad.common.util import Interval
@@ -32,7 +33,18 @@ scenario, planning_problem, pp_set = get_scenario(scenario_path, scenario_name)
 
 # Get the initial and goal positions
 start_pos = planning_problem.initial_state.position
-goal_pos = planning_problem.goal.state_list[0].position.center
+
+# Scenario has no attribute position in goal
+if not hasattr(planning_problem.goal.state_list[0], 'position'):
+      print(f"Scenario {scenario_name} has no goal position.") 
+      sys.exit(0)
+# Scenario has attribute position as a lanelet in goal (get the center of the lanelet) 
+elif isinstance(planning_problem.goal.state_list[0].position, commonroad.geometry.shape.ShapeGroup):
+      goal_pos = planning_problem.goal.state_list[0].position.shapes[0].center
+# Scenario has attribute position as a rectangle in goal (get the center of the rectangle)
+elif isinstance(planning_problem.goal.state_list[0].position, commonroad.geometry.shape.Rectangle):
+      goal_pos = planning_problem.goal.state_list[0].position.center    
+
 # print(start_pos, goal_pos)
 # Calculate X and Y components on the initial velocity
 inital_vel = planning_problem.initial_state.velocity
@@ -49,9 +61,10 @@ LEN_DRAW = 10     # The length of the drawn trajectory (Number of states)
 SAVE = False
 SAVE_CSV = False
 LOAD = False
+LOAD = False
 SAVE_PROFILES = False
 CREATE_VIDEO = False
-RECORD_DATA = True
+RECORD_DATA = False
 
 
 # print(planning_problem.initial_state.acceleration)
@@ -76,11 +89,11 @@ initial_conditions = {
       'vel': np.array(conds['vel']),
       'acc': np.array(conds['acc']),
       'wp': np.array(conds['wp']),
-      # 'obs': np.array([]),  # Uncomment to test with no obstacles
-      'obs': np.array(conds['obs'])     # Comment to test with no obstacles
+      'obs': np.zeros((1, 8)),  # Uncomment to test with no obstacles
+      # 'obs': np.array(conds['obs'])     # Comment to test with no obstacles
 }
 
-print(np.array(conds['obs']) )
+# print(np.array(conds['obs']) )
 if SAVE:
       with open(f'commonroad_utils/frenet_ic/{scenario_name[:-4]}.pkl', 'wb') as f:
             pickle.dump(initial_conditions, f)
@@ -118,9 +131,9 @@ hyperparameters = {
       "num_threads": 0
 }
 
-if SAVE:
-      with open(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.pkl', 'wb') as f:
-            pickle.dump(hyperparameters, f)
+# if SAVE:
+#       with open(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.pkl', 'wb') as f:
+#             pickle.dump(hyperparameters, f)
             
 if LOAD:
       with open(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.pkl', 'rb') as f:
@@ -129,8 +142,8 @@ if LOAD:
 hp_df = pd.DataFrame(list(hyperparameters.items()), columns=['name', 'value'])
 ic_df = pd.concat([ic_df, hp_df], ignore_index=True)
 
-# if SAVE_CSV:
-#       ic_df.to_csv(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.csv', index=False)
+if SAVE_CSV:
+      ic_df.to_csv(f'commonroad_utils/frenet_hp/{scenario_name[:-4]}.csv', index=False)
 
 # print(hyperparameters)
 # print(initial_conditions)
@@ -206,6 +219,8 @@ for i in range(200):
       # print(speeds_x[1], speeds_y[1])
       
       # Visualize the scenario and trajectories
+      # print(i)
+      # print(parser.parse_obstacles(time_step=0))
       visualize_solution(scenario = scenario, 
                         planning_problem_set = planning_problem, 
                         drawn_trajectories = sampling_paths, 
@@ -234,8 +249,8 @@ for i in range(200):
             initial_conditions['ps'] = misc['s']
             initial_conditions['vel'] = np.array([speeds_x[1], speeds_y[1]])
             initial_conditions['acc'] = np.array(accelerations[1])
-            # initial_conditions['obs'] = np.array([])      # Uncomment to test with no obstacles
-            initial_conditions['obs'] = np.array(parser.parse_obstacles(time_step=_timestep+1))         # Comment to test with no obstacles
+            initial_conditions['obs'] = np.zeros((1, 8))      # Uncomment to test with no obstacles
+            # initial_conditions['obs'] = np.array(parser.parse_obstacles(time_step=_timestep+1))         # Comment to test with no obstacles
             velocities_.append(speeds[1])
             accelerations_.append(accelerations[1])
       else:
