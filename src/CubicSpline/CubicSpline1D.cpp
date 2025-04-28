@@ -52,7 +52,7 @@ float CubicSpline1D::calc_der0(float t) {
 
 // Calculate the 1st derivative evaluated at t
 float CubicSpline1D::calc_der1(float t) {
-    if (t < x.front() || t >= x.back()) {
+    if (t < x.front() || t > x.back()) {
         return NAN;
     }
 
@@ -64,7 +64,7 @@ float CubicSpline1D::calc_der1(float t) {
 
 // Calculate the 2nd derivative evaluated at
 float CubicSpline1D::calc_der2(float t) {
-    if (t < x.front() || t >= x.back()) {
+    if (t < x.front() || t > x.back()) {
         return NAN;
     }
 

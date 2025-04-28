@@ -249,8 +249,6 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         Recorder::getInstance()->saveData<float>("valid_path",
                                                  static_cast<int>(valid_path));
 #endif
-        // std::cout << "tv: " << tv << " valid_path: " << valid_path <<
-        // std::endl;
         if (!valid_path) {
           delete tfp;
           tv += fot_hp->d_t_s;
