@@ -18,14 +18,14 @@ from commonroad_utils.parser.utils import *
 
 os.environ["SHOW_SAMPLING_PATH"] = '1'
 
-scenario_path = os.getcwd() + '/commonroad_utils/scenarios_v2/'
-# scenario_name = 'ITA_Empoli-7_3_T-1.xml'
+scenario_path = os.getcwd() + '/commonroad_utils/Critical_Transformed/'
+scenario_name = 'ITA_Empoli-7_3_T-1.xml'
 
-# Check if a filename is provided as a command-line argument
-if len(sys.argv) < 2:
-    print("Usage: python main.py <scenario_filename>")
-    sys.exit(1)
-scenario_name = sys.argv[1]
+# # Check if a filename is provided as a command-line argument
+# if len(sys.argv) < 2:
+#     print("Usage: python main.py <scenario_filename>")
+#     sys.exit(1)
+# scenario_name = sys.argv[1]
 
 
 scenario, planning_problem, pp_set = get_scenario(scenario_path, scenario_name)
