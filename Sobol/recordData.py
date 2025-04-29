@@ -58,6 +58,7 @@ def writeCalculatedData(returnValues, step_number):
             returnValues.speeds_x[i],
             returnValues.speeds_y[i],
             returnValues.costs[11],
+            returnValues.yaw[i],
             returnValues.runtime
         ])
 
@@ -96,7 +97,7 @@ def saveInitialConditions():
 def saveCalculatedData():
     df_calculated = pd.DataFrame(calculated_data_floating_point, columns=[
         'step', 'success', 'x_path', 'y_path', 'speeds', 'accelerations', 'ix', 'iy', 'iyaw', 
-        'd', 's', 'speeds_x', 'speeds_y', 'costs', 'runtime'
+        'd', 's', 'speeds_x', 'speeds_y', 'costs', 'yaw', 'runtime'
     ])
     df_calculated.to_csv('FloatingPoint_Calculated.csv', index=False, mode='w')
 

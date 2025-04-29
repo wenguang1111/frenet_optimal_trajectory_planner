@@ -53,15 +53,16 @@ extern "C" {
             fot_rv->success = 1;
             fot_rv->path_length = std::min(best_frenet_path->x.size(), MAX_PATH_LENGTH);
             for (size_t i = 0; i < fot_rv->path_length; i++) {
-                fot_rv->x_path[i] = static_cast<float>(best_frenet_path->x[i]);
-                fot_rv->y_path[i] = static_cast<float>(best_frenet_path->y[i]);
-                fot_rv->speeds[i] = static_cast<float>(best_frenet_path->s_d[i]);
-                fot_rv->accelerations[i] = static_cast<float>(hypot(best_frenet_path->s_dd[i], best_frenet_path->d_dd[i]));
-                fot_rv->ix[i] = static_cast<float>(best_frenet_path->ix[i]);
-                fot_rv->iy[i] = static_cast<float>(best_frenet_path->iy[i]);
-                fot_rv->iyaw[i] = static_cast<float>(best_frenet_path->iyaw[i]);
-                fot_rv->d[i] = static_cast<float>(best_frenet_path->d[i]);
-                fot_rv->s[i] = static_cast<float>(best_frenet_path->s[i]);
+                fot_rv->x_path[i] = best_frenet_path->x[i];
+                fot_rv->y_path[i] = best_frenet_path->y[i];
+                fot_rv->speeds[i] = best_frenet_path->s_d[i];
+                fot_rv->accelerations[i] = hypot(best_frenet_path->s_dd[i], best_frenet_path->d_dd[i]);
+                fot_rv->ix[i] = best_frenet_path->ix[i];
+                fot_rv->iy[i] = best_frenet_path->iy[i];
+                fot_rv->iyaw[i] = best_frenet_path->iyaw[i];
+                fot_rv->d[i] = best_frenet_path->d[i];
+                fot_rv->s[i] = best_frenet_path->s[i];
+                fot_rv->yaw[i] = best_frenet_path->yaw[i];
                 fot_rv->speeds_x[i] = std::cos(best_frenet_path->yaw[i]) *
                     fot_rv->speeds[i];
                 fot_rv->speeds_y[i] = std::sin(best_frenet_path->yaw[i]) *
@@ -70,11 +71,11 @@ extern "C" {
 
 
             // store info for debug
-            fot_rv->params[0] = static_cast<float>(best_frenet_path->s[1]);
-            fot_rv->params[1] = static_cast<float>(best_frenet_path->s_d[1]);
-            fot_rv->params[2] = static_cast<float>(best_frenet_path->d[1]);
-            fot_rv->params[3] = static_cast<float>(best_frenet_path->d_d[1]);
-            fot_rv->params[4] = static_cast<float>(best_frenet_path->d_dd[1]);
+            fot_rv->params[0] = best_frenet_path->s[1];
+            fot_rv->params[1] = best_frenet_path->s_d[1];
+            fot_rv->params[2] = best_frenet_path->d[1];
+            fot_rv->params[3] = best_frenet_path->d_d[1];
+            fot_rv->params[4] = best_frenet_path->d_dd[1];
 
             // store costs for logging
             fot_rv->costs[0] = best_frenet_path->c_lateral_deviation;

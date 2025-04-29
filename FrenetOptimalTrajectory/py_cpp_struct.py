@@ -48,6 +48,7 @@ class FrenetReturnValues(Structure):
         ("speeds_y", c_float * MAX_PATH_LENGTH),
         ("params", c_float * MAX_PATH_LENGTH),
         ("costs", c_float * MAX_PATH_LENGTH),
+        ("yaw", c_float * MAX_PATH_LENGTH),
         ("runtime", c_float)
     ]
     if sample_path:

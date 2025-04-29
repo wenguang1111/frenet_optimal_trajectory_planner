@@ -61,10 +61,9 @@ LEN_DRAW = 10     # The length of the drawn trajectory (Number of states)
 SAVE = False
 SAVE_CSV = False
 LOAD = False
-LOAD = False
 SAVE_PROFILES = False
 CREATE_VIDEO = False
-RECORD_DATA = False
+RECORD_DATA = True
 
 
 # print(planning_problem.initial_state.acceleration)
@@ -113,16 +112,16 @@ hyperparameters = {
       "max_curvature": 10.0,
       "max_road_width_l": 1.75,
       "max_road_width_r": 1.75,
-      "d_road_w": 0.125,
+      "d_road_w": 0.25,
       "dt": 0.125,
       "maxt": 4.0,
       "mint": 1.0,
-      "d_t_s": 0.125,
-      "n_s_sample": 10.0,
+      "d_t_s": 2.0,
+      "n_s_sample": 2.0,
       "obstacle_clearance": 0.0,
       "kd": 10,
       "kv": 0.125,
-      "ka": 0.125,
+      "ka": 1,
       "kj": 0.125,
       "kt": 0.125,
       "ko": 0.125,

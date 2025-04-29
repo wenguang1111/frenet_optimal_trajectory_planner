@@ -173,11 +173,10 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         fp->d_d.push_back(lat_qp.calc_first_derivative(t));
         fp->d_dd.push_back(lat_qp.calc_second_derivative(t));
         fp->d_ddd.push_back(lat_qp.calc_third_derivative(t));
-        lateral_deviation += abs(lat_qp.calc_point(
-            t)); // TODO: use calculated result directly fp->d.back()
-        lateral_velocity += abs(lat_qp.calc_first_derivative(t));
-        lateral_acceleration += abs(lat_qp.calc_second_derivative(t));
-        lateral_jerk += abs(lat_qp.calc_third_derivative(t));
+        lateral_deviation += abs(fp->d.back()); //TODO: use calculated result directly fp->d.back()
+        lateral_velocity += abs(fp->d_d.back());
+        lateral_acceleration += abs(fp->d_dd.back());
+        lateral_jerk += abs(fp->d_ddd.back());
         t += fot_hp->dt;
         // #ifdef USE_RECORDER
         //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::t",
@@ -249,6 +248,8 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
         Recorder::getInstance()->saveData<float>("valid_path",
                                                  static_cast<int>(valid_path));
 #endif
+        // std::cout << "tv: " << tv << " valid_path: " << valid_path <<
+        // std::endl;
         if (!valid_path) {
           delete tfp;
           tv += fot_hp->d_t_s;

@@ -43,6 +43,7 @@ struct FrenetReturnValues {
   float speeds_y[MAX_PATH_LENGTH];
   float params[MAX_PATH_LENGTH];
   float costs[MAX_PATH_LENGTH];
+  float yaw[MAX_PATH_LENGTH];
   float runtime;
 #ifdef SAMPLING_PATH_ANALYSIS
   float sample_x[MAX_PATH_LENGTH * MAX_SAMPLE_SIZE];
