@@ -17,7 +17,7 @@ CubicSpline1D::CubicSpline1D() = default;
 // Construct the 1-dimensional cubic spline.
 CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
                              const vector<fixp_x>& v2): //x or y
-                             nx(v1.size()), a(v2), x(v1), y(v2),validPath(true){
+                             nx(v1.size()), a(v2), x(v1), y(v2){
     // compute elementwise difference
     vector<fixp_s> deltas (nx);
     adjacent_difference(x.begin(), x.end(), deltas.begin());
@@ -62,8 +62,7 @@ CubicSpline1D::CubicSpline1D(const vector<fixp_s>& v1, //s
 
 // Calculate the 0th derivative evaluated at t
 fixp_x CubicSpline1D::calc_der0(fixp_s t) {
-    if (t < x.front()-fixp_position_error || t >= (x.back()+fixp_position_error)) {
-        validPath = false;
+    if (t < x.front()-fixp_position_error || t > (x.back()+fixp_position_error)) {
         return std::numeric_limits<fixp_x>::max();//FIXME: there could make bug
     }
 
@@ -88,8 +87,7 @@ fixp_x CubicSpline1D::calc_der0(fixp_s t) {
 
 // Calculate the 1st derivative evaluated at t
 fixp_dx CubicSpline1D::calc_der1(fixp_s t) {
-    if (t < x.front()-fixp_position_error || t >= (x.back()+fixp_position_error)) {
-        validPath = false;
+    if (t < x.front()-fixp_position_error || t > (x.back()+fixp_position_error)) {
         return std::numeric_limits<fixp_dx>::max();//FIXME: there could make bug
     }
 
@@ -155,9 +153,4 @@ void CubicSpline1D::assignValue(std::vector<fixp_TM_a> &TM_a, std::vector<fixp_T
 // Search the spline for index closest to t
 int CubicSpline1D::search_index(fixp_s t) {
     return std::upper_bound (x.begin(), x.end(), t) - x.begin();
-}
-
-bool CubicSpline1D::isValidPath()
-{
-    return validPath;
 }

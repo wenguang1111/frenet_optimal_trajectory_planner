@@ -165,8 +165,8 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     tfp->s_dd.push_back(lon_qp.calc_second_derivative(tp));
                     tfp->s_ddd.push_back(lon_qp.calc_third_derivative(tp));
                     longitudinal_acceleration +=
-                        abs(lon_qp.calc_second_derivative(tp));
-                    longitudinal_jerk += abs(lon_qp.calc_third_derivative(tp));
+                        abs(tfp->s_dd.back());
+                    longitudinal_jerk += abs(tfp->s_ddd.back());
                     // #ifdef USE_RECORDER
                     //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", static_cast<float>(fp->t.back()));
                     //     Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", static_cast<float>(fp->d.back()));
@@ -202,9 +202,9 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                 bool valid_path = tfp->is_valid_path(obstacles);
                 if(!valid_path)
                 {
-                    // #ifdef USE_RECORDER
-                    //     Recorder::getInstance()->saveData<double>("noValid", debug+600000);
-                    // #endif
+                    #ifdef USE_RECORDER
+                        Recorder::getInstance()->saveData<double>("noValid", debug+600000);
+                    #endif
                 }
                 if (!valid_path) {
                     delete tfp;
@@ -212,39 +212,53 @@ void FrenetOptimalTrajectory::calc_frenet_paths(int start_di_index,
                     continue;
                 }
                 // lateral costs
-                // tfp->c_lateral_deviation = lateral_deviation;
-                // tfp->c_lateral_velocity = lateral_velocity;
-                // tfp->c_lateral_acceleration = lateral_acceleration;
-                // tfp->c_lateral_jerk = lateral_jerk;
-                // tfp->c_lateral = fot_hp->kd * tfp->c_lateral_deviation +
-                //                  fot_hp->kv * tfp->c_lateral_velocity +
-                //                  fot_hp->ka * tfp->c_lateral_acceleration +
-                //                  fot_hp->kj * tfp->c_lateral_jerk;
-                // // longitudinal costs
-                // tfp->c_longitudinal_acceleration = longitudinal_acceleration;
-                // tfp->c_longitudinal_jerk = longitudinal_jerk;
-                // tfp->c_end_speed_deviation =
-                //     abs(fot_ic->target_speed - tfp->s_d.back());
-                // tfp->c_time_taken = ti;
-                // tfp->c_longitudinal =
-                //     fot_hp->ka * tfp->c_longitudinal_acceleration +
-                //     fot_hp->kj * tfp->c_longitudinal_jerk +
-                //     fot_hp->kt * tfp->c_time_taken +
-                //     fot_hp->kd * tfp->c_end_speed_deviation;
-                // // obstacle costs
+                tfp->c_lateral_deviation = lateral_deviation;
+                tfp->c_lateral_velocity = lateral_velocity;
+                tfp->c_lateral_acceleration = lateral_acceleration;
+                tfp->c_lateral_jerk = lateral_jerk;
+                tfp->c_lateral = fot_hp->kd * tfp->c_lateral_deviation +
+                                 fot_hp->kv * tfp->c_lateral_velocity +
+                                 fot_hp->ka * tfp->c_lateral_acceleration +
+                                 fot_hp->kj * tfp->c_lateral_jerk;
+                // longitudinal costs
+                tfp->c_longitudinal_acceleration = longitudinal_acceleration;
+                tfp->c_longitudinal_jerk = longitudinal_jerk;
+                tfp->c_end_speed_deviation =
+                    abs(fot_ic->target_speed - tfp->s_d.back());
+                tfp->c_time_taken = ti;
+                tfp->c_longitudinal =
+                    fot_hp->ka * tfp->c_longitudinal_acceleration +
+                    fot_hp->kj * tfp->c_longitudinal_jerk +
+                    fot_hp->kt * tfp->c_time_taken +
+                    fot_hp->kd * tfp->c_end_speed_deviation;
+                // obstacle costs
                 // tfp->c_inv_dist_to_obstacles = tfp->inverse_distance_to_obstacles(obstacles);
-                // final cost
+                //final cost
                 // tfp->cf = fot_hp->klat * tfp->c_lateral +
                 //           fot_hp->klon * tfp->c_longitudinal +
-                //           fot_hp->ko * tfp->c_inv_dist_to_obstacles;  
+                //           fot_hp->ko * tfp->c_inv_dist_to_obstacles; 
+                tfp->cf = fot_hp->klat * tfp->c_lateral +
+                         fot_hp->klon * tfp->c_longitudinal;
 
-                // d distance cost
-                fixp_cost d_cost = 0.0;
-                for (size_t i = 0; i < tfp->d.size(); ++i) {
-                    d_cost += pow_2<fixp_cost>(0.25 * (0 - tfp->d[i]));
-                }
-                d_cost += pow_2<fixp_cost>(20.0 * (0 - tfp->d.back()));
-                tfp->cf = fot_hp->kd * d_cost;
+                // // d distance cost
+                // fixp_cost d_cost = 0.0;
+                // for (size_t i = 0; i < tfp->d.size(); ++i) {
+                //     d_cost += pow_2<fixp_cost>((fp_type)(0.25) * (0 - tfp->d[i]));
+                // }
+                // d_cost += pow_2<fixp_cost>((fp_type)(20.0) * (0 - tfp->d.back()));
+                // tfp->cf = fot_hp->kd * d_cost;
+                #ifdef USE_RECORDER
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::t", static_cast<float>(fp->t.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d", static_cast<float>(fp->d.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_d", static_cast<float>(fp->d_d.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_dd", static_cast<float>(fp->d_dd.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::d_ddd", static_cast<float>(fp->d_ddd.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::s", static_cast<float>(tfp->s.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_d", static_cast<float>(tfp->s_d.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_dd", static_cast<float>(tfp->s_dd.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::s_ddd", static_cast<float>(tfp->s_ddd.back()));
+                    Recorder::getInstance()->saveData<float>("calc_frenet_paths::cost", static_cast<float>(tfp->cf));
+                #endif 
 
                 if (multithreaded) {
                     // added mutex lock to prevent threads competing to write to
@@ -275,12 +289,12 @@ void FrenetOptimalTrajectory::setObstacles() {
 
     for (int i = 0; i < fot_ic->no; i++) {
         addObstacle(Point(llx[i], lly[i]), Point(urx[i], ury[i]));
-        #ifdef USE_RECORDER
-            Recorder::getInstance()->saveData<double>("set_llx",static_cast<double>(llx[i]));
-            Recorder::getInstance()->saveData<double>("set_lly",static_cast<double>(lly[i]));
-            Recorder::getInstance()->saveData<double>("set_urx",static_cast<double>(urx[i]));
-            Recorder::getInstance()->saveData<double>("set_ury",static_cast<double>(ury[i]));
-        #endif
+        // #ifdef USE_RECORDER
+        //     Recorder::getInstance()->saveData<double>("set_llx",static_cast<double>(llx[i]));
+        //     Recorder::getInstance()->saveData<double>("set_lly",static_cast<double>(lly[i]));
+        //     Recorder::getInstance()->saveData<double>("set_urx",static_cast<double>(urx[i]));
+        //     Recorder::getInstance()->saveData<double>("set_ury",static_cast<double>(ury[i]));
+        // #endif
     }
 }
 

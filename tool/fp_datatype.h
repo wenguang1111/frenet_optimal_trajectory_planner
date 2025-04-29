@@ -15,7 +15,7 @@
 #define fixp_y fp_type
 //--------------------------------------
 
-#define fixp_position_error fixp_x(0.0)
+#define fixp_position_error fixp_x(0)
 #define fixp_t fp_type
 #define fixp_d fp_type
 #define fixp_d_d fp_type
@@ -80,7 +80,7 @@
 #define fixp_speeds fp_type
 #define fixp_30_33 fp_type
 
-#define Dummy 10
+#define Dummy 20
 #define Trigonometric_Precision Dummy
 #define Time_Precision Dummy
 #define Standard_precision Dummy

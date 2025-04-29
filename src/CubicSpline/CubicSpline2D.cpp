@@ -101,20 +101,26 @@ CubicSpline2D::remove_collinear_points(vector<fixp_x> x, vector<fixp_y> y) {
     vector<fixp_x> x_; 
     vector<fixp_y> y_;
     x_.push_back(static_cast<fixp_x>(x[0]));
-    x_.push_back(static_cast<fixp_x>(x[1]));
     y_.push_back(static_cast<fixp_y>(y[0]));
-    y_.push_back(static_cast<fixp_y>(y[1]));
+    int delete_point_num = 0;
     for (size_t i = 2; i < x.size()-1; i++) {
         bool collinear = are_collinear(
-            x[i - 2], y[i - 2],
+            x[i - 2-delete_point_num], y[i - 2-delete_point_num],
             x[i - 1], y[i - 1],
             x[i], y[i]
             );
         if (collinear) {
+            delete_point_num++;
             continue;
+        }
+        if(delete_point_num!=0)
+        {
+            x_.push_back(x[i-1]);
+            y_.push_back(y[i-1]);
         }
         x_.push_back(static_cast<fixp_x>(x[i]));
         y_.push_back(static_cast<fixp_y>(y[i]));
+        delete_point_num=0;
     }
     // make sure to add the last point in case all points are collinear
     x_.push_back(x.back());
@@ -127,23 +133,11 @@ CubicSpline2D::remove_collinear_points(vector<fixp_x> x, vector<fixp_y> y) {
 // Determine if 3 points are collinear using the triangle area rule
 bool CubicSpline2D::are_collinear(fixp_x x1, fixp_y y1, fixp_x x2, fixp_y y2,
     fixp_x x3, fixp_y y3) {
-    fixp_x a = x1 * (y2 - y3) +
+    fixp_x a = abs(x1 * (y2 - y3) +
                x2 * (y3 - y1) +
-               x3 * (y1 - y2);
+               x3 * (y1 - y2));
     // #ifdef USE_RECORDER
     //     Recorder::getInstance()->saveData<double>("CubicSpline2D::are_collinear::a", a);
     // #endif
     return a <= 0.01;
-}
-
-bool CubicSpline2D::isValidPath()
-{
-    if(sx.isValidPath()==true && sy.isValidPath()==true)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }

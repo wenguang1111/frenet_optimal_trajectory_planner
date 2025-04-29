@@ -11,6 +11,7 @@ import pandas as pd
 import os
 import math
 import sys
+from numpy import mean
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Sobol import recordData
 import FrenetOptimalTrajectory.py_cpp_struct as py_cpp_struct
@@ -46,6 +47,25 @@ hyperparameters = {
     "num_threads": 0,  # set 0 to avoid using threaded algorithm
 }
 
+def get_mean_relative_error(data_fixed, data_float, small_threshold=1e-2):
+    data_fixed = np.asarray(data_fixed)
+    data_float = np.asarray(data_float)
+    
+
+    abs_error = np.abs(data_fixed - data_float)
+    small_ref_mask = np.abs(data_float) < small_threshold
+    relative_error = np.zeros_like(abs_error)
+    relative_error[~small_ref_mask] = abs_error[~small_ref_mask] / np.abs(data_float[~small_ref_mask])
+    relative_error[small_ref_mask] = abs_error[small_ref_mask]
+    mean_relative_error = np.mean(relative_error) * 100.0
+    
+    return mean_relative_error
+
+def get_max_absolut_error(data_fixed, data_float):
+    data_fixed = np.asarray(data_fixed)
+    data_float = np.asarray(data_float)
+    abs_error = np.abs(data_fixed - data_float)
+    return max(abs_error)
 
 # Function Wrapper
 def calculate_error(x):
@@ -64,11 +84,27 @@ def calculate_error(x):
     #     s_dd=int(x[8]),
     #     s_ddd=int(x[9])
     # )
-    print(os.getpid())
-    fot_wrapper_sobol.run_fot(initial_conditions[0], hyperparameters[0]) 
+    print(f"Process ID: {os.getpid()}")
+    
+    steps = len(initial_conditions) 
+    for i in range(steps):
+        fot_wrapper_sobol.step_num = i
+        fot_wrapper_sobol.run_fot(initial_conditions[i], hyperparameters[i])
     # run the fixed point version and calculate the error
-    # evaluate the error via average error?
-    error = 0
+    # error = mean of relative error of all parameters
+    file_fixed = pd.read_csv('FloatingPoint_Calculated.csv')
+    file_float = pd.read_csv('FloatingPoint_Calculated_float.csv')
+    error_x = get_mean_relative_error(file_fixed['x_path'], file_float['x_path'])
+    error_y = get_mean_relative_error(file_fixed['y_path'], file_float['y_path'])
+    error_speed =  get_mean_relative_error(file_fixed['speeds'], file_float['speeds'])
+    error_yaw = get_mean_relative_error(file_fixed['iyaw'], file_float['iyaw'])
+    error = (error_x + error_y + error_speed + error_yaw) / 4
+    print(f"Error: {error}")
+    print(f"Max_error_x :{get_max_absolut_error(file_fixed['x_path'], file_float['x_path'])}")
+    print(f"Max_error_y :{get_max_absolut_error(file_fixed['y_path'], file_float['y_path'])}")
+    print(f"Max_error_speed :{get_max_absolut_error(file_fixed['speeds'], file_float['speeds'])}")
+    print(f"Max_error_yaw :{get_max_absolut_error(file_fixed['yaw'], file_float['yaw'])}")
+    
     return error
 
 

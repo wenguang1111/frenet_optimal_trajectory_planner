@@ -13,7 +13,6 @@ public:
     CubicSpline1D(const std::vector<fixp_s>& v1, const std::vector<fixp_x>& v2);
     fixp_x calc_der0(fixp_s t);
     fixp_dx calc_der1(fixp_s t);
-    bool isValidPath();
     // float calc_der2(fixp_t t);
 private:
     std::vector<fixp_x> a;
@@ -29,7 +28,7 @@ private:
     int search_index(fixp_s t);
     void assignValue(std::vector<fixp_TM_a> &TM_a, std::vector<fixp_TM_b> &TM_b, 
             std::vector<fixp_TM_c> &TM_c, std::vector<fixp_TM_d> &TM_d, std::vector<fixp_s> &deltas);
-    bool validPath;
+    // bool validPath;
 };
 
 #endif //FRENET_OPTIMAL_TRAJECTORY_CUBICSPLINE1D_H

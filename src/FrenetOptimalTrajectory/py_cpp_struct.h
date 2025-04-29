@@ -37,6 +37,7 @@ struct FrenetReturnValues_FLoat {
     float speeds_y[MAX_PATH_LENGTH];
     float params[MAX_PATH_LENGTH];
     float costs[MAX_PATH_LENGTH];
+    float yaw[MAX_PATH_LENGTH];
     float runtime;
 };
 
