@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class CVAE(nn.Module):
-    def __init__(self, X_dim, c_dim, z_dim, h_Q_dim=256, h_P_dim=256):
+    def __init__(self, X_dim, c_dim, z_dim, h_Q_dim=512, h_P_dim=512):
         super(CVAE, self).__init__()
         
         # Encoder (Q network)
