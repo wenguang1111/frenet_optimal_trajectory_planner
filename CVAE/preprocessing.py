@@ -121,18 +121,15 @@ end = time.time()
 print('Time: ', end-start)
 
 cs = np.concatenate((data_np[0:numEntries, dim+3*dimW:dataElements], conditionsOcc), axis=1) # occ, init, goal
-print('Shape of cs: ', cs.shape)
 c_dim = cs.shape[1]
-print('c_dim: ', c_dim)
-print("c_test shape: ", c_test.shape)
 c_gapsInitGoal = c_test
-print('Shape of c_gapsInitGoal: ', c_gapsInitGoal.shape)
 c_train = cs[0:numTrain, :]
-print('Shape of c_train: ', c_train.shape)
 c_test = cs[numTrain:numEntries, :]
-print('Shape of c_test: ', c_test.shape)
+
 
 np.save('CVAE/data/X_train.npy', X_train)
 np.save('CVAE/data/c_train.npy', c_train)
 np.save('CVAE/data/X_test.npy', X_test)
 np.save('CVAE/data/c_test.npy', c_test)
+np.save('CVAE/data/c_gapsInitGoal.npy', c_gapsInitGoal)
+np.save('CVAE/data/occGridSamples.npy', occGridSamples)
