@@ -1,142 +1,59 @@
-# Workspace problem with several narrow gaps
-
 import torch
 import numpy as np
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.gridspec as gridspec
-from mpl_toolkits.mplot3d import Axes3D
-import os
-import pandas as pd
-from random import randint, random
-import time
+from model import CVAE, cvae_loss_function
+from tqdm import tqdm
 
 
-def isSampleFree(sample, obs):
-    for o in range(0, int(obs.shape[0]/(2*dimW))):
-        isFree = 0
-        for d in range(0, sample.shape[0]):
-            if (sample[d] < obs[2*dimW*o + d] or sample[d] > obs[2*dimW*o + d + dimW]):
-                isFree = 1
-                break
-        if isFree == 0:
-            return 0
-    return 1
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
 # neural network parameters
-mb_size = 256
+batch_size = 256
 h_Q_dim = 512
 h_P_dim = 512
+z_dim = 3  # latent dimension
+X_dim = 6  # input dimension (state)
+c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)
 
-c = 0
 lr = 1e-4
+num_epochs = 5000
+loss_weight = torch.tensor([[1, 1, 1, 0.5, 0.5, 0.5]], device=device, dtype=torch.float32)
 
-# problem dimensions
-dim = 6
+# import data
+X = np.load('CVAE/data/X_train.npy')
+c = np.load('CVAE/data/c_train.npy')
 
-# 27 in total, 6 for the state and 21 for the conditions
-dataElements = dim+3*3+2*dim # sample (6D), gap1 (2D, 1D orientation), gap2, gap3, init (6D), goal (6D)
+X_tensor = torch.tensor(X, dtype=torch.float32)
+c_tensor = torch.tensor(c, dtype=torch.float32)
 
-z_dim = 3 # latent
-X_dim = dim # samples
-y_dim = dim # reconstruction of the original point
-c_dim = dataElements - dim # dimension of conditioning variable
+dataset = torch.utils.data.TensorDataset(X_tensor, c_tensor)
+dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-data_df = pd.read_csv(os.getcwd() + '/CVAE/narrowDataFile.txt')
-data_df = data_df.drop(columns=data_df.columns[-1])  # Drop the last column
+# model
+model = CVAE(X_dim, c_dim, z_dim).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+# lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.995)
+# lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,  step_size=100, gamma=0.8)
+# lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5, verbose=True)
 
-# convert the data to numpy array of float32
-data_np = data_df.to_numpy()
-data_np = data_np.astype(np.float32)
-
-# split the inputs and conditions into test train (to be processed in the next step into an occupancy grid representation)
-numEntries = data_np.shape[0]
-ratioTestTrain = 0.8
-numTrain = int(numEntries*ratioTestTrain)
-
-X_train = data_np[0:numTrain, 0:dim] # state: x, y, z, xdot, ydot, zdot
-c_train = data_np[0:numTrain, dim:dataElements] # conditions: gaps, init (6), goal (6)
-
-X_test = data_np[numTrain:numEntries, 0:dim]
-c_test = data_np[numTrain:numEntries, dim:dataElements]
-numTest = X_test.shape[0]
-
-gridSize = 11
-dimW = 3
-plotOn = False
-
-# process data into occupancy grid
-conditions = data_np[0:numEntries, dim:dataElements]
-conditionsOcc = np.zeros([numEntries, gridSize*gridSize])
-occGridSamples = np.zeros([gridSize*gridSize, 2]) # 121 x 2
-gridPointsRange = np.linspace(0, 1, gridSize)
-
-# Fill the occupancy grid samples with the grid points
-idx = 0
-for i in gridPointsRange:
-    for j in gridPointsRange:
-        occGridSamples[idx, 0] = i
-        occGridSamples[idx, 1] = j
-        idx += 1
-
-
-start = time.time()
-for j in range(0, numEntries, 1): # loop through all samples
-    dw = 0.1
-    dimW = 3
-    gap1 = conditions[j, 0:3]
-    gap2 = conditions[j, 3:6]
-    gap3 = conditions[j, 6:9]
-    init = conditions[j, 9:15]
-    goal = conditions[j, 15:21]
-
-    obs1 = [0, gap1[1] - dw, -0.5, gap1[0], gap1[1], 1.5] # 0 1 2 3 4 5
-    obs2 = [gap2[0] - dw, 0, -0.5, gap2[0], gap2[1], 1.5] # 6 7 8 9 10 11
-    obs3 = [gap2[0] - dw, gap2[1] + dw, -0.5, gap2[0], 1, 1.5] # 12 13 14 15 16 17
-    obs4 = [gap1[0] + dw, gap1[1] - dw, -0.5, gap3[0], gap1[1], 1.5] # 18 19 20 21 22 23
-    obs5 = [gap3[0] + dw, gap1[1] - dw, -0.5, 1, gap1[1], 1.5] # 24 25 26 27 28 29
-    obs = np.concatenate((obs1, obs2, obs3, obs4, obs5), axis=0)
-    #print('Obs: ', obs)
+for epoch in range(num_epochs):
+      epoch_loss = 0.0
     
-    if j % 5000 == 0:
-        print('Iter: {}'.format(j))
-        
-    occGrid = np.zeros(gridSize*gridSize)
-    for i in range(0,gridSize*gridSize):
-        occGrid[i] = isSampleFree(occGridSamples[i, :], obs)
-    conditionsOcc[j, :] = occGrid   # every sample has its own occupancy grid (how?)
-    
-    if plotOn:
-        fig1 = plt.figure(figsize=(10,6), dpi=80)
-        ax1 = fig1.add_subplot(111, aspect='equal')
-        for i in range(0, int(obs.shape[0]/(2*dimW))): # plot obstacle patches
-            ax1.add_patch(
-            patches.Rectangle(
-                (obs[i*2*dimW], obs[i*2*dimW+1]),   # (x,y)
-                obs[i*2*dimW+dimW] - obs[i*2*dimW],          # width
-                obs[i*2*dimW+dimW+1] - obs[i*2*dimW+1],          # height
-                alpha=0.6
-            ))
-        for i in range(0,gridSize*gridSize): # plot occupancy grid
-            if occGrid[i] == 0:
-                plt.scatter(occGridSamples[i,0], occGridSamples[i,1], color="red", s=70, alpha=0.8)
-            else:
-                plt.scatter(occGridSamples[i,0], occGridSamples[i,1], color="green", s=70, alpha=0.8)
-        plt.show()
-end = time.time()
-print('Time: ', end-start)
+      for batch in tqdm(dataloader, desc="Training Progress"):
+            x, c = batch
+            x, c = x.to(device), c.to(device)
+            
+            y_pred, mu, logvar = model(x, c)
+            loss = cvae_loss_function(y_pred, x, mu, logvar, weight=loss_weight)
 
-cs = np.concatenate((data_np[0:numEntries, dim+3*dimW:dataElements], conditionsOcc), axis=1) # occ, init, goal
-print('Shape of cs: ', cs.shape)
-c_dim = cs.shape[1]
-print('c_dim: ', c_dim)
-print("c_test shape: ", c_test.shape)
-c_gapsInitGoal = c_test
-print('Shape of c_gapsInitGoal: ', c_gapsInitGoal.shape)
-c_train = cs[0:numTrain, :]
-print('Shape of c_train: ', c_train.shape)
-c_test = cs[numTrain:numEntries, :]
-print('Shape of c_test: ', c_test.shape)
-
-# np.save('my_array.npy', my_array)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            
+            epoch_loss += loss.item()
+            
+      # lr_scheduler.step()
+            
+      print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}")
+      
+torch.save(model.state_dict(), 'CVAE/model_weights/cvae_model.pth')
