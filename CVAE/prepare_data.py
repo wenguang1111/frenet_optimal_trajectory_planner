@@ -1,5 +1,6 @@
 import os
-import glob
+# import glob
+import numpy as np
 import pandas as pd
 import commonroad
 from commonroad.scenario.state import InitialState
@@ -20,10 +21,14 @@ import commonroad_rp
 print(commonroad_rp.__file__)
 import matplotlib
 matplotlib.use('Agg')  # Non-GUI backend (renders to image files)
+from tqdm import tqdm
 
 dir = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/scenarios"
 config_file = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/config/reactive_planner_config.yaml"
 
+# planned = np.array([])
+# planned = np.load("CVAE/data/planned_scenarios.npy")
+# print(f"Planned scenarios loaded: {len(set(planned))}")
 
 sampled_vars = {
       "scenario": [],
@@ -42,8 +47,34 @@ conditioned_vars = {
       "goal_y": [],
 }
 
-for sc in os.listdir(dir):
-      if sc.endswith(".xml"):
+for sc in tqdm(os.listdir(dir), desc="Planning scenarios", unit="scenario"):
+      if sc.endswith(".xml"):            
+            # if sc in planned:
+            #       # print(f"Scenario {sc} already planned, skipping...")
+            #       continue
+            # else:
+            #       print(f"Planning scenario {sc}...") 
+            #       planned = np.append(planned, sc)
+            #       np.save("CVAE/data/planned_scenarios.npy", planned)
+
+            # temporary storage for sampled variables
+            tmp_sampled = {
+                  "t": [],
+                  "d": [],
+                  "lon_velocity": [],
+            }
+            
+            # temporary storage for conditioned variables
+            tmp_conditioned = {
+                  "init_x": [],
+                  "init_y": [],
+                  "init_theta": [],
+                  "init_velocity": [],
+                  "goal_x": [],
+                  "goal_y": [],
+            }
+            
+            
             img_save_dir = f"/home/kareem/frenet_optimal_trajectory_planner/CVAE/data/scenarios_imgs/{sc[:-4]}"
             # sc_path = os.path.join(dir, sc)
             
@@ -51,7 +82,7 @@ for sc in os.listdir(dir):
             
             config = ReactivePlannerConfiguration.load(config_file, sc)
             config.update()
-            
+
             try:
                   # run route planner
                   route_planner = RoutePlanner(config.scenario, config.planning_problem)
@@ -90,42 +121,70 @@ for sc in os.listdir(dir):
                                     collision_checker=planner.collision_checker, 
                                     coordinate_system=planner.coordinate_system)
                         
-                        save_scenario_at_timestep(sc[:-4], planner.record_state_list[-1].time_step)
+                        # save_scenario_at_timestep(sc[:-4], planner.record_state_list[-1].time_step)
                         
                         sampled_vars["scenario"].append(sc[:-4])
-                        sampled_vars["t"].append(samples[0])
-                        sampled_vars["d"].append(samples[1])
-                        sampled_vars["lon_velocity"].append(samples[2])
+                        tmp_sampled["t"].append(samples[0])
+                        tmp_sampled["d"].append(samples[1])
+                        tmp_sampled["lon_velocity"].append(samples[2])
                         
                         conditioned_vars["scenario"].append(sc[:-4])
-                        conditioned_vars["init_x"].append(config.planning_problem.initial_state.position[0])
-                        conditioned_vars["init_y"].append(config.planning_problem.initial_state.position[1])
-                        conditioned_vars["init_theta"].append(config.planning_problem.initial_state.orientation)
-                        conditioned_vars["init_velocity"].append(config.planning_problem.initial_state.velocity)
-                        conditioned_vars["goal_x"].append(goal_pos[0])
-                        conditioned_vars["goal_y"].append(goal_pos[1])
+                        tmp_conditioned["init_x"].append(config.planning_problem.initial_state.position[0])
+                        tmp_conditioned["init_y"].append(config.planning_problem.initial_state.position[1])
+                        tmp_conditioned["init_theta"].append(config.planning_problem.initial_state.orientation)
+                        tmp_conditioned["init_velocity"].append(config.planning_problem.initial_state.velocity)
+                        tmp_conditioned["goal_x"].append(goal_pos[0])
+                        tmp_conditioned["goal_y"].append(goal_pos[1])
+                  
+                  # save sampled variables and conditiobned variables if scenario is successfully planned
+                  if planner.goal_reached():
+                        print(f"Scenario {sc} successfully planned!")
+                        # print(f"Number of samples: {planner.record_state_list[-1].time_step}")
+                        save_scenario_at_timestep(sc[:-4], planner.record_state_list[-1].time_step)
+                        
+                        for t, d, lon_v in zip(tmp_sampled["t"], tmp_sampled["d"], tmp_sampled["lon_velocity"]):
+                              sampled_vars["scenario"].append(sc[:-4])
+                              sampled_vars["t"].append(t)
+                              sampled_vars["d"].append(d)
+                              sampled_vars["lon_velocity"].append(lon_v)
+                              
+                        for init_x, init_y, init_theta, init_velocity, goal_x, goal_y in zip(
+                              tmp_conditioned["init_x"], 
+                              tmp_conditioned["init_y"], 
+                              tmp_conditioned["init_theta"], 
+                              tmp_conditioned["init_velocity"], 
+                              tmp_conditioned["goal_x"], 
+                              tmp_conditioned["goal_y"]):
+                              
+                              conditioned_vars["scenario"].append(sc[:-4])
+                              conditioned_vars["init_x"].append(init_x)
+                              conditioned_vars["init_y"].append(init_y)
+                              conditioned_vars["init_theta"].append(init_theta)
+                              conditioned_vars["init_velocity"].append(init_velocity)
+                              conditioned_vars["goal_x"].append(goal_x)
+                              conditioned_vars["goal_y"].append(goal_y)
 
             except Exception as e:
                   print(f"Scenario {sc} failed!")
                   
                   # If the scenario fails, delete all files related to it
-                  for file_path in glob.glob(os.path.join(img_save_dir, "*")):
-                        if os.path.isfile(file_path):
-                              os.remove(file_path)
-                              print(f"Deleted: {file_path}")
-                  if os.path.exists(img_save_dir) and os.path.isdir(img_save_dir):
-                        os.rmdir(img_save_dir)
-                        print(f"Deleted directory: {img_save_dir}")
+                  # for file_path in glob.glob(os.path.join(img_save_dir, "*")):
+                  #       if os.path.isfile(file_path):
+                  #             os.remove(file_path)
+                  #             print(f"Deleted: {file_path}")
+                  # if os.path.exists(img_save_dir) and os.path.isdir(img_save_dir):
+                  #       os.rmdir(img_save_dir)
+                  #       print(f"Deleted directory: {img_save_dir}")
                         
-                  remove_entries_for_scenario(sampled_vars, sc[:-4])
-                  remove_entries_for_scenario(conditioned_vars, sc[:-4])
+                  # remove_entries_for_scenario(sampled_vars, sc[:-4])
+                  # remove_entries_for_scenario(conditioned_vars, sc[:-4])
 
                   continue
             
 sampled_vars_df = pd.DataFrame(sampled_vars)
-sampled_vars_df.to_csv('data/sampled_vars.csv')
+sampled_vars_df.to_csv('CVAE/data/sampled_vars.csv')
             
 conditioned_vars_df = pd.DataFrame(conditioned_vars)
-conditioned_vars_df.to_csv('data/conditioned_vars.csv')
+conditioned_vars_df.to_csv('CVAE/data/conditioned_vars.csv')
                         
             
