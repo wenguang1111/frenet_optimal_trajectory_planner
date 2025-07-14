@@ -123,12 +123,12 @@ for sc in tqdm(os.listdir(dir), desc="Planning scenarios", unit="scenario"):
                         
                         # save_scenario_at_timestep(sc[:-4], planner.record_state_list[-1].time_step)
                         
-                        sampled_vars["scenario"].append(sc[:-4])
+                        # sampled_vars["scenario"].append(sc[:-4])
                         tmp_sampled["t"].append(samples[0])
                         tmp_sampled["d"].append(samples[1])
                         tmp_sampled["lon_velocity"].append(samples[2])
                         
-                        conditioned_vars["scenario"].append(sc[:-4])
+                        # conditioned_vars["scenario"].append(sc[:-4])
                         tmp_conditioned["init_x"].append(config.planning_problem.initial_state.position[0])
                         tmp_conditioned["init_y"].append(config.planning_problem.initial_state.position[1])
                         tmp_conditioned["init_theta"].append(config.planning_problem.initial_state.orientation)
