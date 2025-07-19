@@ -9,7 +9,7 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad_route_planner.route_planner import RoutePlanner
 from commonroad.geometry.shape import Rectangle
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile
-from utils import save_scenario_at_timestep, remove_entries_for_scenario
+from utils import save_scenario_imgs
 
 import sys
 sys.path.insert(0, "/home/kareem/frenet_optimal_trajectory_planner/CVAE/commonroad-reactive-planner")
@@ -140,7 +140,7 @@ for sc in tqdm(os.listdir(dir), desc="Planning scenarios", unit="scenario"):
                   if planner.goal_reached():
                         print(f"Scenario {sc} successfully planned!")
                         # print(f"Number of samples: {planner.record_state_list[-1].time_step}")
-                        save_scenario_at_timestep(sc[:-4], planner.record_state_list[-1].time_step)
+                        save_scenario_imgs(sc[:-4], planner.record_state_list[-1].time_step)
                         
                         for t, d, lon_v in zip(tmp_sampled["t"], tmp_sampled["d"], tmp_sampled["lon_velocity"]):
                               sampled_vars["scenario"].append(sc[:-4])
@@ -166,18 +166,6 @@ for sc in tqdm(os.listdir(dir), desc="Planning scenarios", unit="scenario"):
 
             except Exception as e:
                   print(f"Scenario {sc} failed!")
-                  
-                  # If the scenario fails, delete all files related to it
-                  # for file_path in glob.glob(os.path.join(img_save_dir, "*")):
-                  #       if os.path.isfile(file_path):
-                  #             os.remove(file_path)
-                  #             print(f"Deleted: {file_path}")
-                  # if os.path.exists(img_save_dir) and os.path.isdir(img_save_dir):
-                  #       os.rmdir(img_save_dir)
-                  #       print(f"Deleted directory: {img_save_dir}")
-                        
-                  # remove_entries_for_scenario(sampled_vars, sc[:-4])
-                  # remove_entries_for_scenario(conditioned_vars, sc[:-4])
 
                   continue
             
