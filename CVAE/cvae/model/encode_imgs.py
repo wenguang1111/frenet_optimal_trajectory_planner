@@ -10,7 +10,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
 
 # Load pretrained CNN (ResNet18 without final classification layer)
-resnet18 = models.resnet18(pretrained=True)
+resnet18 = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
 # resnet18 = resnet18.to(device)
 resnet18.eval()  # inference mode
 feature_extractor = torch.nn.Sequential(*list(resnet18.children())[:-1])  # remove final FC layer
