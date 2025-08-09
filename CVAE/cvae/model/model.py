@@ -35,7 +35,7 @@ class CVAE(nn.Module):
         zc = torch.cat([z, c], dim=1)
         h = F.relu(self.fc_p1(zc))
         # h = F.dropout(h, p=0.5)
-        h = F.relu(self.fc_p2(h))
+        # h = F.relu(self.fc_p2(h))
         return self.fc_out(h)
 
     def forward(self, x, c):
