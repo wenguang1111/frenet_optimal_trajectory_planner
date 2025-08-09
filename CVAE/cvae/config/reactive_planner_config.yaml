@@ -1,0 +1,18 @@
+debug:
+  draw_icons: true
+  draw_traj_set: false
+  multiproc: false
+  save_plots: false
+  show_plots: false
+general:
+  path_scenarios: "/home/kareem/frenet_optimal_trajectory_planner/CVAE/cvae/scenarios"
+planning:
+  dt: 0.1
+  replanning_frequency: 1
+  time_steps_computation: 50
+sampling:
+  t_min: 0.2
+  cvae_sampling: true
+  num_samples: 10
+vehicle:
+  id_type_vehicle: 2
