@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from model import CVAE, cvae_loss_function
+from cvae.model.model import CVAE, cvae_loss_function
 from tqdm import tqdm
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
@@ -12,8 +12,8 @@ print(f"Using device: {device}")
 
 # neural network parameters
 batch_size = 128
-h_Q_dim = 128
-h_P_dim = 128
+# h_Q_dim = 128
+# h_P_dim = 128
 z_dim = 16  # latent dimension
 # X_dim = 6  # input dimension (state)
 # c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)

@@ -1,10 +1,6 @@
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-import matplotlib.gridspec as gridspec
-from mpl_toolkits.mplot3d import Axes3D
-from model import CVAE, cvae_loss_function
+from cvae.model.model import CVAE, cvae_loss_function
 import time
 import pandas as pd
 
@@ -15,8 +11,8 @@ h_P_dim = 512
 z_dim = 16  # latent dimension
 
 # import data
-X_test = pd.read_csv('CVAE/data/x_test.csv') 
-c_test = pd.read_csv('CVAE/data/c_test.csv')
+X_test = pd.read_csv('cvae/data/x_test.csv') 
+c_test = pd.read_csv('cvae/data/c_test.csv')
 
 X_test = X_test.to_numpy()
 c_test = c_test.to_numpy()
@@ -32,7 +28,7 @@ c_dim = c_test_tensor.shape[1]
 
 # Load the model
 model = CVAE(X_dim=X_dim, c_dim=c_dim, z_dim=z_dim, h_Q_dim=h_Q_dim, h_P_dim=h_P_dim)
-model.load_state_dict(torch.load('CVAE/model_weights/cvae_model.pth'))
+model.load_state_dict(torch.load('cvae/model_weights/cvae_model.pth'))
 model.eval()
 
 # one inference step to generate 3000 samples
@@ -42,7 +38,7 @@ with torch.inference_mode():
     for batch in test_dataloader:
         x, c = batch
         y_pred, mu, logvar = model(x, c)
-        # print(y_pred)
+        # print(y_pred, x)
         batch_loss = cvae_loss_function(y_pred, x, mu, logvar)
         
         loss += batch_loss.item()
