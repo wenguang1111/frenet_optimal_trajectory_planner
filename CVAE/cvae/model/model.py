@@ -46,10 +46,9 @@ class CVAE(nn.Module):
 
 
 def cvae_loss_function(y_pred, y_true, mu, logvar, weight=None, kl_beta=1e-4):
-    recon_loss = F.mse_loss(y_pred, y_true, reduction='none')
+    recon_loss = F.mse_loss(y_pred, y_true)
     if weight is not None:
         recon_loss = recon_loss * weight
-    recon_loss = recon_loss.mean()
 
     kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
     kl_loss = kl_loss.mean()
