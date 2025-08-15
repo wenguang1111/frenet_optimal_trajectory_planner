@@ -1,0 +1,4 @@
+[submodule "CVAE/commonroad-reactive-planner"]
+	path = CVAE/commonroad-reactive-planner
+	url = git@github.com:kareem4200/commonroad-reactive-planner.git
+	branch = cvae-dev
