@@ -28,3 +28,21 @@
 - The design choices for the number of layers, neurons, and latent space dimentionality is also a question mark but I cannot be sure that something is wrong with it.
 
 - Maybe incorporate physics-informed losses. Borrow the feasibility checks from frenet and check it while training and penalize if samples produce infeasible trajectories. This would need generating trajectories for each reconstructed batch during training and check feasibility and collisions. Very expensive!
+
+## Comparing Commonroad and CVAE samples
+
+#### CommonRoad Reactive Planner Trajectory (Scenario __DEU_Lohmar-53_1_T-1__)
+![CommonRoad RP Trajectory](commonroad-reactive-planner/gifs/DEU_Lohmar-53_1_T-1_rp.gif)
+
+#### CVAE Trajectory (Scenario __DEU_Lohmar-53_1_T-1__)
+![CVAE Trajectory](commonroad-reactive-planner/gifs/DEU_Lohmar-53_1_T-1_cvae.gif)
+
+- CommonRoad RP sampler took ~58.66 seconds to plan this scenario (98 timesteps), while CVAE took ~65.433 seconds.
+
+- Average time to encode 1 scenario image with ResNet-18 was 0.18 seconds. For 98 timesteps, time taken to encode images was ~17.6 seconds out of the 65.433 seconds.
+
+- CommonRoad RP had 5, 10, 6 samples for lon_v, t, d respectively. Which makes it 5x10x6=300 trajectories to try.
+
+- CVAE outputs 3 samples for each variable which makes possibilities are 3x3x3=27 trajectories.
+
+- By intuition, time reduction in planning should be much more since number of trajectories to try in reduced from 300 to 27. But it is not the case?
