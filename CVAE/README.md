@@ -32,10 +32,10 @@
 ## Comparing Commonroad and CVAE samples
 
 #### CommonRoad Reactive Planner Trajectory (Scenario __DEU_Lohmar-53_1_T-1__)
-![CommonRoad RP Trajectory](commonroad-reactive-planner/gifs/DEU_Lohmar-53_1_T-1_rp.gif)
+![CommonRoad RP Trajectory](https://raw.githubusercontent.com/kareem4200/commonroad-reactive-planner/refs/heads/cvae-dev/gifs/DEU_Lohmar-53_1_T-1_rp.gif)
 
 #### CVAE Trajectory (Scenario __DEU_Lohmar-53_1_T-1__)
-![CVAE Trajectory](commonroad-reactive-planner/gifs/DEU_Lohmar-53_1_T-1_cvae.gif)
+![CVAE Trajectory](https://raw.githubusercontent.com/kareem4200/commonroad-reactive-planner/refs/heads/cvae-dev/gifs/DEU_Lohmar-53_1_T-1_cvae.gif)
 
 - CommonRoad RP sampler took ~58.66 seconds to plan this scenario (98 timesteps), while CVAE took ~65.433 seconds.
 
