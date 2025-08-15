@@ -26,6 +26,7 @@ commonroad_vehicle_models = "=3.0.2"
 commonroad-reactive-planner = { path = "commonroad-reactive-planner", develop = true }
 torch = "^2.8.0"
 torchvision = "^0.23.0"
+pandas = "^2.3.1"
 
 [tool.poetry.group.docs]
 optional = true
