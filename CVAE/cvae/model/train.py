@@ -5,7 +5,6 @@ from tqdm import tqdm
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
-# writer = SummaryWriter(log_dir='CVAE/model_v2/runs/cvae_training')
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
@@ -14,20 +13,21 @@ print(f"Using device: {device}")
 batch_size = 128
 # h_Q_dim = 128
 # h_P_dim = 128
-z_dim = 16  # latent dimension
+z_dim = 32  # latent dimension
 # X_dim = 6  # input dimension (state)
 # c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)
 
-lr = 1e-4
-num_epochs = 20
-loss_weight = torch.tensor([[1, 1, 1]], device=device, dtype=torch.float32)
+lr = 0.002
+num_epochs = 100
+# kl_beta = 1e-0  # KL divergence weight
+kl_beta = 1.0
 
 # import data
-X_train = pd.read_csv('CVAE/data/x_train.csv') 
-c_train = pd.read_csv('CVAE/data/c_train.csv')
+X_train = pd.read_csv('cvae/data/x_train.csv') 
+c_train = pd.read_csv('cvae/data/c_train.csv')
 
-X_val = pd.read_csv('CVAE/data/x_validation.csv')
-c_val = pd.read_csv('CVAE/data/c_validation.csv')
+X_val = pd.read_csv('cvae/data/x_validation.csv')
+c_val = pd.read_csv('cvae/data/c_validation.csv')
 
 X_train = X_train.to_numpy()
 c_train = c_train.to_numpy()
@@ -52,12 +52,14 @@ val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size,
 
 # model
 model = CVAE(X_dim, c_dim, z_dim).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
+optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 # lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.995)
 # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,  step_size=100, gamma=0.8)
-# lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5, verbose=True)
+lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
-writer = SummaryWriter(log_dir=f'CVAE/model_v2/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}')
+writer = SummaryWriter(
+      log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_kl_beta_{kl_beta}'
+      )
 
 for epoch in range(num_epochs):
       epoch_loss = 0.0
@@ -69,8 +71,8 @@ for epoch in range(num_epochs):
             x, c = x.to(device), c.to(device)
             
             y_pred, mu, logvar = model(x, c)
-            loss = cvae_loss_function(y_pred, x, mu, logvar, weight=loss_weight)
-
+            # kl_beta = min(0.2, 0.2 * epoch / num_epochs)
+            loss = cvae_loss_function(y_pred, x, mu, logvar, kl_beta=kl_beta)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -88,7 +90,7 @@ for epoch in range(num_epochs):
                   x, c = x.to(device), c.to(device)
                   
                   output, mu, logvar = model(x, c)
-                  loss = cvae_loss_function(output, x, mu, logvar, weight=loss_weight)
+                  loss = cvae_loss_function(output, x, mu, logvar, kl_beta=kl_beta)
                   val_loss += loss.item()
             
       avg_val_loss = val_loss / len(val_dataloader)
@@ -99,4 +101,7 @@ for epoch in range(num_epochs):
             
       print(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_epoch_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
       
-torch.save(model.state_dict(), 'CVAE/model_weights/cvae_model.pth')
+torch.save(
+      model.state_dict(), 
+      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_kl_beta_{kl_beta}.pth'
+      )

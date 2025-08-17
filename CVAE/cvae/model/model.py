@@ -35,7 +35,7 @@ class CVAE(nn.Module):
         zc = torch.cat([z, c], dim=1)
         h = F.relu(self.fc_p1(zc))
         # h = F.dropout(h, p=0.5)
-        # h = F.relu(self.fc_p2(h))
+        h = F.relu(self.fc_p2(h))
         return self.fc_out(h)
 
     def forward(self, x, c):
@@ -45,12 +45,12 @@ class CVAE(nn.Module):
         return y, mu, logvar
 
 
-def cvae_loss_function(y_pred, y_true, mu, logvar, weight=None, kl_beta=1e-4):
+def cvae_loss_function(y_pred, y_true, mu, logvar, kl_beta=1e-4):
     recon_loss = F.mse_loss(y_pred, y_true)
-    if weight is not None:
-        recon_loss = recon_loss * weight
-
-    kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
+    # if weight is not None:
+    #     recon_loss = recon_loss * weight
+    kl_loss = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp(), dim=1) # normalized over latent dimension trick
     kl_loss = kl_loss.mean()
-
+    # kl_loss = max(0.2, kl_loss)
+    # print(f"KL Loss: {kl_loss}, Recon Loss: {recon_loss}")
     return recon_loss + kl_beta * kl_loss

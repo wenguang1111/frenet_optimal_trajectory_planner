@@ -8,7 +8,7 @@ import pandas as pd
 batch_size = 128
 h_Q_dim = 512
 h_P_dim = 512
-z_dim = 16  # latent dimension
+z_dim = 32  # latent dimension
 
 # import data
 X_test = pd.read_csv('cvae/data/x_test.csv') 
@@ -28,7 +28,7 @@ c_dim = c_test_tensor.shape[1]
 
 # Load the model
 model = CVAE(X_dim=X_dim, c_dim=c_dim, z_dim=z_dim, h_Q_dim=h_Q_dim, h_P_dim=h_P_dim)
-model.load_state_dict(torch.load('cvae/model_weights/cvae_model.pth'))
+model.load_state_dict(torch.load('cvae/model/weights/cvae_model_lr_0.005_batch_128_epochs_100_zdim_32_kl_beta_1.0.pth'))
 model.eval()
 
 # one inference step to generate 3000 samples
