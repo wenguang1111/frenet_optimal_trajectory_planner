@@ -9,10 +9,7 @@ from commonroad.prediction.prediction import TrajectoryPrediction
 from commonroad_route_planner.route_planner import RoutePlanner
 from commonroad.geometry.shape import Rectangle
 from commonroad.common.file_writer import CommonRoadFileWriter, OverwriteExistingFile
-from CVAE.model.utils import save_scenario_imgs
-
-# import sys
-# sys.path.insert(0, "/home/kareem/frenet_optimal_trajectory_planner/CVAE/commonroad-reactive-planner")
+from cvae.model.utils import save_scenario_imgs
 
 from commonroad_rp.utility.evaluation import create_full_solution_trajectory
 from commonroad_rp.reactive_planner import ReactivePlanner
