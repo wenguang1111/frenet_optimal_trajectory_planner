@@ -18,13 +18,13 @@ def save_scenario_imgs(
             Scenario name.
             Time step.
       """
-      save_dir = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/data/scenarios_imgs"
-      sc_path = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/scenarios"
+      save_dir = "cvae/data/data_extended/scenarios_imgs"
+      sc_path = "cvae/scenarios_v2"
       os.makedirs(save_dir + "/" + scenario_name, exist_ok=True)
       
       scenario, pp = CommonRoadFileReader(os.path.join(sc_path, scenario_name) + ".xml").open()
       
-      for ts in range(1, no_time_step + 1):
+      for ts in range(0, no_time_step + 1):
             renderer = MPRenderer()
             renderer.draw_params.axis_visible = False
             renderer.draw_params.time_begin = ts
