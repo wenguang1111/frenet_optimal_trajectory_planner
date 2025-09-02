@@ -46,6 +46,7 @@ class CVAE(nn.Module):
 
 
 def cvae_loss_function(y_pred, y_true, mu, logvar, kl_beta=1e-4):
+    # incorporate the range of d, t, v
     recon_loss = F.mse_loss(y_pred, y_true)
     # if weight is not None:
     #     recon_loss = recon_loss * weight

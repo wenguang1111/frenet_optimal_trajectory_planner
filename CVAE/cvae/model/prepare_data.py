@@ -46,7 +46,7 @@ conditioned_vars = {
       "yaw_rate": [],
       # "goal_x": [],
       # "goal_y": [],
-}
+} # maybe add d from commonroad
 
 for sc in tqdm(os.listdir(dir), desc="Planning scenarios", unit="scenario"):
       if sc.endswith(".xml") and sc not in os.listdir("cvae/stubborn"):            
