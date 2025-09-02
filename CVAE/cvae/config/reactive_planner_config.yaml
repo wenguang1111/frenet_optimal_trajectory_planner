@@ -13,6 +13,9 @@ planning:
 sampling:
   t_min: 0.2
   cvae_sampling: true
+  z_dim: 16
+  c_dim: 518
   num_samples: 3
+  cvae_model_path: "/home/kareem/frenet_optimal_trajectory_planner/CVAE/cvae/model/weights/cvae_model.pth"
 vehicle:
   id_type_vehicle: 2
