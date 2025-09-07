@@ -18,40 +18,58 @@ feature_extractor = torch.nn.Sequential(*list(resnet18.children())[:-1])  # remo
 # print(feature_extractor)
 
 transform = transforms.Compose([
-      transforms.Resize((224, 224)),
-      transforms.ToTensor(),
-      transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                              std =[0.229, 0.224, 0.225])
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                            std =[0.229, 0.224, 0.225])
 ])
 
 def encode_image(image_path):
-      img = Image.open(image_path).convert("RGB")
-      img_tensor = transform(img).unsqueeze(0)  # add batch dim
-      # img_tensor = img_tensor.to(device)
-      with torch.no_grad():
-            features = feature_extractor(img_tensor).squeeze()  # shape: (512,)
-      return features.numpy()
+    img = Image.open(image_path).convert("RGB")
+    img_tensor = transform(img).unsqueeze(0)  # add batch dim
+    # img_tensor = img_tensor.to(device)
+    with torch.no_grad():
+        features = feature_extractor(img_tensor).squeeze()  # shape: (512,)
+    return features.cpu().numpy()
 
-conditioned_vars = pd.read_csv("CVAE/data/conditioned_vars.csv")
+conditioned_vars = pd.read_csv("cvae/data/data_extended/conditioned_vars.csv")
+
+encoded_images_dict = {
+    "scenario": [],
+    "time_step": [],
+}
 
 encoded_images = []
+
 print(len(conditioned_vars["scenario"].unique()))
-img_base_path = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/data/scenarios_imgs"
+img_base_path = "/home/kareem/frenet_optimal_trajectory_planner/CVAE/cvae/data/data_extended/scenarios_imgs"
 
 for scenario in tqdm(conditioned_vars["scenario"].unique(), 
                      total=len(conditioned_vars["scenario"].unique())):
       # scenario = row["scenario"]
       # print(scenario)
-      for img in os.listdir(os.path.join(img_base_path, scenario)):
-            if img.endswith(".png"):
-                  img_path = os.path.join(img_base_path, scenario, f"{img}")
-            
-                  if os.path.exists(img_path):
-                        vec = encode_image(img_path)
-                        encoded_images.append(vec)
+    for img in os.listdir(os.path.join(img_base_path, scenario)):
+        if img.endswith(".png"):
+            # print(img[10:-4])
+            encoded_images_dict["scenario"].append(scenario)
+            encoded_images_dict["time_step"].append(img[10:-4])
+            img_path = os.path.join(img_base_path, scenario, f"{img}")
+
+            if os.path.exists(img_path):
+                vec = encode_image(img_path)
+                encoded_images.append(vec)
+
+encoded_img_df = pd.DataFrame(encoded_images_dict)
 
 image_features_df = pd.DataFrame(encoded_images, columns=[f"img_feat_{i}" for i in range(512)])
 
-conditioned_vars = pd.concat([conditioned_vars, image_features_df], axis=1)
+encoded_img_df = pd.concat([encoded_img_df, image_features_df], axis=1)
 
-conditioned_vars.to_csv("CVAE/data/conditioned_vars_with_img.csv", index=False)
+conditioned_vars["time_step"] = conditioned_vars["time_step"].astype(int)
+encoded_img_df["time_step"] = encoded_img_df["time_step"].astype(int)
+
+encoded_img_df.to_csv("cvae/data/data_extended/encoded_imgs.csv")
+
+conditioned_vars = pd.merge(conditioned_vars, encoded_img_df, on=["scenario", "time_step"], how="left")
+
+conditioned_vars.to_csv("cvae/data/data_extended/conditioned_vars_w_imgs.csv", index=False)
