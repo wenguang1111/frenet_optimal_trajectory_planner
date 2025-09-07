@@ -41,3 +41,7 @@ cluster-smi -n hpdar01c05s02 _(particular node)_
 __Transfer files / folders to the login node__
 
 rsync -r {src_path} di97xub@login.terrabyte.lrz.de:{dest_path}
+
+__Load python3.10 instead of 3.6__
+
+module load python
