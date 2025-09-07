@@ -48,10 +48,10 @@ class CVAE(nn.Module):
 def cvae_loss_function(y_pred, y_true, mu, logvar, kl_beta=1e-4):
     # incorporate the range of d, t, v
     recon_loss = F.mse_loss(y_pred, y_true)
-    # if weight is not None:
-    #     recon_loss = recon_loss * weight
-    kl_loss = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp(), dim=1) # normalized over latent dimension trick
+
+    # sum over latent dim
+    kl_loss = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1)
+    # mean over batch
     kl_loss = kl_loss.mean()
-    # kl_loss = max(0.2, kl_loss)
     # print(f"KL Loss: {kl_loss}, Recon Loss: {recon_loss}")
     return recon_loss + kl_beta * kl_loss
