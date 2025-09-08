@@ -6,25 +6,30 @@ import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 from cvae.utils.beta_annealer import BetaAnnealer
 
+import sys
 import logging
 
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
+logging.basicConfig(level=logging.INFO, 
+                    format="[%(levelname)s] %(message)s",
+                    handlers=[logging.StreamHandler(sys.stdout)])
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logging.info(f"Using device: {device}")
 
 
+batch_size = 256
+
 # import data
-x_train = pd.read_csv('cvae/data/data_extended/x_train.csv')
+x_train = pd.read_parquet('cvae/data/data_extended/x_train.parquet')
 x_train = x_train.drop(columns=["scenario", "time_step"])
 
-c_train = pd.read_csv('cvae/data/data_extended/c_train_repeated.csv')
+c_train = pd.read_parquet('cvae/data/data_extended/c_train_repeated.parquet')
 c_train = c_train.drop(columns=["scenario", "time_step"])
 
-x_val = pd.read_csv('cvae/data/data_extended/x_validation.csv')
+x_val = pd.read_parquet('cvae/data/data_extended/x_validation.parquet')
 x_val = x_val.drop(columns=["scenario", "time_step"])
 
-c_val = pd.read_csv('cvae/data/data_extended/c_validation_repeated.csv')
+c_val = pd.read_parquet('cvae/data/data_extended/c_validation_repeated.parquet')
 c_val = c_val.drop(columns=["scenario", "time_step"])
 
 x_train_t = torch.tensor(x_train.to_numpy(), dtype=torch.float32)
@@ -33,11 +38,11 @@ c_train_t = torch.tensor(c_train.to_numpy(), dtype=torch.float32)
 x_val_t = torch.tensor(x_val.to_numpy(), dtype=torch.float32)
 c_val_t = torch.tensor(c_val.to_numpy(), dtype=torch.float32)
 
-train_dataset = torch.data.TensorDataset(x_train_t, c_train_t)
-val_dataset = torch.data.TensorDataset(x_val_t, c_val_t)
+train_dataset = torch.utils.data.TensorDataset(x_train_t, c_train_t)
+val_dataset = torch.utils.data.TensorDataset(x_val_t, c_val_t)
 
-train_dataloader = torch.utils.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_dataloader = torch.utils.DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
 
 x_dim = x_train_t.shape[1]
 c_dim = c_train_t.shape[1]
@@ -51,9 +56,8 @@ z_dim = 32  # latent dimension
 # X_dim = 6  # input dimension (state)
 # c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)
 
-lr = 0.002
+lr = 1e-3
 num_epochs = 10
-batch_size = 128
 
 kl_beta = 1e-0  # KL divergence weight
 num_steps = (x_train_t.shape[0] / batch_size) * num_epochs
@@ -67,7 +71,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 # lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
 writer = SummaryWriter(
-      log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_kl_beta_{kl_beta}'
+      log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}'
       )
 
 for epoch in range(num_epochs):
@@ -84,6 +88,7 @@ for epoch in range(num_epochs):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            kl_beta = kl_beta_annealer.step()
             
             epoch_loss += loss.item()
             
@@ -98,7 +103,7 @@ for epoch in range(num_epochs):
                   x, c = x.to(device), c.to(device)
                   
                   output, mu, logvar = model(x, c)
-                  loss = cvae_loss_function(output, x, mu, logvar, kl_beta=kl_beta)
+                  loss = cvae_loss_function(output, x, mu, logvar, kl_beta=1.0)
                   val_loss += loss.item()
             
       avg_val_loss = val_loss / len(val_dataloader)
@@ -111,5 +116,5 @@ for epoch in range(num_epochs):
       
 torch.save(
       model.state_dict(), 
-      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_kl_beta_{kl_beta}.pth'
+      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}.pth'
       )
