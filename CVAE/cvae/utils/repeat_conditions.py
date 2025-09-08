@@ -19,7 +19,7 @@ c_train = train_merged.drop(columns=cols_to_drop)
 c_validation = validation_merged.drop(columns=cols_to_drop)
 c_test = test_merged.drop(columns=cols_to_drop)
 
-c_train.to_csv("cvae/data/data_extended/c_train_repeated.csv")
-c_test.to_csv("cvae/data/data_extended/c_test_repeated.csv")
-c_validation.to_csv("cvae/data/data_extended/c_validation_repeated.csv")
+c_train.to_parquet("cvae/data/data_extended/c_train_repeated.parquet", index=False)
+c_test.to_parquet("cvae/data/data_extended/c_test_repeated.parquet", index=false)
+c_validation.to_parquet("cvae/data/data_extended/c_validation_repeated.parquet", index=False)
 
