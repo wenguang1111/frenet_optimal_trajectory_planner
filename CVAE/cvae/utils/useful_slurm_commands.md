@@ -45,3 +45,17 @@ rsync -r {src_path} di97xub@login.terrabyte.lrz.de:{dest_path}
 __Load python3.10 instead of 3.6__
 
 module load python
+
+__Search for jobs and cancel__
+
+squeue -u di97xub
+
+scancel {JOB_ID}
+
+__Send a job__
+
+sbatch {SLURM_SCRIPT.sh}
+
+__Check storage__
+
+dssusrinfo all
