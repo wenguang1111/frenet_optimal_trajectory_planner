@@ -8,14 +8,15 @@ class CVAE(nn.Module):
         
         # Encoder (Q network)
         self.fc_q1 = nn.Linear(X_dim + c_dim, h_Q_dim)
-        self.fc_q2 = nn.Linear(h_Q_dim, h_Q_dim)
-        self.fc_mu = nn.Linear(h_Q_dim, z_dim)
-        self.fc_logvar = nn.Linear(h_Q_dim, z_dim)
+        self.fc_q2 = nn.Linear(h_Q_dim, h_Q_dim // 2)
+        self.fc_mu = nn.Linear(h_Q_dim // 2, z_dim)
+        self.fc_logvar = nn.Linear(h_Q_dim // 2, z_dim)
         
         # Decoder (P network)
-        self.fc_p1 = nn.Linear(z_dim + c_dim, h_P_dim)
-        self.fc_p2 = nn.Linear(h_P_dim, h_P_dim)
-        self.fc_out = nn.Linear(h_P_dim, X_dim)
+        self.fc_p1 = nn.Linear(z_dim + c_dim, h_P_dim // 2)
+        self.fc_p2 = nn.Linear(h_P_dim // 2, h_P_dim // 4)
+        self.fc_p3 = nn.Linear(h_P_dim // 4, h_P_dim // 8)
+        self.fc_out = nn.Linear(h_P_dim // 8, X_dim)
 
     def encode(self, x, c):
         xc = torch.cat([x, c], dim=1)
@@ -36,6 +37,7 @@ class CVAE(nn.Module):
         h = F.relu(self.fc_p1(zc))
         # h = F.dropout(h, p=0.5)
         h = F.relu(self.fc_p2(h))
+        h = F.relu(self.fc_p3(h))
         return self.fc_out(h)
 
     def forward(self, x, c):
@@ -54,4 +56,4 @@ def cvae_loss_function(y_pred, y_true, mu, logvar, kl_beta=1e-4):
     # mean over batch
     kl_loss = kl_loss.mean()
     # print(f"KL Loss: {kl_loss}, Recon Loss: {recon_loss}")
-    return recon_loss + kl_beta * kl_loss
+    return recon_loss, kl_beta * kl_loss
