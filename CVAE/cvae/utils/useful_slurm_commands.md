@@ -59,3 +59,12 @@ sbatch {SLURM_SCRIPT.sh}
 __Check storage__
 
 dssusrinfo all
+
+__Get Tensorboard on local machine__
+
+On the login node run: tensorboard --logdir {runs_dir} --host 0.0.0.0 --port 6006
+
+On local machine ssh to cluster: ssh -L 6006:localhost:6006 di97xub@login.terrabyte.lrz.de
+
+Then tensorboard will be available at: http://localhost:6006
+
