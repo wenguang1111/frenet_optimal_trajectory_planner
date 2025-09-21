@@ -2,21 +2,23 @@ debug:
   draw_icons: true
   draw_traj_set: false
   multiproc: false
-  save_plots: true
+  save_plots: true # activate to save scenarios solutions GIFs
   show_plots: false
 general:
-  path_scenarios: "../cvae/scenarios/rp_success"
+  # path_scenarios: "../cvae/scenarios/rp_success"
+  path_scenarios: "../cvae/all_scenarios"
+  path_output: "output/rp"  # change to output/cvae when running cvae
 planning:
   dt: 0.1
   replanning_frequency: 1
-  time_steps_computation: 50
+  time_steps_computation: 30
 sampling:
-  t_min: 0.2
-  cvae_sampling: true
+  cvae_sampling: false
   z_dim: 32
   c_dim: 518
   num_samples: 50
   cvae_model_path: "../cvae/model/weights/cvae_model_lr_0.001_batch_512_epochs_5_zdim_32.pth"
   pre_encoded_imgs: true
+  device: "cuda"  # "cuda" or "cpu"
 vehicle:
   id_type_vehicle: 2
