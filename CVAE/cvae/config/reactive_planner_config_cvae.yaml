@@ -6,7 +6,7 @@ debug:
   show_plots: false
 general:
   # path_scenarios: "../cvae/scenarios/rp_success"
-  path_scenarios: "../cvae/all_scenarios"
+  path_scenarios: "/dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE/cvae/all_scenarios"
   path_output: "output/cvae"  # change to output/cvae when running cvae
 planning:
   dt: 0.1
