@@ -7,24 +7,24 @@ class CVAE(nn.Module):
         super(CVAE, self).__init__()
         
         # Encoder (Q network)
-        self.fc_q1 = nn.Linear(X_dim + c_dim, h_Q_dim)
-        self.fc_q2 = nn.Linear(h_Q_dim, h_Q_dim // 2)
-        self.fc_mu = nn.Linear(h_Q_dim // 2, z_dim)
-        self.fc_logvar = nn.Linear(h_Q_dim // 2, z_dim)
+        self.encoder_fc_q1 = nn.Linear(X_dim + c_dim, h_Q_dim)
+        self.encoder_fc_q2 = nn.Linear(h_Q_dim, h_Q_dim // 2)
+        self.encoder_fc_mu = nn.Linear(h_Q_dim // 2, z_dim)
+        self.encoder_fc_logvar = nn.Linear(h_Q_dim // 2, z_dim)
         
         # Decoder (P network)
-        self.fc_p1 = nn.Linear(z_dim + c_dim, h_P_dim // 2)
-        self.fc_p2 = nn.Linear(h_P_dim // 2, h_P_dim // 4)
-        self.fc_p3 = nn.Linear(h_P_dim // 4, h_P_dim // 8)
-        self.fc_out = nn.Linear(h_P_dim // 8, X_dim)
+        self.decoder_fc_p1 = nn.Linear(z_dim + c_dim, h_P_dim // 2)
+        self.decoder_fc_p2 = nn.Linear(h_P_dim // 2, h_P_dim // 4)
+        self.decoder_fc_p3 = nn.Linear(h_P_dim // 4, h_P_dim // 8)
+        self.decoder_fc_out = nn.Linear(h_P_dim // 8, X_dim)
 
     def encode(self, x, c):
         xc = torch.cat([x, c], dim=1)
-        h = F.relu(self.fc_q1(xc))
+        h = F.relu(self.encoder_fc_q1(xc))
         # h = F.dropout(h, p=0.5, training=self.training)
-        h = F.relu(self.fc_q2(h))
-        mu = self.fc_mu(h)
-        logvar = self.fc_logvar(h)
+        h = F.relu(self.encoder_fc_q2(h))
+        mu = self.encoder_fc_mu(h)
+        logvar = self.encoder_fc_logvar(h)
         return mu, logvar
 
     def reparameterize(self, mu, logvar):
@@ -34,11 +34,11 @@ class CVAE(nn.Module):
 
     def decode(self, z, c):
         zc = torch.cat([z, c], dim=1)
-        h = F.relu(self.fc_p1(zc))
+        h = F.relu(self.decoder_fc_p1(zc))
         # h = F.dropout(h, p=0.5)
-        h = F.relu(self.fc_p2(h))
-        h = F.relu(self.fc_p3(h))
-        return self.fc_out(h)
+        h = F.relu(self.decoder_fc_p2(h))
+        h = F.relu(self.decoder_fc_p3(h))
+        return self.decoder_fc_out(h)
 
     def forward(self, x, c):
         mu, logvar = self.encode(x, c)
@@ -57,3 +57,34 @@ def cvae_loss_function(y_pred, y_true, mu, logvar, kl_beta=1e-4):
     kl_loss = kl_loss.mean()
     # print(f"KL Loss: {kl_loss}, Recon Loss: {recon_loss}")
     return recon_loss, kl_beta * kl_loss
+
+
+if __name__ == "__main__":
+    # Example usage and hook for layer output shapes
+    X_dim, c_dim, z_dim = 3, 518, 32
+    model = CVAE(X_dim=3, c_dim=518, z_dim=32)
+
+    # Hook function using the layer's variable name
+    def print_shapes(name, module, input, output):
+        location = "Encoder" if "encoder" in name else "Decoder" if "decoder" in name else "Other"
+        print(f"{name} ({location}):")
+        print(f"  Input: {[i.shape for i in input]}")
+        print(f"  Output: {output.shape if isinstance(output, torch.Tensor) else [o.shape for o in output]}")
+        if location == "Encoder" and output.shape[1] == z_dim:
+            print(f"  **Latent z dimension: {output.shape}**")
+
+    # Register hooks
+    hooks = []
+    for name, layer in model.named_modules():
+        if isinstance(layer, nn.Linear):
+            # Use lambda to pass the layer name
+            hooks.append(layer.register_forward_hook(lambda m, inp, out, n=name: print_shapes(n, m, inp, out)))
+
+    # Dummy input
+    x = torch.randn(1, X_dim)
+    c = torch.randn(1, c_dim)
+    x_recon = model(x, c)
+
+    # Remove hooks
+    for h in hooks:
+        h.remove()

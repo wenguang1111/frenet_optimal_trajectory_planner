@@ -55,13 +55,13 @@ z_dim = 32  # latent dimension
 # X_dim = 6  # input dimension (state)
 # c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)
 
-lr = 1e-3
+lr = 1e-4
 num_epochs = 5
 stall_epochs = 0
 
 kl_beta = 0.0  # KL divergence weight
 num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
-kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=0.5, n_steps=int(num_steps))
+kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
 
 # model
 model = CVAE(x_dim, c_dim, z_dim).to(device)
@@ -133,7 +133,7 @@ for epoch in range(num_epochs):
     writer.add_scalar('Train_Loss/KL_Loss_Beta_1.0', avg_train_kl_loss_beta_1, epoch)
     writer.add_scalar('Val_Loss/Full_Loss', avg_val_loss, epoch)
     writer.add_scalar('Val_Loss/Recon_Loss', avg_val_recon_loss, epoch)
-    writer.add_scalar('Val_Loss/KL_Loss', avg_val_kl_loss, epoch)
+    writer.add_scalar('Val_Loss/KL_Loss_Beta_1.0', avg_val_kl_loss, epoch)
         
     logging.info(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
       

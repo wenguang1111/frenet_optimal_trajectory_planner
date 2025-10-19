@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64gb
-#SBATCH --time=24:00:00
+#SBATCH --time=26:00:00
 #SBATCH --mail-type=none
 #SBATCH --mail-user=karem.mohamed@dlr.de
 
