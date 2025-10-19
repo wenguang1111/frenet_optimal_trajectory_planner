@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J cvae_training
-#SBATCH -o cvae/log/train_log.out
-#SBATCH -e cvae/log/train_errors.err
+#SBATCH -o cvae/log/log_train.out
+#SBATCH -e cvae/log/errors_train.err
 #SBATCH -D /dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE
 #SBATCH --clusters=hpda2
 #SBATCH --partition=hpda2_compute_gpu
@@ -13,6 +13,7 @@
 #SBATCH --mail-type=none
 #SBATCH --mail-user=karem.mohamed@dlr.de
 
+# load python3.10
 module load slurm_setup
 module load python
 

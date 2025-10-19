@@ -13,6 +13,7 @@
 #SBATCH --mail-type=none
 #SBATCH --mail-user=karem.mohamed@dlr.de
 
+# load python3.10
 module load slurm_setup
 module load python
 
