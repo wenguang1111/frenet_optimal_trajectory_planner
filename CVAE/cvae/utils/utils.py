@@ -31,6 +31,8 @@ def save_scenario_imgs(
       ego_vehicle = scenario.obstacle_by_id(ego_id)
       ego_params = DynamicObstacleParams()
       ego_params.vehicle_shape.occupancy.shape.facecolor = "#ff0000"
+      ego_params.trajectory.facecolor = "#00B427"
+      ego_params.trajectory.line_width = 0.25
       ego_params.draw_icon = True
       
       # loop through all time steps and save images
@@ -42,6 +44,7 @@ def save_scenario_imgs(
             renderer.draw_params.time_begin = ts
             renderer.draw_params.dynamic_obstacle.draw_shape = True
             renderer.draw_params.dynamic_obstacle.draw_icon = True
+            renderer.draw_params.dynamic_obstacle.trajectory.line_width = 0.25
             
             ego_params.time_begin = ts
             
