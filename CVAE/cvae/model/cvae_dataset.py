@@ -1,42 +1,56 @@
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import pandas as pd
+from PIL import Image
+import numpy as np
+import os
+import logging
+import time
+import sys
 
+logging.basicConfig(level=logging.INFO, 
+                    format="[%(levelname)s] %(message)s",
+                    handlers=[logging.StreamHandler(sys.stdout)])
 
 class CVAEDataset(Dataset):
-    def __init__(self, x_df, c_df):
+    def __init__(self, targets_path, conditions_path, image_root, image_transform=None):
+        targets_df = pd.read_parquet(targets_path)
+        conditions_df = pd.read_parquet(conditions_path)
 
-        merged = pd.merge(x_df, c_df, on=["scenario", "time_step"], how="inner")
-        print(merged.head())
-        cols_to_drop = [merged.columns[i] for i in range(2, 5)]
-        new_c = merged.drop(columns=cols_to_drop)
-        print(new_c.head())
-        new_c.to_csv("cvae/data/data_extended/test_conditions_repeated.csv", index=False)
-        print("Done")
-        # self.samples = []
-        # x_cols = [col for col in x_df.columns if col not in ["scenario", "time_step"]]
-        # c_cols = [col for col in c_df.columns if col not in ["scenario", "time_step"]]
+        assert len(targets_df) == len(conditions_df), \
+            "Targets and conditions must have the same length."
+            
+        self.target_features = ["t", "d", "lon_velocity"]
+        self.cond_features = ["x", "y", "theta", "velocity", "acceleration", "yaw_rate"]
 
-        # for row in merged.itertuples(index=False):
-        #     x_tensor = torch.tensor([getattr(row, col) for col in x_cols], dtype=torch.float32)
-        #     c_tensor = torch.tensor([getattr(row, col) for col in c_cols], dtype=torch.float32)
-        #     self.samples.append((x_tensor, c_tensor))
+        # Precompute NumPy arrays for fast indexing
+        self.targets_np = targets_df[self.target_features].to_numpy(dtype="float32")
+        self.conds_np = conditions_df[self.cond_features].to_numpy(dtype="float32")
+
+        # Scenario and time step lists for image paths
+        self.scenarios = targets_df["scenario"].tolist()
+        self.time_steps = targets_df["time_step"].tolist()
+
+        # Precompute full image paths
+        self.image_paths = [
+            os.path.join(image_root, scenario, f"time_step_{time_step}.png")
+            for scenario, time_step in zip(self.scenarios, self.time_steps)
+        ]
+
+        self.image_transform = image_transform
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.targets_np)
 
     def __getitem__(self, idx):
-        return self.samples[idx]
+        ### bottleneck here in image loading ###
+        # s_time = time.time()
+        target = torch.from_numpy(self.targets_np[idx])
+        cond = torch.from_numpy(self.conds_np[idx])
 
-if __name__ == "__main__":
-    x = pd.read_csv("cvae/data/data_extended/x_test.csv")
-    x = x.drop(["Unnamed: 0"], axis=1)
-   
-    c = pd.read_csv("cvae/data/data_extended/c_test.csv")
-    c = c.drop(["Unnamed: 0"], axis=1)
-    
-    dataset = CVAEDataset(x_df=x, c_df=c)
-    loader = DataLoader(dataset, batch_size=2, shuffle=True)
-
-    for x, c in loader:
-        print(x.shape, c.shape)
+        img = Image.open(self.image_paths[idx]).convert("RGB")
+        if self.image_transform:
+            img = self.image_transform(img)
+        # elapsed = time.time() - s_time
+        # logging.info(f"Loaded sample {idx} in {elapsed:.4f} seconds.")
+        return target, cond, img
