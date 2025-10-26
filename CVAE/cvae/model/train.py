@@ -5,6 +5,9 @@ from tqdm import tqdm
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 from cvae.utils.beta_annealer import BetaAnnealer
+from cvae.model.cvae_dataset import CVAEDataset
+from cvae.model.mask_background import MaskBackground
+from torchvision import transforms
 
 import sys
 import logging
@@ -16,56 +19,73 @@ logging.basicConfig(level=logging.INFO,
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logging.info(f"Using device: {device}")
 
-batch_size = 512
+batch_size = 1024
+img_features = 64
+img_dim = 256
+z_dim = 16
+x_dim = 3
+c_dim = 6 + img_features  # states + img features
+h_Q_dim = 64
+h_P_dim = 64
 
-# import data
-x_train = pd.read_parquet('cvae/data/data_extended/x_train.parquet')
-x_train = x_train.drop(columns=["scenario", "time_step"])
+log_every = 10  # batches
 
-c_train = pd.read_parquet('cvae/data/data_extended/c_train_repeated.parquet')
-c_train = c_train.drop(columns=["scenario", "time_step"])
+# parquet paths
+train_imgs_root = 'cvae/data/data_v2/train/imgs/'
+targets_train_path = 'cvae/data/data_v2/train/x_train.parquet'
+conditions_train_path = 'cvae/data/data_v2/train/c_train.parquet'
 
-x_val = pd.read_parquet('cvae/data/data_extended/x_validation.parquet')
-x_val = x_val.drop(columns=["scenario", "time_step"])
+val_imgs_root = 'cvae/data/data_v2/val/imgs/'
+targets_val_path = 'cvae/data/data_v2/val/x_validation.parquet'
+conditions_val_path = 'cvae/data/data_v2/val/c_validation.parquet'
 
-c_val = pd.read_parquet('cvae/data/data_extended/c_validation_repeated.parquet')
-c_val = c_val.drop(columns=["scenario", "time_step"])
+imgs_transforms = transforms.Compose([
+    transforms.Resize((img_dim, img_dim)),
+    transforms.ToTensor(),  # Converts to [0, 1] (normalized)
+    MaskBackground()
+])
 
-x_train_t = torch.tensor(x_train.to_numpy(), dtype=torch.float32)
-c_train_t = torch.tensor(c_train.to_numpy(), dtype=torch.float32)
+# prepare datasets and dataloaders
+train_dataset = CVAEDataset(
+    targets_path=targets_train_path,
+    conditions_path=conditions_train_path,
+    image_root=train_imgs_root,
+    image_transform=imgs_transforms
+)
 
-x_val_t = torch.tensor(x_val.to_numpy(), dtype=torch.float32)
-c_val_t = torch.tensor(c_val.to_numpy(), dtype=torch.float32)
+val_dataset = CVAEDataset(
+    targets_path=targets_val_path,
+    conditions_path=conditions_val_path,
+    image_root=val_imgs_root,
+    image_transform=imgs_transforms
+)
 
-train_dataset = torch.utils.data.TensorDataset(x_train_t, c_train_t)
-val_dataset = torch.utils.data.TensorDataset(x_val_t, c_val_t)
-
-train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
-
-x_dim = x_train_t.shape[1]
-c_dim = c_train_t.shape[1]
+train_dataloader = torch.utils.data.DataLoader(train_dataset, 
+                                               batch_size=batch_size,
+                                               pin_memory=True,
+                                               num_workers=8,
+                                               shuffle=True)
+val_dataloader = torch.utils.data.DataLoader(val_dataset, 
+                                             batch_size=batch_size,
+                                             pin_memory=True,
+                                             num_workers=8,
+                                             shuffle=True)
 
 logging.info("Data Ready!")
 
-# neural network parameters
-# h_Q_dim = 128
-# h_P_dim = 128
-z_dim = 32  # latent dimension
-# X_dim = 6  # input dimension (state)
-# c_dim = 133  # conditioning dimension (occ 121, init 6, goal 6)
-
 lr = 1e-4
-num_epochs = 5
+num_epochs = 1
 stall_epochs = 0
 
 kl_beta = 0.0  # KL divergence weight
-num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
+# num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
+num_steps = (len(train_dataset) / batch_size) * (num_epochs - stall_epochs)
 kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
 
 # model
-model = CVAE(x_dim, c_dim, z_dim).to(device)
+model = CVAE(x_dim, c_dim, z_dim, ).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+# torch.optim.AdamW()
 # lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.995)
 # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,  step_size=100, gamma=0.8)
 # lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
@@ -74,27 +94,55 @@ writer = SummaryWriter(
       log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}'
       )
 
+# start_data = torch.cuda.Event(enable_timing=True)
+# end_data = torch.cuda.Event(enable_timing=True)
+# start_forward = torch.cuda.Event(enable_timing=True)
+# end_forward = torch.cuda.Event(enable_timing=True)
+# start_backward = torch.cuda.Event(enable_timing=True)
+# end_backward = torch.cuda.Event(enable_timing=True)
+
+# Training loop
 for epoch in range(num_epochs):
     train_loss, recon_loss, kl_loss = 0.0, 0.0, 0.0
     kl_loss_beta_1 = 0.0
     
     # ----- Training Step -----
     model.train()
-    for batch in tqdm(train_dataloader, desc="Training Progress"):
-        x, c = batch
-        x, c = x.to(device), c.to(device)
+    for i, batch in enumerate(train_dataloader):
+        # start_data.record()
+        x, c, img = batch
+        x, c, img = x.to(device, non_blocking=True), c.to(device, non_blocking=True), img.to(device, non_blocking=True)
+        # end_data.record()
         
-        y_pred, mu, logvar = model(x, c)
+        # start_forward.record()
+        y_pred, mu, logvar = model(x, c, img)
         loss = cvae_loss_function(y_pred, x, mu, logvar, kl_beta=kl_beta)
-        optimizer.zero_grad()
+        # end_forward.record()
+        
+        # start_backward.record()
+        optimizer.zero_grad(set_to_none=True)  # clear gradients more effieciently (faster and saves memory)
         sum(loss).backward()
         optimizer.step()
+        # end_backward.record()
         
         recon_loss += loss[0].item()
         kl_loss += loss[1].item()
         train_loss += loss[0].item() + loss[1].item()
         
         kl_loss_beta_1 += cvae_loss_function(y_pred, x, mu, logvar, kl_beta=1.0)[1].item()
+        
+        # Wait for GPU to finish
+        # torch.cuda.synchronize()
+        
+        # logging.info(f"Data move: {start_data.elapsed_time(end_data)/1000:.3f}s | "
+        #     f"Forward: {start_forward.elapsed_time(end_forward)/1000:.3f}s | "
+        #     f"Backward: {start_backward.elapsed_time(end_backward)/1000:.3f}s")
+        if (i + 1) % log_every == 0:
+            logging.info(f"Epoch {epoch+1} | "
+                         f"Batch {i+1}/{len(train_dataloader)} |"
+                         f"Recon Loss: {loss[0].item():.4f} | "
+                         f"KL Loss: {loss[1].item():.4f} | "
+                         f"KL Beta: {kl_beta:.4f}")
         
         # logging.info(f"Previous Beta: {kl_beta}")
         if epoch >= stall_epochs:
@@ -112,10 +160,10 @@ for epoch in range(num_epochs):
     val_loss, recon_loss, kl_loss = 0.0, 0.0, 0.0
     with torch.no_grad():
         for batch in val_dataloader:
-            x, c = batch
-            x, c = x.to(device), c.to(device)
+            x, c, img = batch
+            x, c, img = x.to(device, non_blocking=True), c.to(device, non_blocking=True), img.to(device, non_blocking=True)
             
-            output, mu, logvar = model(x, c)
+            output, mu, logvar = model(x, c, img)
             loss = cvae_loss_function(output, x, mu, logvar, kl_beta=1.0)
             
             recon_loss += loss[0].item()
