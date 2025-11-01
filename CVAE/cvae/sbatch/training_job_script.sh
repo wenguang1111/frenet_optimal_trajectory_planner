@@ -6,9 +6,9 @@
 #SBATCH -D /dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE
 #SBATCH --clusters=hpda2
 #SBATCH --partition=hpda2_compute_gpu
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
-#SBATCH --mem=64gb
+#SBATCH --mem=128gb
 #SBATCH --time=20:00:00
 #SBATCH --mail-type=none
 #SBATCH --mail-user=karem.mohamed@dlr.de
@@ -22,4 +22,14 @@ source /dss/dsshome1/07/di97xub/.cache/pypoetry/virtualenvs/cvae-3j1Yb4w3-py3.10
 
 cd /dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE
 
+# Start monitoring (logs every 5 seconds)
+bash cvae/utils/monitor_resources.sh cvae/log 5 &
+MONITOR_PID=$!
+
+# Run training
 python3 cvae/model/train.py
+
+# Stop monitoring
+kill $MONITOR_PID
+
+# python3 cvae/model/train.py
