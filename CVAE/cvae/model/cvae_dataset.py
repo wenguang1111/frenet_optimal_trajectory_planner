@@ -14,9 +14,17 @@ logging.basicConfig(level=logging.INFO,
                     handlers=[logging.StreamHandler(sys.stdout)])
 
 class CVAEDataset(Dataset):
-    def __init__(self, targets_path, conditions_path, image_root, image_transform=None, num_workers=8):
+    def __init__(self, targets_path,
+                 conditions_path,
+                 image_root,
+                 image_transform=None,
+                 data_normalizer=None,
+                 num_workers=8):
+        
         targets_df = pd.read_parquet(targets_path)
         conditions_df = pd.read_parquet(conditions_path)
+        
+        normalizer_save_dir = 'cvae/model/weights/'
 
         assert len(targets_df) == len(conditions_df), \
             "Targets and conditions must have the same length."
@@ -26,6 +34,22 @@ class CVAEDataset(Dataset):
 
         self.targets_np = targets_df[self.target_features].to_numpy(dtype="float32")
         self.conds_np = conditions_df[self.cond_features].to_numpy(dtype="float32")
+
+        # Store normalizer
+        self.normalizer = data_normalizer
+        
+        if self.normalizer is not None:
+            # fit if not fitted
+            if not self.normalizer.is_fitted:
+                logging.info("Fitting normalizer on dataset...")
+                self.normalizer.fit(self.targets_np, self.conds_np)
+                self.normalizer.save(normalizer_save_dir)
+            else:
+                self.normalizer = self.normalizer.load(normalizer_save_dir)
+                
+            self.targets_np = self.normalizer.transform_targets(self.targets_np)
+            self.conds_np = self.normalizer.transform_conditions(self.conds_np)
+            logging.info("Data normalization applied.")
 
         self.scenarios = targets_df["scenario"].tolist()
         self.time_steps = targets_df["time_step"].tolist()

@@ -8,7 +8,8 @@ from cvae.utils.beta_annealer import BetaAnnealer
 from cvae.model.cvae_dataset import CVAEDataset
 from cvae.model.mask_background import MaskBackground
 from torchvision import transforms
-
+from torch.optim.lr_scheduler import LambdaLR
+from cvae.model.normalizer import Normalizer
 import sys
 import logging
 
@@ -19,6 +20,7 @@ logging.basicConfig(level=logging.INFO,
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logging.info(f"Using device: {device}")
 
+        
 batch_size = 1024
 img_features = 64
 img_dim = 128
@@ -41,6 +43,8 @@ val_imgs_root = 'cvae/data/data_v2/val/imgs/'
 targets_val_path = 'cvae/data/data_v2/val/x_validation.parquet'
 conditions_val_path = 'cvae/data/data_v2/val/c_validation.parquet'
 
+data_normalizer = Normalizer()
+
 imgs_transforms = transforms.Compose([
     transforms.Resize((img_dim, img_dim)),
     transforms.ToTensor(),  # Converts to [0, 1] (normalized)
@@ -53,6 +57,7 @@ train_dataset = CVAEDataset(
     conditions_path=conditions_train_path,
     image_root=train_imgs_root,
     image_transform=imgs_transforms,
+    data_normalizer=data_normalizer,
     num_workers=num_workers
 )
 
@@ -61,6 +66,7 @@ val_dataset = CVAEDataset(
     conditions_path=conditions_val_path,
     image_root=val_imgs_root,
     image_transform=imgs_transforms,
+    data_normalizer=data_normalizer,
     num_workers=num_workers
 )
 
@@ -68,17 +74,17 @@ train_dataloader = torch.utils.data.DataLoader(train_dataset,
                                                batch_size=batch_size,
                                                pin_memory=True,
                                                num_workers=num_workers,
-                                               shuffle=False)
+                                               shuffle=True)
 val_dataloader = torch.utils.data.DataLoader(val_dataset, 
                                              batch_size=batch_size,
                                              pin_memory=True,
                                              num_workers=num_workers,
-                                             shuffle=False)
+                                             shuffle=True)
 
 logging.info("Data Ready!")
 
-lr = 1e-4
-num_epochs = 1
+lr = 5e-6
+num_epochs = 20
 stall_epochs = 0
 
 kl_beta = 0.0  # KL divergence weight
@@ -88,11 +94,16 @@ kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(nu
 
 # model
 model = CVAE(x_dim, c_dim, z_dim, ).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-# torch.optim.AdamW()
+
+# optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-2)
 # lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.995)
 # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,  step_size=100, gamma=0.8)
-# lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
+lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 
+                                                          mode='min',
+                                                          factor=0.5,
+                                                          patience=3,
+                                                          min_lr=1e-7)
 
 writer = SummaryWriter(
       log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}'
@@ -126,7 +137,9 @@ for epoch in range(num_epochs):
         # start_backward.record()
         optimizer.zero_grad(set_to_none=True)  # clear gradients more effieciently (faster and saves memory)
         sum(loss).backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
+        # scheduler.step()
         # end_backward.record()
         
         recon_loss += loss[0].item()
@@ -158,8 +171,7 @@ for epoch in range(num_epochs):
     avg_train_loss = train_loss / len(train_dataloader)
     
     avg_train_kl_loss_beta_1 = kl_loss_beta_1 / len(train_dataloader)
-    
-    ### put in the same loop as training ###
+        
     # ----- Validation Step -----
     model.eval()
     val_loss, recon_loss, kl_loss = 0.0, 0.0, 0.0
@@ -178,7 +190,9 @@ for epoch in range(num_epochs):
     avg_val_recon_loss = recon_loss / len(val_dataloader)
     avg_val_kl_loss = kl_loss / len(val_dataloader)
     avg_val_loss = val_loss / len(val_dataloader)
-    # lr_scheduler.step()
+    
+    lr_scheduler.step()
+    current_lr = optimizer.param_groups[0]['lr']
     
     writer.add_scalar('Train_Loss/Full_Loss', avg_train_loss, epoch)
     writer.add_scalar('Train_Loss/Recon_Loss', avg_train_recon_loss, epoch)
@@ -187,8 +201,12 @@ for epoch in range(num_epochs):
     writer.add_scalar('Val_Loss/Full_Loss', avg_val_loss, epoch)
     writer.add_scalar('Val_Loss/Recon_Loss', avg_val_recon_loss, epoch)
     writer.add_scalar('Val_Loss/KL_Loss_Beta_1.0', avg_val_kl_loss, epoch)
+    writer.add_scalar('Learning_Rate', current_lr, epoch)
         
-    logging.info(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+    logging.info(f"Epoch {epoch+1}/{num_epochs} | "
+                f"Train Loss: {avg_train_loss:.4f} | "
+                f"Val Loss: {avg_val_loss:.4f} | "
+                f"LR: {current_lr:.2e}")
       
 torch.save(
       model.state_dict(), 
