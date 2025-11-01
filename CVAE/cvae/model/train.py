@@ -21,12 +21,14 @@ logging.info(f"Using device: {device}")
 
 batch_size = 1024
 img_features = 64
-img_dim = 256
-z_dim = 16
+img_dim = 128
+z_dim = 32
 x_dim = 3
 c_dim = 6 + img_features  # states + img features
 h_Q_dim = 64
 h_P_dim = 64
+
+num_workers = 16  # for data loading
 
 log_every = 10  # batches
 
@@ -50,26 +52,28 @@ train_dataset = CVAEDataset(
     targets_path=targets_train_path,
     conditions_path=conditions_train_path,
     image_root=train_imgs_root,
-    image_transform=imgs_transforms
+    image_transform=imgs_transforms,
+    num_workers=num_workers
 )
 
 val_dataset = CVAEDataset(
     targets_path=targets_val_path,
     conditions_path=conditions_val_path,
     image_root=val_imgs_root,
-    image_transform=imgs_transforms
+    image_transform=imgs_transforms,
+    num_workers=num_workers
 )
 
 train_dataloader = torch.utils.data.DataLoader(train_dataset, 
                                                batch_size=batch_size,
                                                pin_memory=True,
-                                               num_workers=8,
-                                               shuffle=True)
+                                               num_workers=num_workers,
+                                               shuffle=False)
 val_dataloader = torch.utils.data.DataLoader(val_dataset, 
                                              batch_size=batch_size,
                                              pin_memory=True,
-                                             num_workers=8,
-                                             shuffle=True)
+                                             num_workers=num_workers,
+                                             shuffle=False)
 
 logging.info("Data Ready!")
 
@@ -154,7 +158,8 @@ for epoch in range(num_epochs):
     avg_train_loss = train_loss / len(train_dataloader)
     
     avg_train_kl_loss_beta_1 = kl_loss_beta_1 / len(train_dataloader)
-            
+    
+    ### put in the same loop as training ###
     # ----- Validation Step -----
     model.eval()
     val_loss, recon_loss, kl_loss = 0.0, 0.0, 0.0
