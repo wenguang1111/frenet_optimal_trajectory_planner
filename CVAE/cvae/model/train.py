@@ -9,7 +9,6 @@ from cvae.model.cvae_dataset import CVAEDataset
 from cvae.model.mask_background import MaskBackground
 from torchvision import transforms
 from torch.optim.lr_scheduler import LambdaLR
-from cvae.model.normalizer import Normalizer
 import sys
 import logging
 
@@ -43,8 +42,6 @@ val_imgs_root = 'cvae/data/data_v2/val/imgs/'
 targets_val_path = 'cvae/data/data_v2/val/x_validation.parquet'
 conditions_val_path = 'cvae/data/data_v2/val/c_validation.parquet'
 
-data_normalizer = Normalizer()
-
 imgs_transforms = transforms.Compose([
     transforms.Resize((img_dim, img_dim)),
     transforms.ToTensor(),  # Converts to [0, 1] (normalized)
@@ -56,8 +53,8 @@ train_dataset = CVAEDataset(
     targets_path=targets_train_path,
     conditions_path=conditions_train_path,
     image_root=train_imgs_root,
+    mode='train',
     image_transform=imgs_transforms,
-    data_normalizer=data_normalizer,
     num_workers=num_workers
 )
 
@@ -65,8 +62,8 @@ val_dataset = CVAEDataset(
     targets_path=targets_val_path,
     conditions_path=conditions_val_path,
     image_root=val_imgs_root,
+    mode='val',
     image_transform=imgs_transforms,
-    data_normalizer=data_normalizer,
     num_workers=num_workers
 )
 
@@ -191,7 +188,7 @@ for epoch in range(num_epochs):
     avg_val_kl_loss = kl_loss / len(val_dataloader)
     avg_val_loss = val_loss / len(val_dataloader)
     
-    lr_scheduler.step()
+    lr_scheduler.step(avg_val_loss)
     current_lr = optimizer.param_groups[0]['lr']
     
     writer.add_scalar('Train_Loss/Full_Loss', avg_train_loss, epoch)

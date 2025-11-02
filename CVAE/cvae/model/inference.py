@@ -1,46 +1,79 @@
 import torch
 import numpy as np
 from cvae.model.model import CVAE, cvae_loss_function
-import time
+from tqdm import tqdm
 import pandas as pd
+from torch.utils.tensorboard import SummaryWriter
+from cvae.utils.beta_annealer import BetaAnnealer
+from cvae.model.cvae_dataset import CVAEDataset
+from cvae.model.mask_background import MaskBackground
+from torchvision import transforms
+from torch.optim.lr_scheduler import LambdaLR
+import sys
+import logging
 
-# neural network parameters
-batch_size = 512
-# h_Q_dim = 512
-# h_P_dim = 512
-z_dim = 32  # latent dimension
+logging.basicConfig(level=logging.INFO, 
+                    format="[%(levelname)s] %(message)s",
+                    handlers=[logging.StreamHandler(sys.stdout)])
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+logging.info(f"Using device: {device}")
+
+batch_size = 1024
+img_features = 64
+img_dim = 128
+z_dim = 32
+x_dim = 3
+c_dim = 6 + img_features  # states + img features
+h_Q_dim = 64
+h_P_dim = 64
+
+num_workers = 16  # for data loading
+
+log_every = 10
 
 # import data
-x_test = pd.read_parquet('cvae/data/data_extended/x_test.parquet')
-x_test = x_test.drop(columns=["scenario", "time_step"])
+test_imgs_root = 'cvae/data/data_v2/test/imgs/'
+targets_test_path = 'cvae/data/data_v2/test/x_test.parquet'
+conditions_test_path = 'cvae/data/data_v2/test/c_test.parquet'
 
-c_test = pd.read_parquet('cvae/data/data_extended/c_test_repeated.parquet')
-c_test = c_test.drop(columns=["scenario", "time_step"])
+imgs_transforms = transforms.Compose([
+    transforms.Resize((img_dim, img_dim)),
+    transforms.ToTensor(),  # Converts to [0, 1] (normalized)
+    MaskBackground()
+])
 
-x_test_t = torch.tensor(x_test.to_numpy(), dtype=torch.float32)
-c_test_t = torch.tensor(c_test.to_numpy(), dtype=torch.float32)
+# prepare datasets and dataloaders
+test_dataset = CVAEDataset(
+    targets_path=targets_test_path,
+    conditions_path=conditions_test_path,
+    image_root=test_imgs_root,
+    mode='test',
+    image_transform=imgs_transforms,
+    num_workers=num_workers
+)
 
-test_dataset = torch.utils.data.TensorDataset(x_test_t, c_test_t)
-test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
-x_dim = x_test_t.shape[1]
-c_dim = c_test_t.shape[1]
+test_dataloader = torch.utils.data.DataLoader(test_dataset, 
+                                             batch_size=batch_size,
+                                             pin_memory=True,
+                                             num_workers=num_workers,
+                                             shuffle=True)
 
 # Load the model
 model = CVAE(x_dim, c_dim, z_dim)
-model.load_state_dict(torch.load('cvae/model/weights/cvae_model_lr_0.001_batch_512_epochs_5_zdim_32.pth'))
+model.load_state_dict(torch.load('cvae/model/weights/cvae_model_lr_5e-06_batch_1024_epochs_20_zdim_32.pth'))
+model = model.to(device)
 model.eval()
 
 # s_time = time.time()
 with torch.inference_mode():
-    loss = 0.0
+    cum_loss = 0.0
     for batch in test_dataloader:
-        x, c = batch
-        y_pred, mu, logvar = model(x, c)
-        # print(y_pred, x)
-        recon_loss, kl_loss = cvae_loss_function(y_pred, x, mu, logvar)
-        batch_loss = recon_loss.item() + kl_loss.item()
-        loss += batch_loss
-        print(f"batch reconstruction loss: {batch_loss:.4f}")
-    loss /= len(test_dataloader)
-    print(f"Total reconstruction loss: {loss:.4f}")
+        x, c, img = batch
+        x, c, img = x.to(device, non_blocking=True), c.to(device, non_blocking=True), img.to(device, non_blocking=True)
+        y_pred, mu, logvar = model(x, c, img)
+        loss = cvae_loss_function(y_pred, x, mu, logvar, kl_beta=1.0)
+        cum_loss += sum(loss).item()
+        print(f"batch reconstruction loss: {sum(loss):.4f}")
+    cum_loss /= len(test_dataloader)
+    print(f"Total reconstruction loss: {cum_loss:.4f}")
