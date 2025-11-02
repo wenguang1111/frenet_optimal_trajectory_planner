@@ -138,5 +138,7 @@ class Normalizer:
         logging.info(f"Normalizer loaded from {save_dir}")
         logging.info(f"Target mean: {normalizer.target_scaler.mean_}")
         logging.info(f"Target std: {normalizer.target_scaler.scale_}")
+        logging.info(f"Conditions mean: {normalizer.cond_scaler.mean_}")
+        logging.info(f"Conditions std: {normalizer.cond_scaler.scale_}")
         
         return normalizer

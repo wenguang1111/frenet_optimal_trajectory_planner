@@ -8,6 +8,7 @@ import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
+from normalizer import Normalizer
 
 logging.basicConfig(level=logging.INFO, 
                     format="[%(levelname)s] %(message)s",
@@ -17,15 +18,16 @@ class CVAEDataset(Dataset):
     def __init__(self, targets_path,
                  conditions_path,
                  image_root,
+                 mode,
                  image_transform=None,
-                 data_normalizer=None,
                  num_workers=8):
+        
+        self.mode = mode
+        self.normalizer_dir = 'cvae/model/weights/'
         
         targets_df = pd.read_parquet(targets_path)
         conditions_df = pd.read_parquet(conditions_path)
         
-        normalizer_save_dir = 'cvae/model/weights/'
-
         assert len(targets_df) == len(conditions_df), \
             "Targets and conditions must have the same length."
             
@@ -34,22 +36,8 @@ class CVAEDataset(Dataset):
 
         self.targets_np = targets_df[self.target_features].to_numpy(dtype="float32")
         self.conds_np = conditions_df[self.cond_features].to_numpy(dtype="float32")
-
-        # Store normalizer
-        self.normalizer = data_normalizer
         
-        if self.normalizer is not None:
-            # fit if not fitted
-            if not self.normalizer.is_fitted:
-                logging.info("Fitting normalizer on dataset...")
-                self.normalizer.fit(self.targets_np, self.conds_np)
-                self.normalizer.save(normalizer_save_dir)
-            else:
-                self.normalizer = self.normalizer.load(normalizer_save_dir)
-                
-            self.targets_np = self.normalizer.transform_targets(self.targets_np)
-            self.conds_np = self.normalizer.transform_conditions(self.conds_np)
-            logging.info("Data normalization applied.")
+        self._setup_normalizer()
 
         self.scenarios = targets_df["scenario"].tolist()
         self.time_steps = targets_df["time_step"].tolist()
@@ -93,6 +81,51 @@ class CVAEDataset(Dataset):
                 if img is not None:
                     self.image_cache[key] = img
 
+    def _setup_normalizer(self):
+        """
+        Setup normalizer based on mode:
+        - train: Fit on this data, save to disk, then transform
+        - val/test: Load from disk, then transform
+        """
+        if self.mode == 'train':
+            # ✅ TRAINING MODE: Fit and save normalizer
+            logging.info(f"[TRAIN] Fitting normalizer on training data...")
+            
+            self.normalizer = Normalizer()
+            self.normalizer.fit(self.targets_np, self.conds_np)
+            
+            # Save for later use
+            os.makedirs(self.normalizer_dir, exist_ok=True)
+            self.normalizer.save(self.normalizer_dir)
+            logging.info(f"[TRAIN] Normalizer fitted and saved to {self.normalizer_dir}")
+            
+            # Transform training data
+            self.targets_np = self.normalizer.transform_targets(self.targets_np)
+            self.conds_np = self.normalizer.transform_conditions(self.conds_np)
+            logging.info(f"[TRAIN] Training data normalized")
+            
+        elif self.mode in ['val', 'test']:
+            # ✅ VALIDATION/TEST MODE: Load normalizer and transform only
+            logging.info(f"[{self.mode.upper()}] Loading normalizer from {self.normalizer_dir}...")
+            
+            self.normalizer = Normalizer.load(self.normalizer_dir)
+            
+            if not self.normalizer.is_fitted:
+                raise RuntimeError(
+                    f"Loaded normalizer is not fitted. "
+                    f"Make sure you've trained the model first and saved the normalizer."
+                )
+            
+            logging.info(f"[{self.mode.upper()}] Normalizer loaded successfully")
+            
+            # Transform validation/test data using training statistics
+            self.targets_np = self.normalizer.transform_targets(self.targets_np)
+            self.conds_np = self.normalizer.transform_conditions(self.conds_np)
+            logging.info(f"[{self.mode.upper()}] Data normalized using training statistics")
+            
+        else:
+            raise ValueError(f"Invalid mode: {self.mode}. Must be 'train', 'val', or 'test'")
+        
     def __len__(self):
         return len(self.targets_np)
 
