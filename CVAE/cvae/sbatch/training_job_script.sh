@@ -8,7 +8,7 @@
 #SBATCH --partition=hpda2_compute_gpu
 #SBATCH --cpus-per-task=20
 #SBATCH --gres=gpu:1
-#SBATCH --mem=128gb
+#SBATCH --mem=64gb
 #SBATCH --time=20:00:00
 #SBATCH --mail-type=none
 #SBATCH --mail-user=karem.mohamed@dlr.de
