@@ -4,7 +4,7 @@ from cvae.model.model import CVAE, cvae_loss_function
 from tqdm import tqdm
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
-from cvae.utils.beta_annealer import BetaAnnealer
+from cvae.utils.beta_annealer import BetaAnnealer, CyclicalAnnealer
 from cvae.model.cvae_dataset import CVAEDataset
 from cvae.model.mask_background import MaskBackground
 from torchvision import transforms
@@ -19,15 +19,15 @@ logging.basicConfig(level=logging.INFO,
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logging.info(f"Using device: {device}")
 
-        
+
 batch_size = 1024
 img_features = 64
 img_dim = 128
 z_dim = 32
 x_dim = 3
 c_dim = 6 + img_features  # states + img features
-h_Q_dim = 64
-h_P_dim = 64
+h_Q_dim = 1024
+h_P_dim = 1024
 
 num_workers = 16  # for data loading
 
@@ -45,7 +45,7 @@ conditions_val_path = 'cvae/data/data_v2/val/c_validation.parquet'
 imgs_transforms = transforms.Compose([
     transforms.Resize((img_dim, img_dim)),
     transforms.ToTensor(),  # Converts to [0, 1] (normalized)
-    MaskBackground()
+    MaskBackground(),
 ])
 
 # prepare datasets and dataloaders
@@ -55,6 +55,7 @@ train_dataset = CVAEDataset(
     image_root=train_imgs_root,
     mode='train',
     image_transform=imgs_transforms,
+    normalize=False,
     num_workers=num_workers
 )
 
@@ -64,6 +65,7 @@ val_dataset = CVAEDataset(
     image_root=val_imgs_root,
     mode='val',
     image_transform=imgs_transforms,
+    normalize=False,
     num_workers=num_workers
 )
 
@@ -76,7 +78,7 @@ val_dataloader = torch.utils.data.DataLoader(val_dataset,
                                              batch_size=batch_size,
                                              pin_memory=True,
                                              num_workers=num_workers,
-                                             shuffle=True)
+                                             shuffle=False)
 
 logging.info("Data Ready!")
 
@@ -87,10 +89,17 @@ stall_epochs = 0
 kl_beta = 0.0  # KL divergence weight
 # num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
 num_steps = (len(train_dataset) / batch_size) * (num_epochs - stall_epochs)
-kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
+# kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
+kl_beta_annealer = CyclicalAnnealer(
+    n_cycles=4,
+    n_steps=int(num_steps),
+    ratio=0.5,
+    beta_end=1.0,
+    schedule='linear'
+)
 
 # model
-model = CVAE(x_dim, c_dim, z_dim, ).to(device)
+model = CVAE(x_dim, c_dim, z_dim, h_Q_dim=h_Q_dim, h_P_dim=h_P_dim).to(device)
 
 # optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-2)
@@ -156,6 +165,7 @@ for epoch in range(num_epochs):
                          f"Batch {i+1}/{len(train_dataloader)} |"
                          f"Recon Loss: {loss[0].item():.4f} | "
                          f"KL Loss: {loss[1].item():.4f} | "
+                         f"KL Loss (Beta=1.0): {loss[1].item() / kl_beta:.4f} | "
                          f"KL Beta: {kl_beta:.4f}")
         
         # logging.info(f"Previous Beta: {kl_beta}")
@@ -207,7 +217,7 @@ for epoch in range(num_epochs):
       
 torch.save(
       model.state_dict(), 
-      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}.pth'
+      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_cyc_linear.pth'
       )
 
 logging.info("Training complete. Model saved.")

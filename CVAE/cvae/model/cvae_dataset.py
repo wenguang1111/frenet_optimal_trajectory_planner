@@ -20,6 +20,7 @@ class CVAEDataset(Dataset):
                  image_root,
                  mode,
                  image_transform=None,
+                 normalize: bool = True,
                  num_workers=8):
         
         self.mode = mode
@@ -37,7 +38,8 @@ class CVAEDataset(Dataset):
         self.targets_np = targets_df[self.target_features].to_numpy(dtype="float32")
         self.conds_np = conditions_df[self.cond_features].to_numpy(dtype="float32")
         
-        self._setup_normalizer()
+        if normalize:
+            self._setup_normalizer()
 
         self.scenarios = targets_df["scenario"].tolist()
         self.time_steps = targets_df["time_step"].tolist()
