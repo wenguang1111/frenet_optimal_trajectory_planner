@@ -8,11 +8,11 @@ class CNNFeatureExtractor(nn.Module):
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 32, 3, padding=1), nn.ReLU(),
-            nn.MaxPool2d(2),  # 64→32
+            nn.MaxPool2d(2),  # 128->64
             nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(),
-            nn.MaxPool2d(2),  # 32→16
+            nn.MaxPool2d(2),  # 64->32
             nn.Conv2d(64, 128, 3, padding=1), nn.ReLU(),
-            nn.MaxPool2d(2),  # 16→8
+            nn.MaxPool2d(2),  # 32->16
         )
         self.global_pool = nn.AdaptiveAvgPool2d((1, 1))  # (N,128,1,1)
         self.flatten = nn.Flatten()
@@ -55,13 +55,13 @@ class CVAE(nn.Module):
         # self.decoder_fc_p3 = nn.Linear(h_P_dim // 4, h_P_dim // 8)
         # self.decoder_fc_out = nn.Linear(h_P_dim // 8, X_dim)
         self.decoder = nn.Sequential(
-            nn.Linear(z_dim + c_dim, h_P_dim // 2),
+            nn.Linear(z_dim + c_dim, h_P_dim),
             nn.ReLU(),
-            nn.Linear(h_P_dim // 2, h_P_dim // 4),
+            nn.Linear(h_P_dim, h_P_dim // 2),
             nn.ReLU(),
-            nn.Linear(h_P_dim // 4, h_P_dim // 8),
-            nn.ReLU(),
-            nn.Linear(h_P_dim // 8, X_dim)
+            nn.Linear(h_P_dim // 2, X_dim),
+            # nn.ReLU(),
+            # nn.Linear(h_P_dim // 4, X_dim)
         )
 
     def encode(self, x, c, img):
