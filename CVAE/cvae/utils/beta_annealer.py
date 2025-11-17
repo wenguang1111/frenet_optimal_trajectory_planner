@@ -1,16 +1,40 @@
 import math
 
 class BetaAnnealer:
-    def __init__(self, beta_start=0.0, beta_end=1.0, n_steps=10000):
+    def __init__(self, beta_start=0.0, beta_end=1.0, n_steps=10000, schedule='linear'):
         self.beta_start = beta_start
         self.beta_end = beta_end
         self.n_steps = n_steps
+        self.schedule = schedule
         self.step_count = 0
 
     def step(self):
+        """Compute beta value for current step and increment counter."""
+        progress = min(self.step_count / self.n_steps, 1.0)
+        
+        if self.schedule == 'linear':
+            beta = self.linear_schedule(progress)
+        elif self.schedule == 'cosine':
+            beta = self.cosine_schedule(progress)
+        elif self.schedule == 'sigmoid':
+            beta = self.sigmoid_schedule(progress)
+        else:
+            raise ValueError("Invalid schedule type. Choose from 'linear', 'cosine', 'sigmoid'.")
+        
         self.step_count += 1
-        progress = min(1.0, self.step_count / self.n_steps)
+        return beta
+    
+    def linear_schedule(self, progress):
         return self.beta_start + progress * (self.beta_end - self.beta_start)
+    
+    def cosine_schedule(self, progress):
+        cosine_progress = (1 - math.cos(progress * math.pi)) / 2
+        return self.beta_start + cosine_progress * (self.beta_end - self.beta_start)
+    
+    def sigmoid_schedule(self, progress):
+        x = (progress - 0.5) * 12
+        sigmoid_progress = 1 / (1 + math.exp(-x))
+        return self.beta_start + sigmoid_progress * (self.beta_end - self.beta_start)
 
 
 class CyclicalAnnealer:
