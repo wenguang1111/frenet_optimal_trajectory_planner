@@ -26,8 +26,8 @@ img_dim = 128
 z_dim = 32
 x_dim = 3
 c_dim = 6 + img_features  # states + img features
-h_Q_dim = 1024
-h_P_dim = 1024
+h_Q_dim = 512
+h_P_dim = 512
 
 num_workers = 16  # for data loading
 
@@ -45,7 +45,7 @@ conditions_val_path = 'cvae/data/data_v2/val/c_validation.parquet'
 imgs_transforms = transforms.Compose([
     transforms.Resize((img_dim, img_dim)),
     transforms.ToTensor(),  # Converts to [0, 1] (normalized)
-    MaskBackground(),
+    # MaskBackground(),
 ])
 
 # prepare datasets and dataloaders
@@ -82,20 +82,27 @@ val_dataloader = torch.utils.data.DataLoader(val_dataset,
 
 logging.info("Data Ready!")
 
-lr = 5e-6
-num_epochs = 20
+lr = 1e-4
+num_epochs = 3
 stall_epochs = 0
 
 kl_beta = 0.0  # KL divergence weight
+beta_end = 0.1  # final KL divergence weight
 # num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
 num_steps = (len(train_dataset) / batch_size) * (num_epochs - stall_epochs)
 # kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
-kl_beta_annealer = CyclicalAnnealer(
-    n_cycles=4,
+# kl_beta_annealer = CyclicalAnnealer(
+#     n_cycles=4,
+#     n_steps=int(num_steps),
+#     ratio=0.5,
+#     beta_end=0.3,
+#     schedule='cosine'
+# )
+kl_beta_annealer = BetaAnnealer(
+    beta_start=kl_beta,
+    beta_end=beta_end,
     n_steps=int(num_steps),
-    ratio=0.5,
-    beta_end=1.0,
-    schedule='linear'
+    schedule='cosine'
 )
 
 # model
@@ -124,7 +131,7 @@ writer = SummaryWriter(
 
 # Training loop
 for epoch in range(num_epochs):
-    train_loss, recon_loss, kl_loss = 0.0, 0.0, 0.0
+    train_loss, train_loss_beta_1, recon_loss, kl_loss = 0.0, 0.0, 0.0, 0.0
     kl_loss_beta_1 = 0.0
     
     # ----- Training Step -----
@@ -151,7 +158,7 @@ for epoch in range(num_epochs):
         recon_loss += loss[0].item()
         kl_loss += loss[1].item()
         train_loss += loss[0].item() + loss[1].item()
-        
+        train_loss_beta_1 += cvae_loss_function(y_pred, x, mu, logvar, kl_beta=1.0)[0].item() + cvae_loss_function(y_pred, x, mu, logvar, kl_beta=1.0)[1].item()
         kl_loss_beta_1 += cvae_loss_function(y_pred, x, mu, logvar, kl_beta=1.0)[1].item()
         
         # Wait for GPU to finish
@@ -177,6 +184,7 @@ for epoch in range(num_epochs):
     avg_train_kl_loss = kl_loss / len(train_dataloader)
     avg_train_loss = train_loss / len(train_dataloader)
     
+    avg_train_loss_beta_1 = train_loss_beta_1 / len(train_dataloader)
     avg_train_kl_loss_beta_1 = kl_loss_beta_1 / len(train_dataloader)
         
     # ----- Validation Step -----
@@ -202,6 +210,7 @@ for epoch in range(num_epochs):
     current_lr = optimizer.param_groups[0]['lr']
     
     writer.add_scalar('Train_Loss/Full_Loss', avg_train_loss, epoch)
+    writer.add_scalar('Train_Loss/Full_Loss_Beta_1.0', avg_train_loss_beta_1, epoch)
     writer.add_scalar('Train_Loss/Recon_Loss', avg_train_recon_loss, epoch)
     writer.add_scalar('Train_Loss/KL_Loss', avg_train_kl_loss, epoch)
     writer.add_scalar('Train_Loss/KL_Loss_Beta_1.0', avg_train_kl_loss_beta_1, epoch)
@@ -217,7 +226,7 @@ for epoch in range(num_epochs):
       
 torch.save(
       model.state_dict(), 
-      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_cyc_linear.pth'
+      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_cos_{beta_end}.pth'
       )
 
 logging.info("Training complete. Model saved.")
