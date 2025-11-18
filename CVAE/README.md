@@ -46,3 +46,77 @@
 - CVAE outputs 3 samples for each variable which makes possibilities are 3x3x3=27 trajectories.
 
 - By intuition, time reduction in planning should be much more since number of trajectories to try in reduced from 300 to 27. But it is not the case?
+
+## Track experiments
+
+- Track the performance on 142 test scenarios.
+- First get as much scenarios planned with CVAE as possible (reliability). Set the samples to 256 as an upper bound. Hierarchial sampling should be implemented later (robustness).
+
+### Experiment 1
+
+#### Setup
+
+- LR = 1e-4, Batch size = 1024, z_dim = 64, epochs = 5.
+- Cosine beta annealing from 0 to 0.3 over the training steps.
+- Trainable resnet18 as img feature extractor.
+
+#### Results
+
+- Solved 86/142 test scenarios.
+
+### Experiment 2
+
+#### Setup
+
+- z_dim = 32
+
+#### Results
+
+- Solved 88/142 test scenarios
+
+### Experiment 3
+
+#### Setup
+
+- No image masking
+
+#### Results
+
+- Solved 90/142 test scenarios
+
+### Experiment 4
+
+#### Setup
+
+- Image size 256 instead of 128
+
+#### Results
+
+- Solved 89/142 test scenarios
+
+### Experiment 5
+
+#### Setup
+
+- Image size 128 again
+- z_dim = 32
+- No image masking
+- end kl_beta = 0.1 cosine annealing from 0.0 over 5 epochs
+
+#### Results
+
+- Solved 104/142 test scenarios
+- Apparently there was a posterior collapse
+
+### Experiment 6
+
+#### Setup
+
+- Image size 128 again
+- z_dim = 32
+- No image masking
+- end kl_beta = 0.1 cosine annealing from 0.0 over 3 epochs
+
+#### Results
+
+- Solved 99/142 test scenarios
