@@ -120,3 +120,18 @@
 #### Results
 
 - Solved 99/142 test scenarios
+
+### Experiment 7
+
+#### Setup
+
+- Image size 128 again
+- z_dim = 32
+- No image masking
+- end kl_beta = 0.1 cosine annealing from 0.0 over 5 epochs
+- Sample 512 samples
+
+#### Results
+
+- Solved 98/142 test scenarios
+- Next, experiments with the model
