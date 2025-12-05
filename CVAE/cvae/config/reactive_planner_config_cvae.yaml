@@ -15,10 +15,10 @@ planning:
 sampling:
   cvae_sampling: true
   z_dim: 32
-  c_dim: 518
-  num_samples: 50
-  cvae_model_path: "../cvae/model/weights/cvae_model_lr_0.001_batch_512_epochs_5_zdim_32.pth"
+  c_dim: 70
+  num_samples: 256
+  cvae_model_path: "../cvae/model/weights/cvae_model_lr_0.0001_batch_1024_epochs_10_zdim_32_cos_0.05_stall_end.pth"
   pre_encoded_imgs: true
-  device: "cuda"  # "cuda" or "cpu"
+  device: "cpu"  # "cuda" or "cpu"
 vehicle:
   id_type_vehicle: 2
