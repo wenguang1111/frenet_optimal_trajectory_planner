@@ -83,13 +83,13 @@ val_dataloader = torch.utils.data.DataLoader(val_dataset,
 logging.info("Data Ready!")
 
 lr = 1e-4
-num_epochs = 3
+num_epochs = 10
 stall_epochs = 0
 
 kl_beta = 0.0  # KL divergence weight
-beta_end = 0.1  # final KL divergence weight
+beta_end = 0.05  # final KL divergence weight
 # num_steps = (x_train_t.shape[0] / batch_size) * (num_epochs - stall_epochs)
-num_steps = (len(train_dataset) / batch_size) * (num_epochs - stall_epochs)
+num_steps = (len(train_dataset) / batch_size) * (5 - stall_epochs)
 # kl_beta_annealer = BetaAnnealer(beta_start=kl_beta, beta_end=1.0, n_steps=int(num_steps))
 # kl_beta_annealer = CyclicalAnnealer(
 #     n_cycles=4,
@@ -112,11 +112,14 @@ model = CVAE(x_dim, c_dim, z_dim, h_Q_dim=h_Q_dim, h_P_dim=h_P_dim).to(device)
 optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-2)
 # lr_scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.995)
 # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,  step_size=100, gamma=0.8)
-lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 
-                                                          mode='min',
-                                                          factor=0.5,
-                                                          patience=3,
-                                                          min_lr=1e-7)
+# lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 
+#                                                           mode='min',
+#                                                           factor=0.5,
+#                                                           patience=3,
+#                                                           min_lr=1e-7)
+lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer,
+                                                    milestones=[5],
+                                                    gamma=0.5)
 
 writer = SummaryWriter(
       log_dir=f'cvae/model/runs/lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}'
@@ -226,7 +229,7 @@ for epoch in range(num_epochs):
       
 torch.save(
       model.state_dict(), 
-      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_cos_{beta_end}.pth'
+      f'cvae/model/weights/cvae_model_lr_{lr}_batch_{batch_size}_epochs_{num_epochs}_zdim_{z_dim}_cos_{beta_end}_stall_end.pth'
       )
 
 logging.info("Training complete. Model saved.")
