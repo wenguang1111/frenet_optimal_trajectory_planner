@@ -2,7 +2,7 @@ debug:
   draw_icons: true
   draw_traj_set: false
   multiproc: false
-  save_plots: true # activate to save scenarios solutions GIFs
+  save_plots: false # activate to save scenarios solutions GIFs
   show_plots: false
 general:
   # path_scenarios: "../cvae/scenarios/rp_success"
@@ -16,7 +16,7 @@ sampling:
   cvae_sampling: true
   z_dim: 32
   c_dim: 70
-  num_samples: 256
+  num_samples: 32
   cvae_model_path: "../cvae/model/weights/cvae_model_lr_0.0001_batch_1024_epochs_10_zdim_32_cos_0.05_stall_end.pth"
   pre_encoded_imgs: true
   device: "cpu"  # "cuda" or "cpu"
