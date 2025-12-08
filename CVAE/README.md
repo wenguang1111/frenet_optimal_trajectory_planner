@@ -1,3 +1,54 @@
+## Wenguang Onboarding
+
+### Setting up the venv
+I use __poetry__ as a package manager for this repo. You should have __poetry__ installed. Run the following commands to install, create the venv and install dependencies:
+
+<pre>
+cd /to/your/path/frenet_optimal_trajectory_planner/CVAE
+pip install poetry==2.1.4
+poetry install
+</pre>
+
+### Activating the venv
+To activate the venv, run:
+<pre>
+poetry env activate
+</pre>
+then it will paste a line like:
+<pre>
+source /dss/dsshome1/07/di97xub/.cache/pypoetry/virtualenvs/cvae-3j1Yb4w3-py3.10/bin/activate
+</pre>
+copy it and run it and now you're in the virtual environment.
+
+### Directory Structure
+- __commonroad-reactive-planner/__ : My fork of CommonRoad Reactive Planner with CVAE integration. This a submodule that I update if I make commits there.
+    - __commonroad_rp/__ : The main code of CommonRoad Reactive Planner.
+    - __run_planner.py__ : Script to run the reactive planner.
+    - __output/__ : Folder where the planner outputs results (evaluation csv, gifs). If _EVAL_ is set to True in the __run_planner.py__, it will output evaluation results here. If _save_plots_ is set to True in config files, it will save gifs of the planned scenarios here (this takes more time). This is not tracked in git. You have to create it and mkdir cvae/ and rp/ in __output__ to save the results in the respective folder it you're running CVAE or RP.
+- __cvae/__ : CVAE model code and training scripts.
+    - __all_scenarios/__ : Folder that contains all the CommonRoad scenarios. This is not tracked in git. You have to create it and put the scenarios there (from Zenodo as discussed below).
+        - __planning_scenarios__ : Folder that contains the scenarios that RP planned and are part of our dataset.
+    - __cvae/model/__ : CVAE model architecture and training scripts code.
+        - __weights/__ : Folder to save model weights. The weights in cvae config file are the latest/best weights I have trained.
+        - __runs/__ : Folder to save training runs and logs. Not tracked in git. You have to create it if you want to train the model.
+    - __cvae/sbatch/__ : To submit a job to slurm you use sbatch scripts.
+        - __training_job_script.sh__ : Script to train the CVAE model on the cluster.
+        - __run_planner_script_cvae.sh__: Script to run the reactive planner __with__ CVAE on the cluster. If _--cvae_ flag is set, it will use CVAE. Otherwise, it will use the original reactive planner. The flag _--mode_ determines whether you run the planner on 'train', 'val', or 'test' sets.
+        - __run_planner_script_rp.sh__ : Script to run the reactive planner __without__ CVAE on the cluster.
+    - __config/__ : Config files for cvae planner and rp planner.
+    - __utils/__ : Utility functions like beta annealing and preparing the dataset.
+    - __data/__ : Folder to save the preprocessed dataset. Not tracked in git. You have to create it and download data in it (data_v2).
+        - __data_v2/__ : Preprocessed dataset folder. You have to download it from Zenodo (discussed later).
+
+### Downloading the dataset
+The preprocessed dataset (17.5 GB) is available on Zenodo at this [link](https://zenodo.org/records/17851245?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImZjZWJlNzExLTU2NGUtNDA5MC05YzY1LTdhYzVhN2NlN2EwMiIsImRhdGEiOnt9LCJyYW5kb20iOiJhNmE4MmNhZDMyOTk4NmJjYTdlMjU4NTJiNGQzZjIzYiJ9.1916XCRYQCsoaulhaUI16sx2s-K7GlroRAXbBMEF9tKGz8268JMVb9bJ7HwSYlx1vXeeoDQKBVQ314cOOgZ21Q). Download the dataset, extract it, and paste __data_v2/__ in __cvae/data/__ folder so that the path to the data becomes __cvae/data/data_v2/__. Paste __all_scenarios/__ in __cvae/__ folder. _fiss_scenarios.tar.gz_ contains the scenarios for FISS (explained in the meeting).
+
+I recommend creating an account on Zenodo for me to add you as a collaborator so that you can download the dataset easily in the future if I upload a new version.
+
+For later reference, I used this repo to upload the dataset to Zenodo: https://github.com/jhpoelen/zenodo-upload
+
+__Note__: Their are hardcoded paths in many scripts, as I prefer global paths to avoid python path issues. We can change them later.
+
 ## Comments on latest experiments
 - Data consists of the samples (x) that generated the optimal trajectory for a certain timestep and the conditions (c) which are the initial/goal states and the image of the scenario at each timestep. If a scenario has 100 timesteps, then it will have the same initial/goal state duplicated 100 times, and a 512 feature vector for the image at each timestep that was pre-encoded with frozen ResNet-18. 
 
