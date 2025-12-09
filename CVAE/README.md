@@ -68,7 +68,7 @@ cp -r test/imgs/* all/imgs/
 
 # the command to run the planner on 1 scenario
 cd CVAE/commonroad-reactive-planner/
-python3 run_planner.py --cvae --scenario ARG_Carcarana-4_7_T-1.xml
+python3 run_planner.py --cvae --scenario ESP_Requena-6_2_T-1.xml
 </pre>
 
 ## Comments on latest experiments
