@@ -49,6 +49,28 @@ For later reference, I used this repo to upload the dataset to Zenodo: https://g
 
 __Note__: Their are hardcoded paths in many scripts, as I prefer global paths to avoid python path issues. We can change them later.
 
+## Running the planner on 1 scenario
+
+To run the planner on 1 scenario:
+
+<pre>
+# pull the repo again
+git pull
+
+# make a directory that has all the imgs from train, val, test sets
+cd cvae/data/data_v2/
+mkdir -p all/imgs
+
+# copy all imgs into all/imgs
+cp -r train/imgs/* all/imgs/
+cp -r val/imgs/* all/imgs/
+cp -r test/imgs/* all/imgs/
+
+# the command to run the planner on 1 scenario
+cd CVAE/commonroad-reactive-planner/
+python3 run_planner.py --cvae --scenario ARG_Carcarana-4_7_T-1.xml
+</pre>
+
 ## Comments on latest experiments
 - Data consists of the samples (x) that generated the optimal trajectory for a certain timestep and the conditions (c) which are the initial/goal states and the image of the scenario at each timestep. If a scenario has 100 timesteps, then it will have the same initial/goal state duplicated 100 times, and a 512 feature vector for the image at each timestep that was pre-encoded with frozen ResNet-18. 
 

@@ -6,7 +6,8 @@ debug:
   show_plots: false
 general:
   # path_scenarios: "../cvae/scenarios/rp_success"
-  path_scenarios: "/dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE/cvae/all_scenarios"
+  # path_scenarios: "/dss/dsshome1/07/di97xub/frenet_optimal_trajectory_planner/CVAE/cvae/all_scenarios"
+  path_scenarios: "../cvae/all_scenarios/"
   path_output: "output/cvae"  # change to output/cvae when running cvae
 planning:
   dt: 0.1
@@ -20,5 +21,6 @@ sampling:
   cvae_model_path: "../cvae/model/weights/cvae_model_lr_0.0001_batch_1024_epochs_10_zdim_32_cos_0.05_stall_end.pth"
   pre_encoded_imgs: true
   device: "cpu"  # "cuda" or "cpu"
+  mode: "all"  # "train", "val", "test", or "all"
 vehicle:
   id_type_vehicle: 2
